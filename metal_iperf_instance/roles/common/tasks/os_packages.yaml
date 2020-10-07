@@ -1,0 +1,13 @@
+---
+- name: os_packages_install
+  apt:
+    update_cache: true
+    pkg:
+      - fail2ban
+      - ntpdate
+      - strace
+      - xfsprogs
+      - smartmontools
+      - moreutils
+      - iperf
+    state: latest

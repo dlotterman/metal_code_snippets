@@ -1,0 +1,9 @@
+---
+# metal_dynamic_inventory.yaml
+plugin: metal_dynamic_inventory
+## metal_api_token:
+metal_projects:
+  - '9c419265-YOUR-PROJECT-UUID-HERE'
+metal_device_prefixs:
+  - 'iperf'
+metal_ansible_ip: public_ipv4

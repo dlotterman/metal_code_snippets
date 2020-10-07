@@ -1,0 +1,18 @@
+- packet_device:
+    hostnames: iperf%02d
+    operating_system: debian_9
+    plan: "{{ metal_plan }}"
+    facility: "{{ metal_facility }}"
+    count: 1
+    state: active
+    project_id: "{{ metal_project }}"
+    wait_for_public_IPv: 4
+  register: newiperf
+- name: wait for ssh
+  wait_for:
+    delay: 1
+    host: "{{ item.public_ipv4 }}"
+    port: 22
+    state: started
+    timeout: 500
+  with_items: "{{newiperf.devices}}"

@@ -1,0 +1,46 @@
+---
+- name: data_dirs_create
+  file:
+    path: /data
+    state: directory
+    mode: '0777'
+    owner: root
+    group: root
+  file:
+    path: /data/data_1
+    state: directory
+    mode: '0777'
+    owner: root
+    group: root
+  file:
+    path: /data/data_2
+    state: directory
+    mode: '0777'
+    owner: root
+    group: root
+    
+- name: c2_medium_disks_format_xfs
+  filesystem:
+    fstype: xfs
+    dev: "{{ item }}"
+  loop:
+    - /dev/dm-1
+    - /dev/dm-2
+  when: ('c2_medium_x86' in group_names)
+- name: c2_medium_disks_mount_data1
+  mount:
+    path: /data/data_1
+    src: /dev/dm-1
+    fstype: xfs
+    opts: relatime
+    state: mounted
+  when: "'c2_medium_x86' in {{ group_names }}"
+- name: c2_medium_disks_mount_data2
+  mount:
+    path: /data/data_2
+    src: /dev/dm-2
+    fstype: xfs
+    opts: relatime
+    state: mounted
+  when: "'c2_medium_x86' in {{ group_names }}"
+        

@@ -1,0 +1,9 @@
+- name: common
+  gather_facts: true
+  hosts: all
+  strategy: free
+  roles:
+    - iperf
+  
+  vars:
+    ansible_python_interpreter: auto_silent

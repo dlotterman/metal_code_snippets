@@ -1,0 +1,13 @@
+- name: iperf_template_systemd_unit
+  template:
+    src: templates/iperf_systemd.service.j2
+    dest: "/etc/systemd/system/iperf.service"
+    owner: root
+    group: root
+
+- name: iperf_systemd_enable
+  systemd:
+    name: iperf
+    state: started
+    daemon_reload: yes
+    enabled: yes
