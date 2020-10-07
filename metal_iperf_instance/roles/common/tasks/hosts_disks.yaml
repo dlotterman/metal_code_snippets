@@ -34,7 +34,7 @@
     fstype: xfs
     opts: relatime
     state: mounted
-  when: "'c2_medium_x86' in {{ group_names }}"
+  when: ('c2_medium_x86' in group_names)
 - name: c2_medium_disks_mount_data2
   mount:
     path: /data/data_2
@@ -42,5 +42,5 @@
     fstype: xfs
     opts: relatime
     state: mounted
-  when: "'c2_medium_x86' in {{ group_names }}"
+  when: ('c2_medium_x86' in group_names)
         
