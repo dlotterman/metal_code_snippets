@@ -6,5 +6,5 @@
     - common
   
   vars:
-    workstation_ip: 184.96.1.145
+    workstation_ip: YOURIP
     ansible_python_interpreter: auto_silent
