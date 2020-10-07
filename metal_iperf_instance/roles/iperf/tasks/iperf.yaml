@@ -8,6 +8,6 @@
 - name: iperf_systemd_enable
   systemd:
     name: iperf
-    state: started
+    state: restarted
     daemon_reload: yes
     enabled: yes

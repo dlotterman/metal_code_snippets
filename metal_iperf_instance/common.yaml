@@ -6,5 +6,7 @@
     - common
   
   vars:
-    workstation_ip: YOURIP
+    whitelist_ips: 
+      - "IPBLOCKHERE"
+      - "IPBLOCKHERE"
     ansible_python_interpreter: auto_silent

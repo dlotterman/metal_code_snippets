@@ -10,4 +10,5 @@
       - smartmontools
       - moreutils
       - iperf
+      - iperf3
     state: latest

@@ -4,7 +4,7 @@ Description=iperf server
 After=syslog.target network.target auditd.service
 
 [Service]
-ExecStart=/usr/bin/iperf -s
+ExecStart=/usr/bin/iperf3 -s --logfile=/tmp/iperf_logfile
 
 [Install]
 WantedBy=multi-user.target

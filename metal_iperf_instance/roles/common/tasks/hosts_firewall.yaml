@@ -7,7 +7,11 @@
 - name: ufw_allow_ssh
   ufw: proto=tcp port=22 rule=allow
 - name: ufw_allow_iperf
-  ufw: proto=tcp port=5001 rule=allow src={{ workstation_ip }}
+  ufw: proto=tcp port=5001 rule=allow src="{{ item }}"
+  loop: "{{ whitelist_ips }}"
+- name: ufw_allow_iperf3
+  ufw: proto=tcp port=5201 rule=allow src="{{ item }}"
+  loop: "{{ whitelist_ips }}"
 - name: ufw_allow_all_access_from_RFC1918
   ufw:
     rule: allow
