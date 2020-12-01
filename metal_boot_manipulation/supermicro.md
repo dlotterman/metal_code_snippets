@@ -32,4 +32,5 @@ For reboot device index :
 
 
 6. Interact with the BIOS and make needed changes.
+
 ![console bios](https://s3.wasabisys.com/metalstaticassets/consolebios.PNG)
