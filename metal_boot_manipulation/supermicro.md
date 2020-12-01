@@ -3,7 +3,8 @@
 1. Download the [IPMICFG](https://www.supermicro.com/SwDownload/SwSelect_Free.aspx?cat=IPMI) utility from SuperMicro to the host and unzip it to the desired folder structure
 
 2. Look at the options available for boot priority, looking for the BIOS option
-    * ``` # ./IPMICFG-Linux.x86_64 -soft -help
+```
+# ./IPMICFG-Linux.x86_64 -soft -help
 Command: -soft
 Command(s):
  -soft <index>              Initiates a soft-shutdown for OS and forces system
@@ -24,7 +25,7 @@ For reboot device index :
 
 
 4. Through the IPMICFG utility, reboot the instance into the chassis BIOS
-    * `./IPMICFG-Linux.x86_64 -soft 4`
+    * ```./IPMICFG-Linux.x86_64 -soft 4```
 
 
 5. Catch the BIOS keyprompt, it will be after the initial memory and HBA boot screen flashes, and can be caught with the <TAB> key
