@@ -3,7 +3,6 @@
 1. Download the [IPMICFG](https://www.supermicro.com/SwDownload/SwSelect_Free.aspx?cat=IPMI) utility from SuperMicro to the host and unzip it to the desired folder structure
 
 2. Look at the options available for boot priority, looking for the BIOS option
-    * `# ./IPMICFG-Linux.x86_64 -soft -help`
     * ``` # ./IPMICFG-Linux.x86_64 -soft -help
 Command: -soft
 Command(s):
