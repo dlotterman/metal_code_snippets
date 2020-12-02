@@ -28,9 +28,10 @@ For reboot device index :
     * ```./IPMICFG-Linux.x86_64 -soft 4```
 
 
-5. Catch the BIOS keyprompt, it will be after the initial memory and HBA boot screen flashes, and can be caught with the <TAB> key
+5. Catch the BIOS keyprompt, it will be after the initial memory and HBA boot screen flashes, and can be caught with the `<TAB>` key
 
 
 6. Interact with the BIOS and make needed changes.
+
 
 ![console bios](https://s3.wasabisys.com/metalstaticassets/consolebios.PNG)
