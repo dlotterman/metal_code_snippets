@@ -26,20 +26,24 @@ users:
     primary_group: sftp_users
     passwd: $$REPLACE ME: `mkpasswd --method=SHA-512 --rounds=409`
     shell: /sbin/nologin
-    home: /tmp/sftp_dir
+    home: /data/sftp_chroot/test5G
+    no_create_home: true
+    lock_passwd: false
 
 runcmd:
   - screen -S iperf_5101 -d -m /usr/bin/iperf3 -s -p 5101 --logfile /var/log/iperf_5101.log
   - screen -S iperf_5202 -d -m /usr/bin/iperf3 -s -p 5202 --logfile /var/log/iperf_5202.log
   - screen -S iperf_5303 -d -m /usr/bin/iperf3 -s -p 5303 --logfile /var/log/iperf_5303.log
   - screen -S iperf_5404 -d -m /usr/bin/iperf3 -s -p 5404 --logfile /var/log/iperf_5404.log
-  - mkdir /tmp/sftp_dir
-  - chown test5G /tmp/sftp_dir
-  - chmod 701 /tmp/sftp_dir
+  - mkdir -p /data/sftp_chroot/test5G
+  - chown root:root /data/sftp_chroot/
+  - chmod 755 /data/sftp_chroot/
+  - chown test5G /data/sftp_chroot/test5G
+  - chmod 755 /data/sftp_chroot/test5G
   - grep -v "PasswordAuthentication no" /etc/ssh/sshd_config > /tmp/sshd_config && mv /tmp/sshd_config /etc/ssh/sshd_config
   - echo "PasswordAuthentication yes" >> /etc/ssh/sshd_config
   - echo "Match Group sftp_users" >> /etc/ssh/sshd_config
-  - echo "ChrootDirectory /tmp/sftp_dir" >> /etc/ssh/sshd_config
+  - echo "ChrootDirectory /data/sftp_chroot/" >> /etc/ssh/sshd_config
   - echo "ForceCommand internal-sftp" >> /etc/ssh/sshd_config
   - systemctl restart sshd
   - systemctl enable fail2ban
@@ -51,6 +55,7 @@ runcmd:
   - ufw allow 5303/any
   - ufw allow 5404/any
   - ufw enable
+  - chmod +x /etc/rc.d/rc.local
 
 write_files:
   - owner: root:root
