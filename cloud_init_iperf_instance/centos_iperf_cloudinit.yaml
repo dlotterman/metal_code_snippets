@@ -1,0 +1,89 @@
+#cloud-config
+
+# package_upgrade: true
+package_reboot_if_required: true
+
+yum_repos:
+    epel-release:
+        baseurl: https://download.fedoraproject.org/pub/epel/$releasever/Everything/$basearch
+        enabled: true
+        failovermethod: priority
+        gpgcheck: true
+        gpgkey: http://download.fedoraproject.org/pub/epel/RPM-GPG-KEY-EPEL-8
+        name: Extra Packages for Enterprise Linux $releasever - $basearch
+
+packages:
+ - fail2ban
+ - iperf3
+ - screen
+ - ufw
+
+groups:
+  - sftp_users
+
+users:
+  - name: $REPLACE_ME
+    primary_group: sftp_users
+    passwd: $$REPLACE ME: `mkpasswd --method=SHA-512 --rounds=409`
+    shell: /sbin/nologin
+    home: /tmp/sftp_dir
+
+runcmd:
+  - screen -S iperf_5101 -d -m /usr/bin/iperf3 -s -p 5101 --logfile /var/log/iperf_5101.log
+  - screen -S iperf_5202 -d -m /usr/bin/iperf3 -s -p 5202 --logfile /var/log/iperf_5202.log
+  - screen -S iperf_5303 -d -m /usr/bin/iperf3 -s -p 5303 --logfile /var/log/iperf_5303.log
+  - screen -S iperf_5404 -d -m /usr/bin/iperf3 -s -p 5404 --logfile /var/log/iperf_5404.log
+  - mkdir /tmp/sftp_dir
+  - chown test5G /tmp/sftp_dir
+  - chmod 701 /tmp/sftp_dir
+  - grep -v "PasswordAuthentication no" /etc/ssh/sshd_config > /tmp/sshd_config && mv /tmp/sshd_config /etc/ssh/sshd_config
+  - echo "PasswordAuthentication yes" >> /etc/ssh/sshd_config
+  - echo "Match Group sftp_users" >> /etc/ssh/sshd_config
+  - echo "ChrootDirectory /tmp/sftp_dir" >> /etc/ssh/sshd_config
+  - echo "ForceCommand internal-sftp" >> /etc/ssh/sshd_config
+  - systemctl restart sshd
+  - systemctl enable fail2ban
+  - systemctl start fail2ban
+  - ufw default deny incoming
+  - ufw allow ssh
+  - ufw allow 5101/any
+  - ufw allow 5202/any
+  - ufw allow 5303/any
+  - ufw allow 5404/any
+  - ufw enable
+
+write_files:
+  - owner: root:root
+    path: /etc/cron.d/dnf_system_upgrade
+    content: "0 2 * * * dnf -y upgrade \n"
+  - owner: root:root
+    path: /etc/cron.d/sshd_restart
+    content: "0 3 * * * systemctl restart sshd \n"
+  - owner: root:root
+    path: /etc/rc.local
+    content: |
+      ufw default deny incoming
+      ufw allow ssh
+      ufw allow 5101/any
+      ufw allow 5202/any
+      ufw allow 5303/any
+      ufw allow 5404/any
+      ufw enable
+      screen -S iperf_5101 -d -m /usr/bin/iperf3 -s -p 5101 --logfile /var/log/iperf_5101.log
+      screen -S iperf_5202 -d -m /usr/bin/iperf3 -s -p 5202 --logfile /var/log/iperf_5202.log
+      screen -S iperf_5303 -d -m /usr/bin/iperf3 -s -p 5303 --logfile /var/log/iperf_5303.log
+      screen -S iperf_5404 -d -m /usr/bin/iperf3 -s -p 5404 --logfile /var/log/iperf_5404.log
+    append: true
+  - owner: root:root
+    path: /etc/fail2ban/jail.local
+    content: |
+      [DEFAULT]
+      bantime = 3600
+      banaction = iptables-multiport
+      ignoreip = 127.0.0.1/8 10.0.0.0/8
+      findtime = 600
+      maxretry = 5
+      [sshd]
+      enabled = true
+      logpath = %(sshd_log)s
+    permissions: '0644'
