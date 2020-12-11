@@ -1,6 +1,6 @@
 #cloud-config
 
-# package_upgrade: true
+package_upgrade: true
 package_reboot_if_required: true
 
 yum_repos:
@@ -16,7 +16,6 @@ packages:
  - fail2ban
  - iperf3
  - screen
- - ufw
 
 groups:
   - sftp_users
@@ -32,10 +31,6 @@ users:
 
 
 runcmd:
-  - screen -S iperf_5101 -d -m /usr/bin/iperf3 -s -p 5101 --logfile /var/log/iperf_5101.log
-  - screen -S iperf_5202 -d -m /usr/bin/iperf3 -s -p 5202 --logfile /var/log/iperf_5202.log
-  - screen -S iperf_5303 -d -m /usr/bin/iperf3 -s -p 5303 --logfile /var/log/iperf_5303.log
-  - screen -S iperf_5404 -d -m /usr/bin/iperf3 -s -p 5404 --logfile /var/log/iperf_5404.log
   - mkdir -p /data/sftp_chroot/sftp_user
   - chown root:root /data/sftp_chroot/
   - chmod 755 /data/sftp_chroot/
@@ -49,36 +44,53 @@ runcmd:
   - systemctl restart sshd
   - systemctl enable fail2ban
   - systemctl start fail2ban
-  - ufw default deny incoming
-  - ufw allow ssh
-  - ufw allow 5101/any
-  - ufw allow 5202/any
-  - ufw allow 5303/any
-  - ufw allow 5404/any
-  - ufw enable
+  - systemctl start firewalld
+  - systemctl enable firewalld
+  - firewall-cmd --permanent --zone=public --add-service=ssh
+  - firewall-cmd --permanent --zone=public --add-port=5101/tcp
+  - firewall-cmd --permanent --zone=public --add-port=5101/udp
+  - firewall-cmd --permanent --zone=public --add-port=5202/tcp
+  - firewall-cmd --permanent --zone=public --add-port=5202/udp
+  - firewall-cmd --permanent --zone=public --add-port=5303/tcp
+  - firewall-cmd --permanent --zone=public --add-port=5303/udp
+  - firewall-cmd --permanent --zone=public --add-port=5404/tcp
+  - firewall-cmd --permanent --zone=public --add-port=5404/udp
+  - firewall-cmd --permanent --zone=public --add-source=10.0.0.0/8
+  - firewall-cmd --reload
+  - /usr/bin/iperf3 --server --daemon --logfile /var/log/iperf_5101.log --pidfile /var/run/iperf_5101.pid -p 5101
+  - /usr/bin/iperf3 --server --daemon --logfile /var/log/iperf_5202.log --pidfile /var/run/iperf_5202.pid -p 5202
+  - /usr/bin/iperf3 --server --daemon --logfile /var/log/iperf_5303.log --pidfile /var/run/iperf_5303.pid -p 5303
+  - /usr/bin/iperf3 --server --daemon --logfile /var/log/iperf_5404.log --pidfile /var/run/iperf_5404.pid -p 5404
   - chmod +x /etc/rc.d/rc.local
 
 write_files:
   - owner: root:root
     path: /etc/cron.d/dnf_system_upgrade
-    content: "0 2 * * * dnf -y upgrade \n"
+    content: "0 2 * * * root dnf -y upgrade \n"
   - owner: root:root
     path: /etc/cron.d/sshd_restart
-    content: "0 3 * * * systemctl restart sshd \n"
+    content: "0 3 * * * root systemctl restart sshd \n"
+  - owner: root:root
+    path: /etc/cron.d/iperf_watch
+    content: "*/5 * * * * root /root/iperf_watch.sh >> /var/log/iperf_watch_cron.log \n"
   - owner: root:root
     path: /etc/rc.local
     content: |
-      ufw default deny incoming
-      ufw allow ssh
-      ufw allow 5101/any
-      ufw allow 5202/any
-      ufw allow 5303/any
-      ufw allow 5404/any
-      ufw enable
-      screen -S iperf_5101 -d -m /usr/bin/iperf3 -s -p 5101 --logfile /var/log/iperf_5101.log
-      screen -S iperf_5202 -d -m /usr/bin/iperf3 -s -p 5202 --logfile /var/log/iperf_5202.log
-      screen -S iperf_5303 -d -m /usr/bin/iperf3 -s -p 5303 --logfile /var/log/iperf_5303.log
-      screen -S iperf_5404 -d -m /usr/bin/iperf3 -s -p 5404 --logfile /var/log/iperf_5404.log
+      firewall-cmd --permanent --zone=public --add-service=ssh
+      firewall-cmd --permanent --zone=public --add-port=5101/tcp
+      firewall-cmd --permanent --zone=public --add-port=5101/udp
+      firewall-cmd --permanent --zone=public --add-port=5202/tcp
+      firewall-cmd --permanent --zone=public --add-port=5202/udp
+      firewall-cmd --permanent --zone=public --add-port=5303/tcp
+      firewall-cmd --permanent --zone=public --add-port=5303/udp
+      firewall-cmd --permanent --zone=public --add-port=5404/tcp
+      firewall-cmd --permanent --zone=public --add-port=5404/udp
+      firewall-cmd --permanent --zone=public --add-source=10.0.0.0/8
+      firewall-cmd --reload
+      /usr/bin/iperf3 --server --daemon --logfile /var/log/iperf_5101.log --pidfile /var/run/iperf_5101.pid -p 5101
+      /usr/bin/iperf3 --server --daemon --logfile /var/log/iperf_5202.log --pidfile /var/run/iperf_5202.pid -p 5202
+      /usr/bin/iperf3 --server --daemon --logfile /var/log/iperf_5303.log --pidfile /var/run/iperf_5303.pid -p 5303
+      /usr/bin/iperf3 --server --daemon --logfile /var/log/iperf_5404.log --pidfile /var/run/iperf_5404.pid -p 5404
     append: true
   - owner: root:root
     path: /etc/fail2ban/jail.local
@@ -93,3 +105,25 @@ write_files:
       enabled = true
       logpath = %(sshd_log)s
     permissions: '0644'
+  - owner: root:root
+    path: /root/iperf_watch.sh
+    content: |
+      #!/bin/bash
+      PORTS="5101 5202 5303 5404"
+      for PORT in $PORTS; do
+      RESULTS=$(tail -5 /var/log/iperf_"$PORT".log | grep "0.00 Bytes  0.00 bits/sec" )
+      if [ -z "$RESULTS" ]
+      then
+              true
+      else
+              echo "iperf_$PORT looks frozen, restarting"
+              PID=$(tr -d '\0' < /var/run/iperf_"$PORT".pid)
+              kill -9 "$PID"
+              echo "iperf_watch from cron restarted this server" >> /var/log/iperf_"$PORT".log
+              /usr/bin/iperf3 --server --daemon \
+                  --logfile /var/log/iperf_"$PORT".log \
+                  --pidfile /var/run/iperf_"$PORT".pid \
+                  -p "$PORT"
+      fi
+      done
+    permissions: '0754'

@@ -6,7 +6,7 @@ The instructions in the cloud-init file will:
 
 * Update all packages including system packages and reboot once initially if neeeded
 * Install the EPEL package repository (for the package `fail2ban`)
-* Install several packages, namely `iperf3`, `fail2ban` and `ufw`
+* Install several packages, namely `iperf3` and `fail2ban`.
 * Create firewalls rules that start with `deny all`, then open holes for `ssh`, and the iperf3 ports `5101`, `5202`, `5303` and `5404`. These will be the only ports exposed to the outside.
 * Start 4x iperf3 instances inside of `screen` sessions, on ports `5101`, `5202`, `5303` and `5404`
   * These `iperf3` instances will listen on both the [public and private](https://metal.equinix.com/developers/docs/networking/) Metal interfaces.
@@ -22,6 +22,7 @@ The instructions in the cloud-init file will:
 * Leverage `rc.local` to restart both `ufw` and the `iperf3` servers after reboot
 * Update packages including system packages every night
 * Restart OpenSSH every night in order to pickup any package updates, as it is the main vector into the instance.
+* Watch the `iperf3` servers every 5 minutes via cron and a lightweight script that looks for a stall'ed server (when a client disapppears during a timed test) and restarts that server.
 
 
 #### Configuration ####
