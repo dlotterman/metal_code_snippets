@@ -1,0 +1,38 @@
+#cloud-config
+
+package_upgrade: true
+package_reboot_if_required: true
+
+packages:
+ - screen
+ - sysbench
+ - ethtool
+ - fail2ban
+ - iperf3
+ - lshw
+ - pciutils
+
+runcmd:
+  - systemctl enable fail2ban
+  - systemctl start fail2ban
+  - systemctl start firewalld
+  - systemctl enable firewalld
+  - firewall-cmd --permanent --zone=public --add-service=ssh
+  - firewall-cmd --permanent --zone=public --add-source=10.0.0.0/8
+  - firewall-cmd --reload
+
+write_files:
+  - owner: root:root
+    path: /etc/fail2ban/jail.local
+    content: |
+      [DEFAULT]
+      bantime = 3600
+      banaction = iptables-multiport
+      ignoreip = 127.0.0.1/8 10.0.0.0/8
+      findtime = 600
+      maxretry = 5
+      [sshd]
+      enabled = true
+      logpath = %(sshd_log)s
+      mode = aggressive
+    permissions: '0644'

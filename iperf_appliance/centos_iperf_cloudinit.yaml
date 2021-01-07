@@ -116,8 +116,8 @@ write_files:
       then
               true
       else
-              echo "iperf_$PORT looks frozen, restarting"
               PID=$(tr -d '\0' < /var/run/iperf_"$PORT".pid)
+              echo "$(date --rfc-3339=ns) iperf_$PORT looks frozen, restarting PID "$PID""
               kill -9 "$PID"
               echo "iperf_watch from cron restarted this server" >> /var/log/iperf_"$PORT".log
               /usr/bin/iperf3 --server --daemon \
