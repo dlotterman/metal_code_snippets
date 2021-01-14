@@ -12,6 +12,7 @@ packages:
  - lshw
  - pciutils
  - ufw
+ - 8021q
 
 runcmd:
   - systemctl enable fail2ban
@@ -23,6 +24,7 @@ runcmd:
   - ufw enable
   - systemctl enable ufw
   - systemctl start ufw
+  - echo "8021q" >> /etc/modules
 
 write_files:
   - owner: root:root
