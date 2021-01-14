@@ -12,7 +12,8 @@ packages:
  - lshw
  - pciutils
  - ufw
- - 8021q
+ - vlan
+ - arping
 
 runcmd:
   - systemctl enable fail2ban
