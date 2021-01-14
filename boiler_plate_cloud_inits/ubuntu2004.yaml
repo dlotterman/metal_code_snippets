@@ -11,15 +11,18 @@ packages:
  - iperf3
  - lshw
  - pciutils
+ - ufw
 
 runcmd:
   - systemctl enable fail2ban
   - systemctl start fail2ban
-  - systemctl start firewalld
-  - systemctl enable firewalld
-  - firewall-cmd --permanent --zone=public --add-service=ssh
-  - firewall-cmd --permanent --zone=public --add-source=10.0.0.0/8
-  - firewall-cmd --reload
+  - ufw default allow outgoing
+  - ufw default deny incoming
+  - ufw allow ssh
+  - ufw allow from 10.0.0.1/8
+  - ufw enable
+  - systemctl enable ufw
+  - systemctl start ufw
 
 write_files:
   - owner: root:root
@@ -27,7 +30,7 @@ write_files:
     content: |
       [DEFAULT]
       bantime = 3600
-      banaction = iptables-multiport
+      banaction = ufw
       ignoreip = 127.0.0.1/8 10.0.0.0/8
       findtime = 600
       maxretry = 5
