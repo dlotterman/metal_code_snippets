@@ -14,10 +14,13 @@ packages:
  - ufw
  - vlan
  - arping
+ - unattended-upgrades
 
 runcmd:
   - systemctl enable fail2ban
   - systemctl start fail2ban
+  - systemctl enable unattended-upgrades
+  - systemctl start unattended-upgrades
   - ufw default allow outgoing
   - ufw default deny incoming
   - ufw allow ssh
