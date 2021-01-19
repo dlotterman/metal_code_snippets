@@ -28,6 +28,7 @@ runcmd:
   - ufw enable
   - systemctl enable ufw
   - systemctl start ufw
+  - modprobe 8021q
   - echo "8021q" >> /etc/modules
 
 write_files:
