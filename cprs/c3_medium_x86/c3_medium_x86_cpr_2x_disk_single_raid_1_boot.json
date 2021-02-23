@@ -1,0 +1,113 @@
+{
+	"disks": [{
+			"device": "/dev/sda",
+			"wipeTable": true,
+			"partitions": [{
+					"label": "BIOS",
+					"number": 1,
+					"size": 4096
+				},
+				{
+					"label": "SWAPA2",
+					"number": 2,
+					"size": "1996796"
+				},
+				{
+					"label": "ROOTA3",
+					"number": 3,
+					"size": 0
+				}
+			]
+		},
+		{
+			"device": "/dev/sdd",
+			"wipeTable": true,
+			"partitions": [{
+					"label": "BIOS",
+					"number": 1,
+					"size": 4096
+				},
+				{
+					"label": "SWAPD2",
+					"number": 2,
+					"size": "1996796"
+				},
+				{
+					"label": "ROOTD3",
+					"number": 3,
+					"size": 0
+				}
+			]
+		},
+		{
+			"device": "/dev/sdb",
+			"wipeTable": true,
+			"partitions": [{
+				"label": "DATA1B1",
+				"number": 1,
+				"size": 0
+			}]
+		},
+		{
+			"device": "/dev/sdc",
+			"wipeTable": true,
+			"partitions": [{
+				"label": "DATA1C1",
+				"number": 1,
+				"size": 0
+			}]
+		}
+	],
+	"raid": [{
+			"devices": [
+				"/dev/sda2",
+				"/dev/sdd2"
+			],
+			"level": "1",
+			"name": "/dev/md/SWAP"
+		},
+		{
+			"devices": [
+				"/dev/sda3",
+				"/dev/sdd3"
+			],
+			"level": "1",
+			"name": "/dev/md/ROOT"
+		},
+		{
+			"devices": [
+				"/dev/sdc1",
+				"/dev/sdb1"
+			],
+			"level": "1",
+			"name": "/dev/md/DATA1MD"
+		}
+	],
+	"filesystems": [{
+			"mount": {
+				"device": "/dev/md/ROOT",
+				"format": "ext4",
+				"point": "/",
+				"create": {
+					"options": [
+						"-L",
+						"ROOT"
+					]
+				}
+			}
+		},
+		{
+			"mount": {
+				"device": "/dev/md/SWAP",
+				"format": "swap",
+				"point": "none",
+				"create": {
+					"options": [
+						"-L",
+						"SWAP"
+					]
+				}
+			}
+		}
+	]
+}

@@ -15,6 +15,7 @@ packages:
  - vlan
  - arping
  - unattended-upgrades
+ - unzip
 
 runcmd:
   - systemctl enable fail2ban
