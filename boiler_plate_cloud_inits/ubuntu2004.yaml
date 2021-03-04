@@ -16,6 +16,7 @@ packages:
  - arping
  - unattended-upgrades
  - unzip
+ - strace
 
 runcmd:
   - systemctl enable fail2ban

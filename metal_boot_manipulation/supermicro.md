@@ -24,11 +24,12 @@ For reboot device index :
     * Personal suggestion, increase the size of SSH / PUTTY / etc window to wider / taller then the traditional 80 columns, screenshot in this write is taken at 100 x 40 for example. This will make rendering the BIOS menus significantly easier on the 20 layers of software abstraction involved.
 
 
-4. Through the IPMICFG utility, reboot the instance into the chassis BIOS
+4. Through the IPMICFG utility, power off the instance setting it to boot into the chassis BIOS. Use the time it's powered off to load the OOB in a larger then the usual 80x columns window.
     * ```./IPMICFG-Linux.x86_64 -soft 4```
 
 
 5. Catch the BIOS keyprompt, it will be after the initial memory and HBA boot screen flashes, and can be caught with the `<TAB>` key
+	* Note that the Mellanox NICs have a key prompt of "Ctrl + B" to enter their firmware POST menus
 
 
 6. Interact with the BIOS and make needed changes.
