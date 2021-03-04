@@ -1,5 +1,4 @@
 #!ipxe
 dhcp
-:start
 echo Oi
-|| goto start
+shell
