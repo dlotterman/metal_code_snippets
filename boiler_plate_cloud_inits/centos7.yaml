@@ -1,4 +1,14 @@
 #cloud-config
+#
+#This cloud-init primarily does three things.
+#1) Via firewalld, shuts all ports, then opens up
+#    * 22 (SSH) in from the world
+#    * All traffic in from the Metal management network (10.0.0.0/8)
+#2) Setups fail2ban to block abusive SSH IP's
+#3) Enables yum-cron, which will automatically update packages \
+#   based on security settings
+#This is all in the persuit of having operator "safety" guards
+#for instances that will be managed collaboratively
 
 package_upgrade: true
 package_reboot_if_required: true
