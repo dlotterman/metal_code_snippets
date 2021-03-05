@@ -1,0 +1,76 @@
+#cloud-config
+
+package_upgrade: true
+package_reboot_if_required: true
+
+yum_repos:
+    epel-release:
+        baseurl: http://download.fedoraproject.org/pub/epel/7/$basearch
+        enabled: true
+        failovermethod: priority
+        gpgcheck: true
+        gpgkey: http://download.fedoraproject.org/pub/epel/RPM-GPG-KEY-EPEL-7
+        name: Extra Packages for Enterprise Linux $releasever - $basearch
+
+packages:
+ - fail2ban
+ - iperf3
+ - screen
+ - ethtool
+ - strace
+ - unzip
+ - yum-cron
+ - jq
+ 
+runcmd:
+  - mv /etc/yum.repos.d/packet.repo /root/packet.repo.bak
+  - echo "8021q"  >> /etc/modules-load.d/networking.conf
+  - systemctl enable yum-cron
+  - systemctl enable fail2ban
+  - systemctl enable firewalld
+  - systemctl start fail2ban
+  - systemctl start firewalld
+  - systemctl start yum-cron
+  - firewall-cmd --permanent --zone=public --add-service=ssh
+  - firewall-cmd --permanent --zone=public --add-source=10.0.0.0/8
+  - firewall-cmd --reload
+
+write_files:
+  - owner: root:root
+    path: /etc/fail2ban/jail.local
+    content: |
+      [DEFAULT]
+      bantime = 3600
+      banaction = iptables-multiport
+      ignoreip = 127.0.0.1/8 10.0.0.0/8
+      findtime = 600
+      maxretry = 5
+      [sshd]
+      enabled = true
+      logpath = %(sshd_log)s
+    permissions: '0644'
+  - owner: root:root
+    path: /etc/yum/yum-cron.conf
+    content: |
+      [commands]
+      update_cmd = security
+      update_messages = yes
+      download_updates = yes
+      apply_updates = yes
+      random_sleep = 360
+      [emitters]
+      system_name = None
+      emit_via = stdio
+      output_width = 80
+      [email]
+      email_from = root@localhost
+      email_to = root
+      email_host = localhost
+      [groups]
+      group_list = None
+      group_package_types = mandatory, default
+      [base]
+      debuglevel = -2
+      mdpolicy = group:main
+    permissions: '0644'
+
