@@ -1,0 +1,8 @@
+#!ipxe
+# be sure to see `.treeinfo` file information
+# https://anaconda-installer.readthedocs.io/en/latest/boot-options.html
+set base http://${DIR_THAT_IS_UNPACKED_ISO}
+kernel ${base}/images/pxeboot/vmlinuz initrd=initrd.img inst.repo=${base} inst.stage2=${base} console=tty0 console=ttyS1,115200n8 inst.text ip=dhcp
+initrd ${base}/images/pxeboot/initrd.img
+boot || read void
+
