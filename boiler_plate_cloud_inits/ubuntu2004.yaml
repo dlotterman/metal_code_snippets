@@ -18,6 +18,16 @@ packages:
  - unzip
  - strace
 
+groups:
+ - cloud-users
+
+users:
+  - name: adminuser
+    primary_group: cloud-users
+    sudo: ALL=(ALL) NOPASSWD:ALL
+    groups: [cloud-users, sudo]
+    shell: /bin/bash
+
 runcmd:
   - systemctl enable fail2ban
   - systemctl start fail2ban
@@ -32,6 +42,11 @@ runcmd:
   - systemctl start ufw
   - modprobe 8021q
   - echo "8021q" >> /etc/modules
+  - rsync -av /root/.ssh /home/adminuser/
+  - chown -R adminuser:cloud-users /home/adminuser/.ssh
+  - sed -i -e '/^#PermitRootLogin/s/^.*$/PermitRootLogin no/' /etc/ssh/sshd_config
+  - systemctl restart ssh
+  - echo "Finished cloud-init at $(date "+%s or %Y/%m/%d %H:%M:%S")" > /var/log/cloud-init-userdata-runcmd.log
 
 write_files:
   - owner: root:root
