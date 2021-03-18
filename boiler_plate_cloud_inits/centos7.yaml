@@ -42,8 +42,9 @@ runcmd:
   - systemctl start firewalld
   - systemctl start yum-cron
   - systemctl restart systemd-modules-load.service
+  - firewall-cmd --permanent --zone=public --set-target=DROP
   - firewall-cmd --permanent --zone=public --add-service=ssh
-  - firewall-cmd --permanent --zone=public --add-source=10.0.0.0/8
+  - firewall-cmd --permanent --zone=trusted --add-source=10.0.0.0/8
   - firewall-cmd --reload
 
 write_files:
