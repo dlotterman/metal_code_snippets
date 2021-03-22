@@ -28,6 +28,12 @@ users:
     groups: [cloud-users, sudo]
     shell: /bin/bash
 
+
+# keep sshd disabled till everything is done at the end of runcmd
+bootcmd:
+  - systemctl stop sshd
+  - systemctl disable sshd  
+
 runcmd:
   - systemctl enable fail2ban
   - systemctl start fail2ban
@@ -45,8 +51,8 @@ runcmd:
   - rsync -av /root/.ssh /home/adminuser/
   - chown -R adminuser:cloud-users /home/adminuser/.ssh
   - sed -i -e '/^#PermitRootLogin/s/^.*$/PermitRootLogin no/' /etc/ssh/sshd_config
-  - systemctl restart ssh
-  - echo "Finished cloud-init at $(date "+%s or %Y/%m/%d %H:%M:%S")" > /var/log/cloud-init-userdata-runcmd.log
+  - systemctl enable ssh
+  - systemctl start ssh
 
 write_files:
   - owner: root:root
