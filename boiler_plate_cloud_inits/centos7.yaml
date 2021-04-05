@@ -35,6 +35,7 @@ packages:
 runcmd:
   - mv /etc/yum.repos.d/packet.repo /root/packet.repo.bak
   - echo "8021q"  >> /etc/modules-load.d/networking.conf
+  - echo "ZONE=trusted" >> /etc/sysconfig/network-scripts/ifcfg-bond0:0
   - systemctl enable yum-cron
   - systemctl enable fail2ban
   - systemctl enable firewalld

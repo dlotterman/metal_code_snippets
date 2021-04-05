@@ -17,6 +17,7 @@ packages:
  - unattended-upgrades
  - unzip
  - strace
+ - git
 
 groups:
  - cloud-users
@@ -28,13 +29,18 @@ users:
     groups: [cloud-users, sudo]
     shell: /bin/bash
 
+datasource:
+  Ec2:
+    strict_id: false
 
 # keep sshd disabled till everything is done at the end of runcmd
 bootcmd:
   - systemctl stop sshd
-  - systemctl disable sshd  
+  - systemctl disable sshd
 
 runcmd:
+  - systemctl stop sshd
+  - systemctl disable sshd
   - systemctl enable fail2ban
   - systemctl start fail2ban
   - systemctl enable unattended-upgrades
