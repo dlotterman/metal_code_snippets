@@ -31,6 +31,25 @@ packages:
  - unzip
  - yum-cron
  - jq
+
+groups:
+ - cloud-users
+
+users:
+  - name: adminuser
+    primary_group: cloud-users
+    sudo: ALL=(ALL) NOPASSWD:ALL
+    groups: [cloud-users, sudo]
+    shell: /bin/bash
+
+datasource:
+  Ec2:
+    strict_id: false
+
+# keep sshd disabled till everything is done at the end of runcmd
+bootcmd:
+  - systemctl stop sshd
+  - systemctl disable sshd
  
 runcmd:
   - mv /etc/yum.repos.d/packet.repo /root/packet.repo.bak
@@ -47,6 +66,9 @@ runcmd:
   - firewall-cmd --permanent --zone=public --add-service=ssh
   - firewall-cmd --permanent --zone=trusted --add-source=10.0.0.0/8
   - firewall-cmd --reload
+  - systemctl restart network
+  - systemctl start sshd
+  - systemctl enable sshd
 
 write_files:
   - owner: root:root
