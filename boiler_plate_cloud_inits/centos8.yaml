@@ -1,3 +1,6 @@
+# This file should be considered broken, deprecated and unmaintained
+
+
 #cloud-config
 
 package_upgrade: true
