@@ -172,7 +172,7 @@ The <strong>"Install"</strong> button can now be pressed, and the VM's "console"
 
 ## Configuring networking inside the VM / appliance
 
-The VM's network interfaces were configuring in such a way as to give the VM / appliance the same logical network access as the plain "bond" device / interface of the Metal host. As such, when configuring the appliance interfaces inside the appliance operating system itself, the Layer-3 networks (public + management) will be configured as <strong>native / NON-vlan tagged traffic</code> while the interface intende for Layer-2 VLAN traffic will need to be configured to be VLAN aware.
+The VM's network interfaces were configuring in such a way as to give the VM / appliance the same logical network access as the plain "bond" device / interface of the Metal host. As such, when configuring the appliance interfaces inside the appliance operating system itself, the Layer-3 networks (public + management) will be configured as <strong>native / NON-vlan tagged traffic</strong> while the interface intende for Layer-2 VLAN traffic will need to be configured to be VLAN aware.
 
 The Layer-3 "Public" IP address to configure inside the VM will be from the public block that was provisioned at the start of this guide. For example if a host was provisioned with a /30 such as:
 
