@@ -165,7 +165,7 @@ These 3x interfaces will individually assume the responsibilities of:
 
 # Install the virtual appliance inside of the VM
 
-The <strong>"Install"/strong> button can now be pressed, and the VM's "console" tab can be selected to interact with the VM / appliance through its install process.
+The <strong>"Install"</strong> button can now be pressed, and the VM's "console" tab can be selected to interact with the VM / appliance through its install process.
 
 ![](https://s3.wasabisys.com/packetrepo/pfsense_install.PNG)
 
