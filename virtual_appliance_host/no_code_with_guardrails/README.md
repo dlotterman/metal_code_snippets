@@ -31,6 +31,7 @@ The characteristics of this "no code safe virtual appliance" host are as follow:
   * Download updates automatically
   * Apply updates automatically
 * `cockpit` is [installed and configured](https://www.redhat.com/en/blog/linux-system-administration-management-console-cockpit) to:
+  * Significantly lower "experience" burden required to deploy safe and useable appliances
   * Manage Networks
   * Manage Linux KVM
   * Manage podman containers
