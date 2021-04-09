@@ -184,7 +184,7 @@ The same logic is true of the Layer-3 private management network.
 
 ## Troubleshooting Layer-2 inside the VM
 
-If attempting to troubleshoot connectivity into the Layer-2 VLAN from inside the guest, it can be useful to configure the guest with an IP from the private block that was chosen in the Cockpit configuration section of this guide (presumably 172.16.0/1). 
+If attempting to troubleshoot connectivity into the Layer-2 VLAN from inside the guest, it can be useful to configure the guest with an IP from the private block that was chosen in the Cockpit configuration section of this guide (presumably 172.16.0./1). 
 
 To clarify this, both the bonded interface on the host and the virtual interface inside the guest should be configured to be VLAN aware for any "Layer-2" networks attached.
 

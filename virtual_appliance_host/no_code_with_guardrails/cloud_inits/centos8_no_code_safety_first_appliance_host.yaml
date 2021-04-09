@@ -85,6 +85,7 @@ runcmd:
   - firewall-cmd --permanent --zone=public --add-service=ssh
   - firewall-cmd --permanent --zone=public --add-service=cockpit
   - firewall-cmd --permanent --zone=trusted --add-source=10.0.0.0/8
+  - firewall-cmd --permanent --zone=trusted --add-source=172.16.0.0/12
   - firewall-cmd --reload
   - rsync -av /root/.ssh /home/adminuser/
   - chown -R adminuser:cloud-users /home/adminuser/.ssh
