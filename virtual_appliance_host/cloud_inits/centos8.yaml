@@ -1,0 +1,125 @@
+#cloud-config
+#
+#This cloud-init primarily does three things.
+#1) Via firewalld, shuts all ports, then opens up
+#    * 22 (SSH) in from the world
+#    * All traffic in from the Metal management network (10.0.0.0/8)
+#2) Setups fail2ban to block abusive SSH IP's
+#3) Enables yum-cron, which will automatically update packages \
+#   based on security settings
+#This is all in the persuit of having operator "safety" guards
+#for instances that will be managed collaboratively
+
+package_upgrade: true
+package_reboot_if_required: true
+
+yum_repos:
+    epel-release:
+        baseurl: https://download.fedoraproject.org/pub/epel/$releasever/Everything/$basearch
+        enabled: true
+        failovermethod: priority
+        gpgcheck: true
+        gpgkey: http://download.fedoraproject.org/pub/epel/RPM-GPG-KEY-EPEL-8
+        name: Extra Packages for Enterprise Linux $releasever - $basearch
+
+packages:
+ - fail2ban
+ - iperf3
+ - screen
+ - ethtool
+ - strace
+ - unzip
+ - jq
+ - dnf-automatic
+ - cockpit
+ - cockpit-machines
+ - cockpit-storage
+ - cockpit-podman
+ - cockpit-system
+ - cockpit-bridge
+
+groups:
+ - cloud-users
+
+users:
+  - name: adminuser
+    primary_group: cloud-users
+    sudo: ALL=(ALL) NOPASSWD:ALL
+    groups: [cloud-users, sudo]
+    shell: /bin/bash
+
+datasource:
+  Ec2:
+    strict_id: false
+
+# keep sshd disabled till everything is done at the end of runcmd
+bootcmd:
+  - systemctl stop sshd || true
+  - systemctl disable sshd || true
+ 
+runcmd:
+  - systemctl stop sshd || true
+  - systemctl disable sshd || true
+  - mv /etc/yum.repos.d/packet.repo /root/packet.repo.bak
+  - echo "8021q"  >> /etc/modules-load.d/networking.conf
+  - modprobe 8021q
+  - echo "ZONE=trusted" >> /etc/sysconfig/network-scripts/ifcfg-bond0:0
+  - systemctl enable yum-cron
+  - systemctl enable fail2ban
+  - systemctl enable firewalld
+  - systemctl start fail2ban
+  - systemctl start firewalld
+  - systemctl start yum-cron
+  - systemctl restart systemd-modules-load.service
+  - firewall-cmd --permanent --zone=public --set-target=DROP
+  - firewall-cmd --permanent --zone=public --add-service=ssh
+  - firewall-cmd --permanent --zone=public --add-service=cockpit
+  - firewall-cmd --permanent --zone=trusted --add-source=10.0.0.0/8
+  - firewall-cmd --reload
+  - rsync -av /root/.ssh /home/adminuser/
+  - chown -R adminuser:cloud-users /home/adminuser/.ssh
+  - sed -i -e '/^#PermitRootLogin/s/^.*$/PermitRootLogin no/' /etc/ssh/sshd_config
+  - systemctl restart network
+  - systemctl enable libvirtd  
+  - systemctl start libvirtd
+  - systemctl enable cockpit
+  - systemctl start cockpit
+  - systemctl enable NetworkManager  
+  - systemctl start NetworkManager
+  - systemctl enable --now dnf-automatic-install.timer
+  - systemctl enable sshd  
+  - systemctl start sshd
+  - mkdir -p /data/isos/
+  - [ wget, "https://s3.wasabisys.com/packetrepo/pfSense-CE-2.5.0-RELEASE-amd64.iso", -O, /data/isos/pfsense.iso ]
+
+write_files:
+  - owner: root:root
+    path: /etc/fail2ban/jail.local
+    content: |
+      [DEFAULT]
+      bantime = 3600
+      banaction = iptables-multiport
+      ignoreip = 127.0.0.1/8 10.0.0.0/8
+      findtime = 600
+      maxretry = 5
+      [sshd]
+      enabled = true
+      logpath = %(sshd_log)s
+      [pam-generic]
+      enabled = true
+      logpath = /var/log/secure
+      bantime = 3600
+      banaction = iptables-multiport
+      ignoreip = 127.0.0.1/8 10.0.0.0/8
+      findtime = 600
+      maxretry = 5      
+    permissions: '0644'
+  - owner: root:root
+    path: /etc/dnf/automatic.conf
+    content: |
+      [commands]
+      upgrade_type = default
+      download_updates = yes
+      [emitters]
+      emit_via = motd
+    permissions: '0644'

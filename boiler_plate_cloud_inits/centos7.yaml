@@ -48,8 +48,8 @@ datasource:
 
 # keep sshd disabled till everything is done at the end of runcmd
 bootcmd:
-  - systemctl stop sshd
-  - systemctl disable sshd
+  - systemctl stop sshd || true
+  - systemctl disable sshd || true
  
 runcmd:
   - mv /etc/yum.repos.d/packet.repo /root/packet.repo.bak
@@ -67,6 +67,9 @@ runcmd:
   - firewall-cmd --permanent --zone=public --add-service=ssh
   - firewall-cmd --permanent --zone=trusted --add-source=10.0.0.0/8
   - firewall-cmd --reload
+  - rsync -av /root/.ssh /home/adminuser/
+  - chown -R adminuser:cloud-users /home/adminuser/.ssh
+  - sed -i -e '/^#PermitRootLogin/s/^.*$/PermitRootLogin no/' /etc/ssh/sshd_config
   - systemctl restart network
   - systemctl start sshd
   - systemctl enable sshd
