@@ -90,7 +90,7 @@ runcmd:
   - systemctl enable sshd  
   - systemctl start sshd
   - mkdir -p /data/isos/
-  - [ wget, "https://s3.wasabisys.com/packetrepo/pfSense-CE-2.5.0-RELEASE-amd64.iso", -O, /data/isos/pfsense.iso ]
+  - [ wget, --quiet, "https://s3.wasabisys.com/packetrepo/pfSense-CE-2.5.0-RELEASE-amd64.iso", -O, /data/isos/pfsense.iso ]
 
 write_files:
   - owner: root:root
