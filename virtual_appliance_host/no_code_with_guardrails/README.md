@@ -10,7 +10,7 @@ When evaluating or working with Equinix Metal, users often want a "fastest" path
 
 While it may make sense to "short path" to running an appliance in Metal in a variety of ways (ESXi for example), those "short paths" often ignore very real and present challenges, namely security in the pursuit of "getting things to work".
 
-This guide and associated folders is intended to provide a documented "short but safe path" to running a virtual appliance inside an Equinix Metal environment with 0 "code", where minimal technical knowledge is assumed but that the end result should be "safe" within reason. 
+This guide and associated folders is intended to provide a documented "short but safe path" to running a virtual appliance inside an Equinix Metal environment with "0 code", where minimal technical knowledge is assumed but that the end result should be "safe" within reason. 
 
 For the purposes of brevity, it will be assumed that the "virtual appliance" in this case is a network focused (router / firewall etc) appliance.
 
@@ -38,12 +38,10 @@ The characteristics of this "no code safe virtual appliance" host are as follow:
   * Add less privildged user
   * Prepare for Metal centric things like VLAN configuration'
   * Maintain Hybrid Bonded Mode for availability characteristics
-* Is <strong>NOT</strong> to be considered performant / good for benchmarking
+* Is <strong>NOT</strong> considered performant / good for benchmarking
   * By design, this is intended for useability discovery
   * Performance will be significantly degraded
-  
-  
-This is all done via the cloud-init file in the accompanying sub-directory.
+
 
 # Network preperation
 
@@ -55,7 +53,7 @@ Following best practices, the easiet way to provision a host as a hypervisor / V
 
 [More documentation here about reserving public IP addresses](https://metal.equinix.com/developers/docs/networking/standard-ips/)
 
-<strong>Additional charges will be encured with the provisioning of additional IP addresses.</strong>[details here](https://metal.equinix.com/product/network/)
+<strong>Additional charges will be encured with the provisioning of additional IP addresses.</strong> [details here](https://metal.equinix.com/product/network/)
 
 ## VLAN's
 
@@ -147,7 +145,7 @@ Under <strong>"Virtual Machines"</strong>, create a new VM. Chosing "URL" will a
 
 ![](https://s3.wasabisys.com/packetrepo/createvm.PNG)
 
-<strong> Once the "Create VM" botton has been pressed, more configuration of the VM object will be needed, do not initiate the install process via the "Install" button till network interface create is complete.
+Once the <strong> "Create VM"</strong> botton has been pressed, more configuration of the VM object will be needed, do not initiate the install process via the "Install" button till network interface create is complete.
 
 ## Configuring VM interfaces
 
