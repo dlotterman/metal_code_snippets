@@ -67,8 +67,8 @@ runcmd:
   - systemctl stop sshd || true
   - systemctl disable sshd || true
   - systemctl stop iscsi
-  - systemctl disable iscsi
   - systemctl stop nis-domainname  
+  - systemctl disable iscsi
   - systemctl disable nis-domainname
   - dnf upgrade -y
   - systemctl reset-failed
@@ -120,11 +120,6 @@ write_files:
       [pam-generic]
       enabled = true
       logpath = /var/log/secure
-      bantime = 3600
-      banaction = iptables-multiport
-      ignoreip = 127.0.0.1/8 10.0.0.0/8
-      findtime = 600
-      maxretry = 5      
     permissions: '0644'
   - owner: root:root
     path: /etc/dnf/automatic.conf
