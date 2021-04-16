@@ -26,12 +26,15 @@ The characteristics of this "no code safe virtual appliance" host are as follow:
     * Allow all from yet unconfigured private networks (172.16.0.0/12)
 * `fail2ban` is [installed and configured](https://fail2ban.readthedocs.io/en/latest/develop.html) to:
   * Watch system logs and ban IP's exhibiting abusive SSH behavior
-  * Watch systems logs and ban IP's exhibiting abusive Cockpit behavior
+  * Watch systems logs and ban IP's exhibiting abusive Cockpit behavior (currently broken in cockpit)
   * Drop any bans after 5 minutes
 * `dnf-automatic` is [installed and configured](https://dnf.readthedocs.io/en/latest/automatic.html) to:
   * Check automatically for package updates, both security and normal
   * Download updates automatically
   * Apply updates automatically
+* `faillock` is [configured](https://www.server-world.info/en/note?os=CentOS_8&p=pam&f=2) to:
+  * Protect both `cockpit` and `ssh` with a second layer of auth protection.
+  * Because `fail2ban` does not currently protect cockpit, will also protect that auth path
 * `cockpit` is [installed and configured](https://www.redhat.com/en/blog/linux-system-administration-management-console-cockpit) to:
   * Significantly lower "experience" burden required to deploy safe and useable appliances
   * Manage Networks
