@@ -58,9 +58,9 @@ datasource:
 
 # keep sshd disabled till everything is done at the end of runcmd
 bootcmd:
-  - systemctl stop sshd || true
+  - [ cloud-init-per, instance, systemctl, stop, sshd ]
+  - [ cloud-init-per, instance, systemctl, disable, sshd ]
   - systemctl stop kdump || true
-  - systemctl disable sshd || true
   - systemctl disable kdump || true
  
 runcmd:
@@ -76,6 +76,7 @@ runcmd:
   - echo "8021q"  >> /etc/modules-load.d/networking.conf
   - modprobe 8021q
   - echo "ZONE=trusted" >> /etc/sysconfig/network-scripts/ifcfg-bond0:0
+  - sed -i -e '/^AllowZoneDrifting/s/^.*$/AllowZoneDrifting=no/' /etc/firewalld/firewalld.conf
   - systemctl enable fail2ban
   - systemctl enable firewalld
   - systemctl start fail2ban

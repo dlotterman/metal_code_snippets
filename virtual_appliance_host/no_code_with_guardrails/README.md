@@ -14,6 +14,8 @@ This guide and associated folders is intended to provide a documented "short but
 
 For the purposes of brevity, it will be assumed that the "virtual appliance" in this case is a network focused (router / firewall etc) appliance.
 
+<strong>Please note that fail2ban is currently not correctly protecting cockpit correctly</strong>
+
 The characteristics of this "no code safe virtual appliance" host are as follow:
 
 * `firewalld` is [installed and configured](https://www.redhat.com/sysadmin/beginners-guide-firewalld) to:
