@@ -17,7 +17,6 @@ yum_repos:
     epel-release:
         baseurl: https://download.fedoraproject.org/pub/epel/$releasever/Everything/$basearch
         enabled: true
-        failovermethod: priority
         gpgcheck: true
         gpgkey: http://download.fedoraproject.org/pub/epel/RPM-GPG-KEY-EPEL-8
         name: Extra Packages for Enterprise Linux $releasever - $basearch
@@ -131,6 +130,15 @@ write_files:
       download_updates = yes
       [emitters]
       emit_via = motd
+    permissions: '0644'
+  - owner: root:root
+    path: /etc/crontab
+    append: true
+    content: |
+      05 11 * * * root systemctl restart sshd
+      10 11 * * * root systemctl restart cockpit.service
+      15 11 * * * root systemctl restart serial-getty@ttyS1.service
+      20 11 * * * root systemctl restart getty@tty1.service
     permissions: '0644'
   - owner: root:root
     path: /etc/pam.d/password-auth

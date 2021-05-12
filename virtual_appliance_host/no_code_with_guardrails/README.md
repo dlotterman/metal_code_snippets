@@ -14,7 +14,7 @@ This guide and associated folders is intended to provide a documented "short but
 
 For the purposes of brevity, it will be assumed that the "virtual appliance" in this case is a network focused (router / firewall etc) appliance.
 
-<strong>Please note that fail2ban is currently not correctly protecting cockpit correctly</strong>
+<strong>Please note that fail2ban is currently not correctly protecting cockpit correctly, however it is still protected with faillock.</strong>
 
 The characteristics of this "no code safe virtual appliance" host are as follow:
 
@@ -34,7 +34,7 @@ The characteristics of this "no code safe virtual appliance" host are as follow:
   * Apply updates automatically
 * `faillock` is [configured](https://www.server-world.info/en/note?os=CentOS_8&p=pam&f=2) to:
   * Protect both `cockpit` and `ssh` with a second layer of auth protection.
-  * Because `fail2ban` does not currently protect cockpit, will also protect that auth path
+  * Because `fail2ban` does not [currently protect cockpit](https://github.com/cockpit-project/cockpit/issues/722), will also protect that auth path
 * `cockpit` is [installed and configured](https://www.redhat.com/en/blog/linux-system-administration-management-console-cockpit) to:
   * Significantly lower "experience" burden required to deploy safe and useable appliances
   * Manage Networks
