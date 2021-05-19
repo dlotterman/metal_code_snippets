@@ -82,17 +82,17 @@ write_files:
       Unattended-Upgrade::Allowed-Origins {
       "${distro_id}:${distro_codename}";
       "${distro_id}:${distro_codename}-security";
-      “${distro_id}:${distro_codename}-updates”;
       "${distro_id}ESMApps:${distro_codename}-apps-security";
       "${distro_id}ESM:${distro_codename}-infra-security";
       };
     permissions: '0644'
   - owner: root:root
-    path: /etc/apt/apt.conf.d/20auto-upgrades
+    path: /etc/apt/apt.conf.d/21auto-upgrades_on
     content: |
       APT::Periodic::Update-Package-Lists "1";
+      APT::Periodic::Download-Upgradeable-Packages "1";
+      APT::Periodic::AutocleanInterval "7";
       APT::Periodic::Unattended-Upgrade "1";
-      };
     permissions: '0644'
   - owner: root:root
     path: /etc/crontab
