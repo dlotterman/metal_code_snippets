@@ -55,7 +55,7 @@ runcmd:
   - systemctl start ufw
   - modprobe 8021q
   - echo "8021q" >> /etc/modules
-  - rsync -av /root/.ssh /home/adminuser/
+  - mv /root/.ssh /home/adminuser/
   - chown -R adminuser:cloud-users /home/adminuser/.ssh
   - sed -i -e '/^#PermitRootLogin/s/^.*$/PermitRootLogin no/' /etc/ssh/sshd_config
   - systemctl enable ssh
@@ -81,6 +81,7 @@ write_files:
     content: |
       Unattended-Upgrade::Allowed-Origins {
       "${distro_id}:${distro_codename}";
+      "${distro_id}:${distro_codename}-updates";
       "${distro_id}:${distro_codename}-security";
       "${distro_id}ESMApps:${distro_codename}-apps-security";
       "${distro_id}ESM:${distro_codename}-infra-security";
