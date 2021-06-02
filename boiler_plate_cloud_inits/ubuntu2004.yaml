@@ -60,6 +60,7 @@ runcmd:
   - sed -i -e '/^#PermitRootLogin/s/^.*$/PermitRootLogin no/' /etc/ssh/sshd_config
   - systemctl enable ssh
   - systemctl start ssh
+  - yes | unminimize  &
 
 write_files:
   - owner: root:root
