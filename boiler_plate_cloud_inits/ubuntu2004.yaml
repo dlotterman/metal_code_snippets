@@ -30,6 +30,7 @@ users:
     groups: [cloud-users, sudo]
     shell: /bin/bash
 
+datasource_list: [Ec2, Equinix]
 datasource:
   Ec2:
     strict_id: false
