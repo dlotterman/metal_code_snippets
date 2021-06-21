@@ -5,7 +5,7 @@ title: Personal Windows "First Actions" for Equinix Metal
 
 # Background
 
-This document is intended to describe my personal "first actions" when launching an Equinix Metal instance with Wwindows 2019. These first actions are what I take for operational sanity and security any time I launch an ad-hoc windows instance inside Equinix Metal. These are not intended to be presecriptive or complete compared to other best practices, this is purely supplementary and being shared for ease of communication.
+This document is intended to describe my personal "first actions" when launching an Equinix Metal instance with Windows 2019. These first actions are what I take for operational sanity and security any time I launch an ad-hoc windows instance inside Equinix Metal. These are not intended to be prescriptive or complete compared to other best practices, this is purely supplementary and being shared for ease of communication.
 
 <strong>Please note that this is not intended to be a best practices document. There is no support offered around the content of this document.</strong>
 
@@ -34,13 +34,13 @@ As someone who generally has at least 1x sshd enabled (Linux) instance provision
 
 ### Kitty / Putty Configuration + Metal configuration details
 
-In this example, the Metal instance labelled "home" is a Metal instance provisioned with ubuntu_2004, where the sshd configuration of the instances allows SOCKs proxy functionality (should be enabled by default). We will elverage the "private" or "management" network for access. Notice that with Equinix Metal's ["Backend Transfer"](https://metal.equinix.com/developers/docs/networking/backend-transfer/) feature enabled, an instance in any region can be a SOCKs proxy for any other instance on the private / management network, I.E as host in DA11 could act as SOCKs proxies for hosts in SG1 as well as AM6.
+In this example, the Metal instance labeled "home" is a Metal instance provisioned with ubuntu_2004, where the sshd configuration of the instances allows SOCKs proxy functionality (should be enabled by default). We will leverage the "private" or "management" network for access. Notice that with Equinix Metal's ["Backend Transfer"](https://metal.equinix.com/developers/docs/networking/backend-transfer/) feature enabled, an instance in any region can be a SOCKs proxy for any other instance on the private / management network, I.E as host in DA11 could act as SOCKs proxies for hosts in SG1 as well as AM6.
 
 ![](https://s3.wasabisys.com/packetrepo/http_assets/windows_first_actions/socks_sshd.PNG)
 
 ### RDP into the instance @ localhost
 
-Once the SOCKs proxy is established, the RDP session can be initated against the localhost port configured, where the string ".\" before "Admin" can be useful to break any uneeded domain information, and "Admin" is the username one would expect would expect to be fulfilled by "Administrator" in a Windows environment.
+Once the SOCKs proxy is established, the RDP session can be initiated against the localhost port configured, where the string ".\" before "Admin" can be useful to break any uneeded domain information, and "Admin" is the username one would expect would expect to be fulfilled by "Administrator" in a Windows environment.
 
 ![]https://s3.wasabisys.com/packetrepo/http_assets/windows_first_actions/localhost.PNG
 
@@ -55,7 +55,7 @@ The Defender Firewall is slightly wonky to configure, but it does follow a tradi
 First, we "disable" all rules besides RDP:
 ![](https://s3.wasabisys.com/packetrepo/http_assets/windows_first_actions/rdp_10_in.PNG)
 
-Second, we modify the "scope" of the RDP allow to allow in anything from our 10.0.0.1/8 management network. This is implying an implicit trust of that network and is what will continue to allow our RDP traffic to proxy through our Bastien host:
+Second, we modify the "scope" of the RDP allow to allow in anything from our 10.0.0.1/8 management network. This is implying an implicit trust of that network and is what will continue to allow our RDP traffic to proxy through our bastion host:
 ![]https://s3.wasabisys.com/packetrepo/http_assets/windows_first_actions/rdp_10_in.PNG
 
 When these rule changes are applied, the host will be in a state where the only traffic allowed IN will be RDP traffic over the private network. Outbound internet request will be allowed as expected. This gives us a better operational posture for the remaining configuration work.
@@ -91,7 +91,7 @@ This follows traditional ![Metal documentation](https://metal.equinix.com/develo
 ![](https://s3.wasabisys.com/packetrepo/http_assets/windows_first_actions/second_vlan.PNG)
 
 ### NIC Teaming
-The "NIC Teaming" tool can be reached via the Server Manager dashboard. Note that the "Local Server" on the left hand selector can sometimes be cached / stale. If the "local server" appears to be greyed out or not selecteable or "Host is unavailable" warnings are given, simply find the sole instance in the "All Servers" list.
+The "NIC Teaming" tool can be reached via the Server Manager dashboard. Note that the "Local Server" on the left hand selector can sometimes be cached / stale. If the "local server" appears to be greyed out or not selectable or "Host is unavailable" warnings are given, simply find the sole instance in the "All Servers" list.
 ![](https://s3.wasabisys.com/packetrepo/http_assets/windows_first_actions/right_click.PNG)
 
 After select both the "bond_bond0" Team and bond0 object in the "Team Interface" pain, the "Add Interface" option should be available in the "Tasks" dropdown to the right of "Adapter and Interfaces"
@@ -121,7 +121,7 @@ We must also change the "private" zone to an allow / allow posture
 
 ## Disable Public IP Interface
 
-Now that updates have been applied and there should be no current dependency on the public internet, we can remove that IP interface entirely to withdraw the host entirely from any publically accesible networking, but still manage the host via RDP as well any other network function / service that may leverage the private VLAN networking
+Now that updates have been applied and there should be no current dependency on the public internet, we can remove that IP interface entirely to withdraw the host entirely from any publically accessible networking, but still manage the host via RDP as well any other network function / service that may leverage the private VLAN networking
 
 We can also update default gateway to point to the GW associated with the private network, allowing us to continue to leverage Backend Transfer as our management of control plane across facility network boundaries
 ![](https://s3.wasabisys.com/packetrepo/http_assets/windows_first_actions/removepublic.PNG)
