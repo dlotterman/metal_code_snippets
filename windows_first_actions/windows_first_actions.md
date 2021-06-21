@@ -85,7 +85,7 @@ VLANs and NIC Teaming were significantly revamped in both Windows 2016 and 2019.
 In Server 2019, LACP is now managed by the "NIC Teaming" function on Windows (where previously LACP or VLANs were primarily a vendor driver function), and the "NIC Teaming" function can also be used to easily work with VLAN based networks. This is likely the operationally simplest path to VLAN aware networking within windows, however note that this documentation in this page will conflict with documentation for more complicated Hyper-V centric deployments. For those more complicated deployments, consult more specific information.
 
 ### Assign Metal VLANs to the instance
-This follows traditional ![Metal documentation](https://metal.equinix.com/developers/docs/layer2-networking/overview/), this document assumes the operator is pursuing a ["Hybrid Bonded"](https://metal.equinix.com/developers/docs/layer2-networking/hybrid-bonded-mode/) implementation
+This follows traditional [Metal documentation](https://metal.equinix.com/developers/docs/layer2-networking/overview/), this document assumes the operator is pursuing a ["Hybrid Bonded"](https://metal.equinix.com/developers/docs/layer2-networking/hybrid-bonded-mode/) implementation
 
 ![](https://s3.wasabisys.com/packetrepo/http_assets/windows_first_actions/hyrid_vlan_first.PNG)
 ![](https://s3.wasabisys.com/packetrepo/http_assets/windows_first_actions/second_vlan.PNG)
