@@ -25,7 +25,7 @@ The gist of the actions taken here:
 This document will presume that the operator is working of a Equinix Metal instance provisioned entirely according to defaults with the Equinix Metal Windows 2019 option as the chosen OS. 
   
   
-## SSH + SOCKS
+## SSH + SOCKS + RDP
 It is commonly accepted that leaving any kind of host OS exposed directly to the public internet is a high risk vector for compromise, in particular Windows environments, which are generally "presumed to be installed and operated on a private first network model". 
 
 In order to get to a "private only" network mode for a provisioned Equinix Metal instance, we need at least one path for network based management (RDP).
@@ -42,7 +42,7 @@ In this example, the Metal instance labeled "home" is a Metal instance provision
 
 Once the SOCKs proxy is established, the RDP session can be initiated against the localhost port configured, where the string ".\" before "Admin" can be useful to break any uneeded domain information, and "Admin" is the username one would expect to be fulfilled by "Administrator" in a Windows environment.
 
-![]https://s3.wasabisys.com/packetrepo/http_assets/windows_first_actions/localhost.PNG
+![](https://s3.wasabisys.com/packetrepo/http_assets/windows_first_actions/localhost.PNG)
 
 When RDP is intiatied through this localhost SSHD + SOCKs proxy, it will functionally avoid the public interface of the Windows instance, where the RDP session / traffic will exist between the SSHD "bastion" endpoint and the Windows instance over the private network, and will be proxied back to your workstation via the SOCKs proxy over that Bastion instances public network. This will allow us to re-configure and eventually remove the public internet / access from the Windows instance.
 
@@ -56,7 +56,7 @@ First, we "disable" all rules besides RDP:
 ![](https://s3.wasabisys.com/packetrepo/http_assets/windows_first_actions/rdp_10_in.PNG)
 
 Second, we modify the "scope" of the RDP allow to allow in anything from our 10.0.0.1/8 management network. This is implying an implicit trust of that network and is what will continue to allow our RDP traffic to proxy through our bastion host:
-![]https://s3.wasabisys.com/packetrepo/http_assets/windows_first_actions/rdp_10_in.PNG
+![](https://s3.wasabisys.com/packetrepo/http_assets/windows_first_actions/rdp_10_in.PNG)
 
 When these rule changes are applied, the host will be in a state where the only traffic allowed IN will be RDP traffic over the private network. Outbound internet requests will be allowed as expected. This gives us a better operational posture for the remaining configuration work.
 
