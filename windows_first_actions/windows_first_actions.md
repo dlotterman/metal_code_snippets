@@ -68,6 +68,8 @@ For reference, this can include multiple reboot loops to catch up on all increme
 ### Automatic updates
 For an instance deployment that may be long-lived, it would be strongly [suggested to configure](https://docs.microsoft.com/en-us/windows-server/administration/windows-server-update-services/deploy/4-configure-group-policy-settings-for-automatic-updates#allow-automatic-updates-immediate-installation) the instance to [automatic updates](https://docs.microsoft.com/en-us/windows/deployment/update/waas-wufb-group-policy). 
 
+GPO Automatic Updates Path:  [Server Manager, > Tools, > Group Policy Management](https://docs.microsoft.com/en-us/windows-server/administration/windows-server-update-services/deploy/4-configure-group-policy-settings-for-automatic-updates#accessing-the-windows-update-settings-in-group-policy)
+
 ![](https://s3.wasabisys.com/packetrepo/http_assets/windows_first_actions/automatic_updates_first.PNG)
 ![](https://s3.wasabisys.com/packetrepo/http_assets/windows_first_actions/automatic_updates.PNG)
 
