@@ -161,7 +161,7 @@ In order to highlight the infrastructure differences between scenario 1 & 2, we 
         - The OS of the `metal_router_0[1-2]` instances have been [configured to route / pass traffic for other hosts](https://linuxconfig.org/how-to-turn-on-off-ip-forwarding-in-linux)
         - ~~The OS of the `metal_router_01` instance has been configured with an IP in the private address space that will act as the Default Gateway for other Metal instances in this deployment model.~~
           - ~~`192.168.200.1` in this documentation / diagram~~
-        - **The OS  of the `metal_router_0[1-2]` instances have been configured with [keepalived](#Making the Default Gateway Highly Available) (or other service / cluster availability tool)**
+        - **The OS  of the `metal_router_0[1-2]` instances have been configured with [keepalived](https://github.com/dlotterman/metal_code_snippets/blob/main/documentation_stage/virtual_circuit_availability/equinix_metal_fabric_vcs_availability.md#making-the-default-gateway-highly-available) (or other service / cluster availability tool)**
             - **keepalived has been configured to make the default gateway or `192.168.200.1` for the `101` hosted private network highly available across both `metal_router0[1-2]` instances**
 
 3. #### Scenario #2: Customer has configured Fabric 
