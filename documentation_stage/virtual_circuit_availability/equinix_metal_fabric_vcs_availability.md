@@ -76,7 +76,7 @@ The below is a pseudo-logical series of "steps" that are use to describe the env
 
 ### Scenario #1 "Life of a Packet"
 
-When a server from the Metal *"Backend Server"* group (say `192.168.200.15`) tries to reach a *"Colo Server"* (say `192.168.100.60`):
+When a server from the *"Metal Backend Server"* group (say `192.168.200.15`) tries to reach a *"Colo Backend Server"* (say `192.168.100.60`):
 
   - The destination of `192.168.100.60/24` will be out of it's local network so it will pass the traffic to the configured default gateway, in this case the `metal_router_01` instance at `192.168.200.1` over Metal VLAN `101`
   - The router instance will receive the traffic and see that`192.168.200.1/24` is available in it's routing table from its routing advertisement, where `192.168.200.1/24` is available behind `169.254.254.3` via the Virtual Circuit / L2 Domain connected to Metal VLAN `111`.
