@@ -1,0 +1,18 @@
+# ip a | grep -E "bond|inet"
+    inet 127.0.0.1/8 scope host lo
+    inet6 ::1/128 scope host
+4: enp1s0f0: <BROADCAST,MULTICAST,SLAVE,UP,LOWER_UP> mtu 1500 qdisc mq master bond0 state UP group default qlen 1000
+5: enp1s0f1: <BROADCAST,MULTICAST,SLAVE,UP,LOWER_UP> mtu 1500 qdisc mq master bond0 state UP group default qlen 1000
+6: bond0: <BROADCAST,MULTICAST,MASTER,UP,LOWER_UP> mtu 1500 qdisc noqueue state UP group default qlen 1000
+    inet 147.75.197.231/31 brd 255.255.255.255 scope global bond0
+    inet6 fe80::e42:a1ff:fe7e:a494/64 scope link
+7: bond0.101@bond0: <BROADCAST,MULTICAST,UP,LOWER_UP> mtu 1500 qdisc noqueue state UP group default qlen 1000
+    inet 192.168.200.2/24 brd 192.168.200.255 scope global bond0.101
+    inet 192.168.200.1/24 scope global secondary gateway:0
+    inet6 fe80::e42:a1ff:fe7e:a494/64 scope link
+8: bond0.111@bond0: <BROADCAST,MULTICAST,UP,LOWER_UP> mtu 1500 qdisc noqueue state UP group default qlen 1000
+    inet 169.254.254.3/29 brd 169.254.254.7 scope global bond0.111
+    inet6 fe80::e42:a1ff:fe7e:a494/64 scope link
+9: bond0.121@bond0: <BROADCAST,MULTICAST,UP,LOWER_UP> mtu 1500 qdisc noqueue state UP group default qlen 1000
+    inet 169.254.254.11/29 brd 169.254.254.15 scope global bond0.121
+    inet6 fe80::e42:a1ff:fe7e:a494/64 scope link

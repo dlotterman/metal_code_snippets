@@ -1,0 +1,49 @@
+# cat /etc/bird/bird.conf
+protocol kernel {
+   persist;
+   scan time 20;
+   import all;
+   export all;
+}
+protocol device {
+   scan time 20;
+}
+router id 192.168.200.2;
+protocol direct {
+   disabled;
+}
+protocol static {
+   import all;
+   route 192.168.200.0/24 unreachable;
+}
+
+protocol bgp ny_to_dc_primary_master {
+   local as 65003;
+   neighbor 169.254.254.1 as 65001;
+   source address 169.254.254.3;
+   import all;
+   export where source = RTS_STATIC;
+}
+protocol bgp ny_to_dc_primary_backup {
+   local as 65003;
+   neighbor 169.254.254.2 as 65002;
+   source address 169.254.254.3;
+   import all;
+   export where source = RTS_STATIC;
+}
+
+protocol bgp ny_to_dc_secondary_master {
+   local as 65003;
+   neighbor 169.254.254.9 as 65001;
+   source address 169.254.254.11;
+   import all;
+   export where source = RTS_STATIC;
+}
+protocol bgp ny_to_dc_secondary_backup {
+   local as 65003;
+   neighbor 169.254.254.10 as 65002;
+   source address 169.254.254.11;
+   import all;
+   export where source = RTS_STATIC;
+}
+

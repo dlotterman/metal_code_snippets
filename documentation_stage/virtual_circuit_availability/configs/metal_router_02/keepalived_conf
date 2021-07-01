@@ -1,0 +1,20 @@
+# cat /etc/keepalived/keepalived.conf
+vrrp_instance VI_1 {
+    state BACKUP
+    interface bond0.101
+    unicast_src_ip 192.168.200.3
+    unicast_peer {
+        192.168.200.2
+    }
+    virtual_router_id 100
+    priority 50
+    advert_int 1
+    authentication {
+        auth_type AH
+        auth_pass k@l!ve1
+    }
+    virtual_ipaddress {
+        192.168.200.1/24 dev bond0.101 label gateway:0
+    }
+}
+

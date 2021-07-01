@@ -1,0 +1,23 @@
+# birdc show protocols all 'colo_switch_01'
+BIRD 1.6.8 ready.
+name     proto    table    state  since       info
+colo_switch_01 BGP      master   up     2021-06-29  Established
+  Preference:     100
+  Input filter:   ACCEPT
+  Output filter:  (unnamed)
+  Routes:         2 imported, 1 exported, 1 preferred
+  Route change stats:     received   rejected   filtered    ignored   accepted
+    Import updates:              2          0          0          0          2
+    Import withdraws:            0          0        ---          0          0
+    Export updates:              4          1          2        ---          1
+    Export withdraws:            0        ---        ---        ---          0
+  BGP state:          Established
+    Neighbor address: 169.254.254.1
+    Neighbor AS:      65001
+    Neighbor ID:      192.168.100.2
+    Neighbor caps:    refresh restart-aware AS4 add-path-rx
+    Session:          external AS4
+    Source address:   169.254.254.3
+    Hold timer:       129/180
+    Keepalive timer:  46/60
+

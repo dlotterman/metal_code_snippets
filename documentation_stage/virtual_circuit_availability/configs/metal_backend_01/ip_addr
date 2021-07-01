@@ -1,0 +1,9 @@
+# ip a | grep -E "bond|inet"
+    inet 127.0.0.1/8 scope host lo
+    inet6 ::1/128 scope host
+4: enp1s0f0: <BROADCAST,MULTICAST,SLAVE,UP,LOWER_UP> mtu 1500 qdisc mq master bond0 state UP group default qlen 1000
+5: enp1s0f1: <BROADCAST,MULTICAST,SLAVE,UP,LOWER_UP> mtu 1500 qdisc mq master bond0 state UP group default qlen 1000
+6: bond0: <BROADCAST,MULTICAST,MASTER,UP,LOWER_UP> mtu 1500 qdisc noqueue state UP group default qlen 1000
+bond0.101@bond0: <BROADCAST,MULTICAST,UP,LOWER_UP> mtu 1500 qdisc noqueue state UP group default qlen 1000
+    inet 192.168.200.5/24 brd 192.168.200.255 scope global bond0
+    inet6 fe80::1e34:daff:fe5c:2abc/64 scope link
