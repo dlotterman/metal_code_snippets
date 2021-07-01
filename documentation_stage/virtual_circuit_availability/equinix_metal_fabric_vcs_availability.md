@@ -23,7 +23,7 @@ There is supporting documentation of the configurations referenced here in the [
 
 The below is a pseudo-logical series of "steps" that are use to describe the environment and infrastructure that would be relevant to this discussion. It is intended to read like a summarized change-control runbook of the environment, and is also intended to match or describe the diagram immediately below.
 
-![](https://s3.wasabisys.com/packetrepo/http_assets/scenario_1_diagrram.PNG)
+![](https://s3.wasabisys.com/packetrepo/http_assets/vcavailability/scenario_1.PNG)
 
 1. #### Scenario #1: Customer has configured Colocation
   - Customer has at least one cabinet with Equinix in the same [Metro](https://metal.equinix.com/developers/docs/locations/metros/) as Metal
@@ -121,7 +121,7 @@ In order to highlight the infrastructure differences between scenario 1 & 2, we 
 
 
 
-![](https://s3.wasabisys.com/packetrepo/http_assets/scenario_w.PNG)
+![](https://s3.wasabisys.com/packetrepo/http_assets/vcavailability/scenario_2.PNG)
 
 
 
@@ -219,7 +219,7 @@ In this scenario, we should be able to tolerate the failure of any individual po
 
 In this scenario, a piece of equipment or software in the path of the primary Virtual Circuit has failed, reducing us to our single, secondary path or Virtual Circuit.
 
-![](https://s3.wasabisys.com/packetrepo/http_assets/scenario3.PNG)
+![](https://s3.wasabisys.com/packetrepo/http_assets/vcavailability/scenario_25.PNG)
 
 ### Scenario #2.5 "Life of a Packet"
 
