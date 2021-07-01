@@ -16,6 +16,8 @@ In particular, this document will focus on describing:
 
 There is supporting documentation of the configurations referenced here in the [folder adjacent to this document](configs/)
 
+[The associated diagrams can also be viewed direct here](https://lucid.app/lucidchart/invitations/accept/inv_f79a2bb9-4d23-47a7-b770-481c4b102d3f?viewport_loc=1351%2C-101%2C2776%2C1489%2CRp2Q1LKxpKvX)
+
 
 ## Scenario #1 - Single Virtual Circuit
 
