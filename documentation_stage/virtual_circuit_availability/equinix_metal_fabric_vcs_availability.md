@@ -65,7 +65,7 @@ The below is a pseudo-logical series of "steps" that are use to describe the env
 4. #### Scenario #1: Customer has configured A & Z-Side of Virtual Circuit 
   - The switch associated with the [*1st Step*](https://github.com/dlotterman/metal_code_snippets/blob/main/documentation_stage/virtual_circuit_availability/equinix_metal_fabric_vcs_availability.md#scenario-1-customer-has-configured-colocation) have been configured to receive the VLAN carried by the virtual circuit as configured in the provisioned of the Virtual Circuit VLANID
   - Customer has tied the [Virtual Circuit to the Equinix Metal VLAN](https://metal.equinix.com/developers/docs/equinix-interconnect/interconnection-model/)
-        - Where the Metal VLAN is the `metal_to_virtual_circuit_vlan_0001` VLAN referenced in the [*2nd Step*](# Customer has configured Metal)
+        - Where the Metal VLAN is the `metal_to_virtual_circuit_vlan_0001` VLAN referenced in the [*2nd Step*](https://github.com/dlotterman/metal_code_snippets/blob/main/documentation_stage/virtual_circuit_availability/equinix_metal_fabric_vcs_availability.md#scenario-1-customer-has-configured-metal)
   - Customer has configured the Metal `metal_router_01` instance and their 1x physical switch in such a way as they are informed of each others network availability, such that they will pass traffic between each other for the private networks behind them
   - The expectation is this would be done with something like BGP, but is open to customer implementation choice
 
@@ -167,7 +167,7 @@ In order to highlight the infrastructure differences between scenario 1 & 2, we 
 3. #### Scenario #2: Customer has configured Fabric 
 
   - Customer has "activated" their [Fabric account](https://docs.equinix.com/en-us/Content/Interconnection/Fabric/getting-started/Fabric-getting-started.htm) and provisioned all physical infrastructure
-  - The switches in [*Step 1*](Customer has configured Colocation) is connected to the [Equinix Fabric via cross-connect](https://docs.equinix.com/en-us/Content/Interconnection/Fabric/Fabric-landing-main.htm) and [Fabric Ports](https://docs.equinix.com/en-us/Content/Interconnection/Fabric/ports/Fabric-port-details.htm)
+  - The switches in [*Step 1*](https://github.com/dlotterman/metal_code_snippets/blob/main/documentation_stage/virtual_circuit_availability/equinix_metal_fabric_vcs_availability.md#scenario-2-customer-has-configured-colocation) is connected to the [Equinix Fabric via cross-connect](https://docs.equinix.com/en-us/Content/Interconnection/Fabric/Fabric-landing-main.htm) and [Fabric Ports](https://docs.equinix.com/en-us/Content/Interconnection/Fabric/ports/Fabric-port-details.htm)
 
   - Customer has initiated a the request of a [*"Shared Ports"*](https://metal.equinix.com/developers/docs/equinix-interconnect/interconnection-model/) connection from the [Metal Connections](https://metal.equinix.com/developers/docs/equinix-interconnect/introduction/) page
       - ~~This virtual circuit is ordered **WITHOUT** redundancy, that is the checkbox for "Redundant Connection" is left unchecked~~
@@ -176,11 +176,11 @@ In order to highlight the infrastructure differences between scenario 1 & 2, we 
   - Customer has completed the provisioning of the Virtual Circuit via Equinix Fabric
 
 4. #### Scenario #2: Customer has configured A & Z-Side of Virtual Circuit 
-  - The switch associated with the [*1st Step*](#Customer has configured Colocation) have been configured to receive the VLAN carried by the virtual circuit as configured in the provisioned of the Virtual Circuit VLAN_ID, with Fabric ports receiving the A-side of the virtual circuit.
+  - The switch associated with the [*1st Step*](https://github.com/dlotterman/metal_code_snippets/blob/main/documentation_stage/virtual_circuit_availability/equinix_metal_fabric_vcs_availability.md#scenario-2-customer-has-configured-colocation) have been configured to receive the VLAN carried by the virtual circuit as configured in the provisioned of the Virtual Circuit VLAN_ID, with Fabric ports receiving the A-side of the virtual circuit.
   - ~~Customer has tied the [Virtual Circuit to the Equinix Metal VLAN](https://metal.equinix.com/developers/docs/equinix-interconnect/interconnection-model/)~~
   - Customer has tied the [Virtual Circuits to the Equinix Metal VLANs](https://metal.equinix.com/developers/docs/equinix-interconnect/interconnection-model/)
-  - Where the **Primary Virtual Circuit** is mapped to the Metal `metal_to_virtual_circuit_vlan_0001` VLAN referenced in the [*2nd Step*](# Customer has configured Metal)
-  - Where the **Second Virtual Circuit** is mapped to the Metal `metal_to_virtual_circuit_vlan_0002` VLAN referenced in the [*2nd Step*](# Customer has configured Metal)
+  - Where the **Primary Virtual Circuit** is mapped to the Metal `metal_to_virtual_circuit_vlan_0001` VLAN referenced in the [*2nd Step*](https://github.com/dlotterman/metal_code_snippets/blob/main/documentation_stage/virtual_circuit_availability/equinix_metal_fabric_vcs_availability.md#scenario-2-customer-has-configured-metal)
+  - Where the **Second Virtual Circuit** is mapped to the Metal `metal_to_virtual_circuit_vlan_0002` VLAN referenced in the [*2nd Step*](https://github.com/dlotterman/metal_code_snippets/blob/main/documentation_stage/virtual_circuit_availability/equinix_metal_fabric_vcs_availability.md#scenario-2-customer-has-configured-metal)
 
 5. #### Scenario #2: Customer has configured route advertisement
 - ~~**The OS of the `metal_router_01` instance has been configured with [bird](https://bird.network.cz/) (or other BGP or routing advertisement mechanism)**~~
