@@ -226,6 +226,6 @@ In this scenario, a piece of equipment or software in the path of the primary Vi
 When a server from the  *"Metal Backend Server"* group (say `192.168.200.15`) tries to reach a *"Colo Backend Server"* (say `192.168.100.60`):
 
 - The destination of `192.168.100.60/24` will be out of it's local network so it will pass the traffic to the configured default gateway. The default gateway IP of `192.168.200.1` will be hosted by one of the two `metal_router_0[1-2]` instances depending on the state of *keepalived*
-- The router instance, having lost it's BGP session with `colo_switch[1-2]`, will identify that it's interface associated with the secondary VLAN (`metal_to_virtual_circuit_vlan_0002` or `121`) is the only path available 
+- The router instance, having lost it's BGP session with `colo_switch[1-2]`, will identify that it's interface associated with the secondary VLAN (`metal_to_virtual_circuit_vlan_0002` or `121`) is the only path available to reach `169.254.254.3`, which is announcing itself as a path to `192.168.100.1/24` 
 - The router instance will pass the traffic in that North <-> South direction via the secondary virtual circuit or `121`, where it is carried via the Virtual Circuit across Fabric and is handed off to `colo_switch_02` in the Customers colocation environment, where it will follow a similar flow to the colo server.
 - Return traffic would follow a similar flow
