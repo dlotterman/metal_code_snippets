@@ -55,7 +55,7 @@ The characteristics of this "no code safe virtual appliance" host are as follow:
 
 Equinix Metal has two primary networking "namespaces", it's batteries included Layer-3 networking and it's customer managed Layer-2 networking modes. Network appliances in Metal will often want connectivity into a variety of networks so this guide will assume both Layer-3 and Layer-2 connectivity is desired for the virtual appliance.
 
-Following best practices, the easiet way to provision a host as a hypervisor / VM host with Layer-3 networking for it's guests is to provision the host with defined, contigous IP blocks, for both public and private. Before provisioning any Metal hosts, ensure that a block of "Public" (not Global) IP's has been provisioned into the facility. It's strongly suggested the block be at least a /30 for ease of use. 
+Following best practices, the easiet way to provision a host as a hypervisor / VM host with Layer-3 networking for it's guests is to provision the host with defined, contigous IP blocks, for both public and private. Before provisioning any Metal hosts, ensure that a block of "Public" (not Global) IP's has been provisioned into the facility. It's strongly suggested the block be at least a **/29** for ease of use. 
 
 [More documentation here about reserving public IP addresses](https://metal.equinix.com/developers/docs/networking/standard-ips/)
 
@@ -103,7 +103,7 @@ Once the instance has completed provisionig in the Metal platform, [it needs to 
 ![](https://s3.wasabisys.com/packetrepo/http_assets/hybrid_bonded.PNG)
 
 When done, the instance should visibly:
-* Have it's public management address be the /30 we provisioned and configured the host with
+* Have it's public management address be the **/29** we provisioned and configured the host with
 * Be in "Hybrid Bonded Mode" with 1x or more VLANs attached where VLANs are tagged to the host (<strong>not native, not untagged</strong>)
 
 ![](https://s3.wasabisys.com/packetrepo/http_assets/networkconfigdone.PNG)
@@ -179,11 +179,11 @@ The <strong>"Install"</strong> button can now be pressed, and the VM's "console"
 
 The VM's network interfaces were configuring in such a way as to give the VM / appliance the same logical network access as the plain "bond" device / interface of the Metal host. As such, when configuring the appliance interfaces inside the appliance operating system itself, the Layer-3 networks (public + management) will be configured as <strong>native / NON-vlan tagged traffic</strong> while the interface intende for Layer-2 VLAN traffic will need to be configured to be VLAN aware.
 
-The Layer-3 "Public" IP address to configure inside the VM will be from the public block that was provisioned at the start of this guide. For example if a host was provisioned with a /30 such as:
+The Layer-3 "Public" IP address to configure inside the VM will be from the public block that was provisioned at the start of this guide. For example if a host was provisioned with a /29 such as:
 
-`145.40.80.68/30`
+`145.40.80.68/29`
 
-Where `145.40.80.70` is the static public IP address of the Metal host and `145.40.80.69` is reserved as the gateway for the entire block. In this scenario, `145.40.80.71` would be available for allocation inside the guest, with the same gateway of `145.40.80.69`.
+Where `145.40.80.70` is the static public IP address of the Metal host and `145.40.80.65` is reserved as the gateway for the entire block. In this scenario, `145.40.80.72` would be available for allocation inside the guest, with the same gateway of `145.40.80.65`.
 
 The same logic is true of the Layer-3 private management network.
 
