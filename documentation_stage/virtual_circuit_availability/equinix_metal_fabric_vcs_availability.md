@@ -23,7 +23,7 @@ There is supporting documentation of the configurations referenced here in the [
 
 The below is a pseudo-logical series of "steps" that are use to describe an environment and infrastructure that enable this topic. It is intended to read like a summarized change-control runbook of the environment, and is also intended to match or describe the diagram immediately below.
 
-![](https://s3.wasabisys.com/packetrepo/http_assets/vcavailability/scenario_1.PNG)
+![](https://s3.wasabisys.com/packetrepo/http_assets/vcavailability/scenario_1.PNG#1)
 
 1. #### Scenario #1: Customer has configured Colocation
   - Customer has at least one cabinet with Equinix in the same [Metro](https://metal.equinix.com/developers/docs/locations/metros/) as Metal
