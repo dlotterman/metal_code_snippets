@@ -137,7 +137,11 @@ We can also update the default gateway to point to the GW associated with the pr
 
 There is a task in the Windows task scheduler that is set to run at boot time, which will one-off run the cloudbase-init (cloud-init) function, which will among other things reset the configured interfaces according to the Metal Layer-3 configuration, as in if you have removed the Metal assigned L3 networking, this can likely overwrite those changes.
 
-This can be disabled via the Task Scheduler GUI interface, or via the follow commands
+To disable this function, the two following configurations need to be made, the cloudbase-init service needs to be disabled (fine now that initial network configuration post provisioning is complete), and the boot-time scheduled task needs to be disabled or removed.
+
+These can either be accomplished via the Windows Services GUI, disabling the `cloudbase-init` service entirely, and in the Windows Task Scheduler GUI, disabling the `Packet-Config-Network` bootime task.
+
+Via the commandline, these can be accomplished with:
 
 ```
 sc.exe config "cloudbase-init" start=disabled
