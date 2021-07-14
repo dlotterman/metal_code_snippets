@@ -31,6 +31,7 @@ packages:
  - unzip
  - yum-cron
  - jq
+ - vconfig
 
 groups:
  - cloud-users

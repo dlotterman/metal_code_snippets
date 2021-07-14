@@ -130,3 +130,28 @@ We can also update the default gateway to point to the GW associated with the pr
 ![](https://s3.wasabisys.com/packetrepo/http_assets/windows_first_actions/removepublic.PNG)
 ![](https://s3.wasabisys.com/packetrepo/http_assets/windows_first_actions/private_gateway.PNG)
 ![](https://s3.wasabisys.com/packetrepo/http_assets/windows_first_actions/privategateway.PNG)
+
+
+
+## Disable Cloud-init startup scheduled task
+
+There is a task in the Windows task scheduler that is set to run at boot time, which will one-off run the cloudbase-init (cloud-init) function, which will among other things reset the configured interfaces according to the Metal Layer-3 configuration, as in if you have removed the Metal assigned L3 networking, this can likely overwrite those changes.
+
+This can be disabled via the Task Scheduler GUI interface, or via the follow commands
+
+```
+sc.exe config "cloudbase-init" start=disabled
+Get-ScheduledTask -TaskName "Packet-Config-Network"
+Unregister-ScheduledTask -TaskName "Packet-Config-Network" -Confirm:$false
+```
+
+### Remove additional services no longer needed after provisioning
+
+If desired, you can also remove the additional tools that are included as part of the Metal Windows to enable it's provisioning flow:
+
+```
+$MyApp = Get-WmiObject -Class Win32_Product | Where-Object{$_.Name -eq "Cloudbase-Init 1.1.3.dev10"}
+$myapp.uninstall()
+$MyApp = Get-WmiObject -Class Win32_Product | Where-Object{$_.Name -eq "Pensando Ionic Driver"}
+$myapp.uninstall()
+````
