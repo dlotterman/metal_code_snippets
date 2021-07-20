@@ -1,0 +1,4 @@
+---
+collections:
+  - name: equinix.metal
+  - name: Oefenweb.dnsmasq

@@ -1,0 +1,44 @@
+---
+- name: openstack_gather_facts
+  strategy: free
+  hosts: tag_os
+  gather_facts: true
+
+- hosts: tag_osw
+  vars:
+    # referenced in template
+    nova_mysql_password: novamysql1234
+    nova_admin_password: novaadmin1234
+    rabbitmq_openstack_password: rabbitmqopenstack123
+    # Templating
+    placement_admin_password: placementadmin1234
+    neutron_admin_password: neutronadmin1234
+    os_metadata_secret: osmetadatasecret1234
+    
+  tasks:
+    - name: openstack_install_nova_node_packages
+      become: yes
+      become_method: sudo
+      ansible.builtin.package:
+        name:
+          - nova-compute
+        state: latest
+
+    - name: openstack_nova_template_conf
+      become: yes
+      become_method: sudo    
+      template:
+        src: nova_node.conf.j2
+        dest: /etc/nova/nova.conf
+      register: nova_conf
+
+    - name: openstack_nova_restart
+      become: yes
+      become_method: sudo
+      ansible.builtin.service:
+        name: "{{ item }}"
+        state: restarted
+        enabled: yes
+      when: nova_conf.changed    
+      with_items:
+        - nova-compute

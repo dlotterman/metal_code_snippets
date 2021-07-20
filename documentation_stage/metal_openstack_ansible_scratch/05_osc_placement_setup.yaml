@@ -1,0 +1,226 @@
+---
+- hosts: tag_osc
+  vars:
+    placement_mysql_password: placementmysql1234
+    placement_admin_password: placementadmin1234
+    
+  tasks:
+    - name: openstack_install_placement_packages
+      become: yes
+      become_method: sudo
+      ansible.builtin.package:
+        name:
+          - placement-api
+        state: latest
+
+    - name: openstack_placement_mysql_db_create
+      become: yes
+      become_method: sudo     
+      mysql_db: 
+        name: placement
+        state: present
+        login_unix_socket: /var/run/mysqld/mysqld.sock
+
+    - name: openstack_placement_mysql_user_create
+      become: yes
+      become_method: sudo    
+      mysql_user: 
+        name: placement
+        append_privs: yes
+        password: "{{ placement_mysql_password }}"
+        priv: 'placement.*:ALL,GRANT'
+        login_unix_socket: /var/run/mysqld/mysqld.sock
+        state: present
+        host: "{{ item }}"
+      with_items:
+        - 127.0.0.1
+        - ::1
+        - localhost
+        - '%'
+
+    # Need to var and or rework all of this
+    - name: openstack_placement_osuser_create
+      become: yes
+      become_method: sudo
+      command: |
+        openstack user create --domain default --password placementadmin1234 placement \
+        --os-username admin \
+        --os-project-name admin \
+        --os-user-domain-id default \
+        --os-project-domain-id default \
+        --os-identity-api-version 3 \
+        --os-auth-url http://controller:5000 \
+        --os-password keystoneadmin1234 \
+      args:
+        strip_empty_ends: false
+        creates: /metal/lock/placementosusercreate.lock
+      register: placementosusercreate
+
+    - name: openstack_placement_osuser_create_touch_file
+      become: yes
+      become_method: sudo
+      file: 
+        path: /metal/lock/placementosusercreate.lock
+        state: touch
+      when: placementosusercreate.changed
+
+    - name: openstack_placement_osrole_create
+      become: yes
+      become_method: sudo
+      command: |
+        openstack role add --project service --user placement admin \
+        --os-username admin \
+        --os-project-name admin \
+        --os-user-domain-id default \
+        --os-project-domain-id default \
+        --os-identity-api-version 3 \
+        --os-auth-url http://controller:5000 \
+        --os-password keystoneadmin1234 \
+      args:
+        strip_empty_ends: false
+        creates: /metal/lock/placementosrolecreate.lock
+      register: placementosrolecreate
+
+    - name: openstack_placemente_osrole_create_touch_file
+      become: yes
+      become_method: sudo
+      file: 
+        path: /metal/lock/placementosrolecreate.lock
+        state: touch
+      when: placementosrolecreate.changed
+      
+    - name: openstack_placement_osservice_create
+      become: yes
+      become_method: sudo
+      command: |
+        openstack service create --name placement --description "placement_api" placement \
+        --os-username admin \
+        --os-project-name admin \
+        --os-user-domain-id default \
+        --os-project-domain-id default \
+        --os-identity-api-version 3 \
+        --os-auth-url http://controller:5000 \
+        --os-password keystoneadmin1234 \
+      args:
+        strip_empty_ends: false
+        creates: /metal/lock/placementosservicecreate.lock
+      register: placementosservicecreate
+
+    - name: openstack_glance_osservice_create_touch_file
+      become: yes
+      become_method: sudo
+      file: 
+        path: /metal/lock/placementosservicecreate.lock
+        state: touch
+      when: placementosservicecreate.changed          
+
+    - name: openstack_placement_osendpoint_public_create
+      become: yes
+      become_method: sudo
+      command: |
+        openstack endpoint create --region RegionOne placement public http://controller:8778 \
+        --os-username admin \
+        --os-project-name admin \
+        --os-user-domain-id default \
+        --os-project-domain-id default \
+        --os-identity-api-version 3 \
+        --os-auth-url http://controller:5000 \
+        --os-password keystoneadmin1234 \
+      args:
+        strip_empty_ends: false
+        creates: /metal/lock/placementosendpointpublic.lock
+      register: placementosendpointpublic
+
+    - name: openstack_placement_osendpoint_public_create_touch_file
+      become: yes
+      become_method: sudo
+      file: 
+        path: /metal/lock/placementosendpointpublic.lock
+        state: touch
+      when: placementosendpointpublic.changed   
+
+    - name: openstack_placement_osendpoint_internal_create
+      become: yes
+      become_method: sudo
+      command: |
+        openstack endpoint create --region RegionOne placement internal http://controller:8778 \
+        --os-username admin \
+        --os-project-name admin \
+        --os-user-domain-id default \
+        --os-project-domain-id default \
+        --os-identity-api-version 3 \
+        --os-auth-url http://controller:5000 \
+        --os-password keystoneadmin1234 \
+      args:
+        strip_empty_ends: false
+        creates: /metal/lock/placementosendpointinternal.lock
+      register: placementosendpointinternal
+
+    - name: openstack_placement_osendpoint_internal_create_touch_file
+      become: yes
+      become_method: sudo
+      file: 
+        path: /metal/lock/placementosendpointinternal.lock
+        state: touch
+      when: placementosendpointinternal.changed   
+
+    - name: openstack_placement_osendpoint_admin_create
+      become: yes
+      become_method: sudo
+      command: |
+        openstack endpoint create --region RegionOne placement admin http://controller:8778 \
+        --os-username admin \
+        --os-project-name admin \
+        --os-user-domain-id default \
+        --os-project-domain-id default \
+        --os-identity-api-version 3 \
+        --os-auth-url http://controller:5000 \
+        --os-password keystoneadmin1234 \
+      args:
+        strip_empty_ends: false
+        creates: /metal/lock/placementosendpointadmin.lock
+      register: placementosendpointadmin
+
+    - name: openstack_placement_osendpoint_admin_create_touch_file
+      become: yes
+      become_method: sudo
+      file: 
+        path: /metal/lock/placementosendpointadmin.lock
+        state: touch
+      when: placementosendpointadmin.changed
+
+    - name: openstack_placement_template_conf
+      become: yes
+      become_method: sudo    
+      template:
+        src: placement.conf.j2
+        dest: /etc/placement/placement.conf
+      register: placement_conf
+      
+    - name: openstack_apache_restart
+      become: yes
+      become_method: sudo
+      ansible.builtin.service:
+        name: apache2
+        state: restarted
+        enabled: yes
+      when: placement_conf.changed
+
+      #This is so horrible. Why?
+    - name: openstack_placement_db_populate
+      become: yes
+      become_method: sudo  
+      shell:  su -s /bin/sh -c "placement-manage db sync" placement
+      args:
+        creates: /metal/lock/placementemanagedbsync.lock
+      register: placementemanagedbsync
+
+    - name: openstack_placement_db_touch_file
+      become: yes
+      become_method: sudo
+      file: 
+        path: /metal/lock/placementemanagedbsync.lock
+        state: touch
+      when: placementemanagedbsync.changed
+
+

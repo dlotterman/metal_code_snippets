@@ -1,0 +1,35 @@
+---
+- hosts: tag_osc
+  #vars:
+
+  tasks:
+    # https://docs.openstack.org/horizon/wallaby/install/install-ubuntu.html#install-and-configure-components
+    - name: openstack_horizon_install_packages
+      become: yes
+      become_method: sudo
+      ansible.builtin.package:
+        name:
+          - openstack-dashboard
+        state: latest
+
+    - name: openstack_horizon_template_conf
+      become: yes
+      become_method: sudo    
+      template:
+        src: local_settings.py.j2
+        dest: /etc/openstack-dashboard/local_settings.py
+      register: horizon_conf
+      
+    - name: openstack_glance_restart
+      become: yes
+      become_method: sudo
+      ansible.builtin.service:
+        name: apache2
+        state: restarted
+        enabled: yes
+      when: horizon_conf.changed
+
+    - name: hosts_ufw_allow_http
+      become: yes
+      become_method: sudo
+      ufw: proto=tcp port=80 rule=allow         

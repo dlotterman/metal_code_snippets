@@ -1,0 +1,55 @@
+---
+- name: openstack_gather_facts
+  strategy: free
+  hosts: tag_os
+  gather_facts: true
+
+- hosts: tag_osw
+  vars:
+    # referenced in template
+    nova_mysql_password: novamysql1234
+    nova_admin_password: novaadmin1234
+    rabbitmq_openstack_password: rabbitmqopenstack123
+    # Templating
+    placement_admin_password: placementadmin1234
+    neutron_admin_password: neutronadmin1234
+    os_metadata_secret: osmetadatasecret1234
+    neutron_mysql_password: neutronmysql1234
+    
+  tasks:
+    - name: openstack_install_neutron_node_packages
+      become: yes
+      become_method: sudo
+      ansible.builtin.package:
+        name:
+          - neutron-linuxbridge-agent
+        state: latest
+
+    - name: openstack_neutron_template_conf
+      become: yes
+      become_method: sudo    
+      template:
+        src: neutron_controller.conf.j2
+        dest: /etc/neutron/neutron.conf
+      register: neutron_conf
+
+    - name: openstack_neutron_linuxbridge_agent_template_conf
+      become: yes
+      become_method: sudo    
+      template:
+        src: linuxbridge_agent.ini.j2
+        dest: /etc/neutron/plugins/ml2/linuxbridge_agent.ini
+      register: openstack_neutron_linuxbridge_agent_template_conf
+
+
+    - name: openstack_neutron_nova_node_restart
+      become: yes
+      become_method: sudo
+      ansible.builtin.service:
+        name: "{{ item }}"
+        state: restarted
+        enabled: yes
+      when: neutron_conf.changed or openstack_neutron_linuxbridge_agent_template_conf.changed 
+      with_items:
+        - nova-compute
+        - neutron-linuxbridge-agent

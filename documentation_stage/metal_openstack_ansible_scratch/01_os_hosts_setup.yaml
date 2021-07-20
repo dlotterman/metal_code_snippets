@@ -1,0 +1,210 @@
+---
+- hosts: tag_os
+  vars:
+    metal_os_vlan: 2335
+  tasks:
+
+    - name: metal_lock_file_dir
+      become: yes
+      become_method: sudo    
+      file:
+        path: /metal/lock/
+        state: directory
+        mode: '0755'
+
+    - name: hosts_apt_repository_os_victoria_key_add
+      apt_key:
+        keyserver: keyserver.ubuntu.com
+        id: 5EDB1B62EC4926EA
+        state: present
+      become: yes
+
+    - name: hosts_apt_repository_os_victoria_repo_add
+      become: yes
+      become_method: sudo
+      ansible.builtin.apt_repository:
+        repo: deb http://ubuntu-cloud.archive.canonical.com/ubuntu focal-updates/wallaby main
+        state: present
+        filename: cloudarchive-wallaby.list
+        update_cache: yes
+        validate_certs: no
+        
+    - name: hosts_install_system_packages
+      become: yes
+      become_method: sudo
+      ansible.builtin.package:
+        name:
+          - dnsmasq
+          - ubuntu-cloud-keyring
+          - python3-pymysql
+          - python3-memcache
+          - python3-pip
+          - fail2ban
+          - ntpdate
+          - strace
+          - xfsprogs
+          - smartmontools
+          - moreutils
+          - screen          
+          - tmux
+          - ufw
+        state: latest
+
+    - name: hosts_install_system_packages
+      become: yes
+      become_method: sudo
+      ansible.builtin.package:
+        name:
+          - nano
+        state: absent        
+
+    - name: hosts_ufw_allow_ssh
+      become: yes
+      become_method: sudo
+      ufw: proto=tcp port=22 rule=allow
+      
+    - name: hosts_ufw_allow_all_access_from_RFC1918
+      become: yes
+      become_method: sudo
+      ufw:
+        rule: allow
+        src: '{{ item }}'
+      loop:
+        - 10.0.0.0/8
+        - 172.16.0.0/12
+        - 192.168.0.0/16
+    - name: hosts_set_ufw_policy
+      become: yes
+      become_method: sudo
+      ufw: state=enabled direction=incoming policy=deny
+
+
+    - name: hosts_template_dnsmasq_conf
+      become: yes
+      become_method: sudo    
+      template:
+        src: dnsmasq.conf.j2
+        dest: /etc/dnsmasq.conf
+      register: dnsmasq_conf
+        
+    - name: hosts_template_resolveconf
+      become: yes
+      become_method: sudo
+      template:
+        src: resolv.conf.j2
+        dest: /etc/resolv.conf
+        follow: no
+        mode: 0644
+
+    - name: hosts_service_stop_systemd_resolved
+      become: yes
+      become_method: sudo
+      ansible.builtin.service:
+        name: systemd-resolved
+        state: stopped
+        enabled: false
+
+    - name: hosts_service_restart_dnsmasq
+      become: yes
+      become_method: sudo
+      ansible.builtin.service:
+        name: dnsmasq
+        state: restarted
+        enabled: yes
+      when: dnsmasq_conf.changed
+
+    - name: hosts_install_os_packages
+      become: yes
+      become_method: sudo
+      ansible.builtin.package:
+        name:
+          - python3-openstackclient
+        state: latest
+
+    - name: hosts_template_fail2ban_jail_conf
+      become: yes
+      become_method: sudo
+      template:
+        src: jail.local.j2
+        dest: /etc/fail2ban/jail.local
+        follow: no
+        mode: 0644
+      register: fail2ban_conf
+
+    - name: hosts_fail2ban_restart
+      become: yes
+      become_method: sudo
+      ansible.builtin.service:
+        name: "{{ item }}"
+        state: restarted
+        enabled: yes
+      when: fail2ban_conf.changed    
+      with_items:
+        - fail2ban
+    # https://docs.openstack.org/neutron/victoria/install/controller-install-option1-ubuntu.html#configure-the-linux-bridge-agent    
+    - name: hosts_add_kernel_module_8021q
+      become: yes
+      become_method: sudo
+      community.general.modprobe:
+        name: 8021q
+        state: present
+
+    - name: hosts_add_kernel_module_brfilter
+      become: yes
+      become_method: sudo    
+      community.general.modprobe:
+        name: br_netfilter
+        state: present
+    
+    # https://docs.openstack.org/neutron/victoria/install/controller-install-option1-ubuntu.html#configure-the-linux-bridge-agent
+    - name: os_settings_sysctl_settings_set_nf_iptables
+      become: yes
+      become_method: sudo        
+      sysctl:
+        name: net.bridge.bridge-nf-call-iptables
+        value: '1'
+        sysctl_set: yes        
+
+    - name: os_settings_sysctl_settings_set_nf_ip6tables
+      become: yes
+      become_method: sudo        
+      sysctl:
+        name: net.bridge.bridge-nf-call-ip6tables
+
+        value: '1'
+        sysctl_set: yes   
+
+    # Network
+    - name: hosts_network_bond_vlan_{{ metal_os_vlan }}_add
+      become: yes
+      become_method: sudo  
+      shell: ip link add link bond0 name bond0.{{ metal_os_vlan }} type vlan id {{ metal_os_vlan }}
+      args:
+        creates: /metal/lock/hosts_network_bond_vlan_{{ metal_os_vlan }}_add.lock
+      # Can't template register calls, lookinto
+      register: hosts_network_bond_vlan_1_add
+
+    - name: hosts_network_bond_vlan_{{ metal_os_vlan }}_add_touch_file
+      become: yes
+      become_method: sudo
+      file: 
+        path: /metal/lock/hosts_network_bond_vlan_{{ metal_os_vlan }}_add.lock
+        state: touch
+      when: hosts_network_bond_vlan_1_add.changed
+
+    - name: hosts_network_bond_vlan_{{ metal_os_vlan }}_up
+      become: yes
+      become_method: sudo  
+      shell: ip link set dev bond0.{{ metal_os_vlan }} up 
+      args:
+        creates: /metal/lock/hosts_network_bond_vlan_{{ metal_os_vlan }}_up.lock
+      # Can't template register calls, look into #todo
+      register: hosts_network_bond_vlan_1_up
+
+    - name: hosts_network_bond_vlan_{{ metal_os_vlan }}_up_touch_file
+      become: yes
+      become_method: sudo
+      file: 
+        path: /metal/lock/hosts_network_bond_vlan_{{ metal_os_vlan }}_up.lock
+        state: touch
+      when: hosts_network_bond_vlan_1_up.changed

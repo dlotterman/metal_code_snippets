@@ -1,0 +1,170 @@
+---
+- hosts: tag_osc
+  vars:
+    keystone_mysql_password: keystonemysql1234
+    keystone_admin_password: keystoneadmin1234
+    
+  tasks:
+    - name: openstack_install_keystone_packages
+      become: yes
+      become_method: sudo
+      ansible.builtin.package:
+        name:
+          - keystone
+        state: latest
+
+    - name: openstack_keystone_mysql_db_create
+      become: yes
+      become_method: sudo     
+      mysql_db: 
+        name: keystone
+        state: present
+        login_unix_socket: /var/run/mysqld/mysqld.sock
+
+    - name: openstack_keystone_mysql_user_create
+      become: yes
+      become_method: sudo    
+      mysql_user: 
+        name: keystone  
+        password: "{{ keystone_mysql_password }}"
+        priv: 'keystone.*:ALL,GRANT'
+        login_unix_socket: /var/run/mysqld/mysqld.sock
+        state: present
+        host: "{{ item }}"
+      with_items:
+        - 127.0.0.1
+        - ::1
+        - localhost
+        - '%'
+
+    - name: openstack_keystone_template_conf
+      become: yes
+      become_method: sudo    
+      template:
+        src: keystone.conf.j2
+        dest: /etc/keystone/keystone.conf
+      register: keystone_conf    
+      
+      #This is so horrible. Why?
+    - name: openstack_keystone_db_populate
+      become: yes
+      become_method: sudo  
+      #become_user: keystone
+      shell: su -s /bin/sh -c "keystone-manage db_sync" keystone
+      args:
+        # cmd: keystone-manage db_sync
+        # strip_empty_ends: false
+        creates: /metal/lock/keystonemanagedbsync.lock
+      register: keystonemanagedbsync
+
+    - name: openstack_keystone_db_touch_file
+      become: yes
+      become_method: sudo
+      file: 
+        path: /metal/lock/keystonemanagedbsync.lock
+        state: touch
+      when: keystonemanagedbsync.changed 
+
+    - name: openstack_keystone_fernet_setup
+      become: yes
+      become_method: sudo
+      command: keystone-manage fernet_setup --keystone-user keystone --keystone-group keystone
+      args:
+        creates: /metal/lock/keystonemanagefernetsetup.lock
+        strip_empty_ends: false
+      register: keystonemanagefernetsetup    
+
+    - name: openstack_keystone_fernet_setup_touch_file
+      become: yes
+      become_method: sudo
+      file: 
+        path: /metal/lock/keystonemanagefernetsetup.lock
+        state: touch
+      when: keystonemanagefernetsetup.changed 
+
+    - name: openstack_keystone_credential_setup
+      become: yes
+      become_method: sudo
+      command: keystone-manage credential_setup --keystone-user keystone --keystone-group keystone
+      args:
+        strip_empty_ends: false
+        creates: /metal/lock/keystonemanagecredentialsetup.lock
+      register: keystonemanagecredentialsetup    
+
+    - name: openstack_keystone_credential_setup_touch_file
+      become: yes
+      become_method: sudo
+      file: 
+        path: /metal/lock/keystonemanagecredentialsetup.lock
+        state: touch
+      when: keystonemanagecredentialsetup.changed 
+    
+    # Need to var this
+    - name: openstack_keystone_bootstrap
+      become: yes
+      become_method: sudo
+      command: |
+        keystone-manage bootstrap --bootstrap-password keystoneadmin1234 \
+        --bootstrap-admin-url http://controller:5000/v3/ \
+        --bootstrap-internal-url http://controller:5000/v3/ \
+        --bootstrap-public-url http://controller:5000/v3/ \
+        --bootstrap-username admin \
+        --bootstrap-project-name admin \
+        --bootstrap-role-name admin \
+        --bootstrap-service-name keystone \
+        --bootstrap-region-id RegionOne
+      args:
+        strip_empty_ends: false
+        creates: /metal/lock/keystonemanagebootstrap.lock
+      register: keystonemanagebootstrap
+
+    - name: openstack_keystone_bootstrap_touch_file
+      become: yes
+      become_method: sudo
+      file: 
+        path: /metal/lock/keystonemanagebootstrap.lock
+        state: touch
+      when: keystonemanagebootstrap.changed
+
+    - name: openstack_keystone_template_apacheconf
+      become: yes
+      become_method: sudo    
+      template:
+        src: apache2.conf.j2
+        dest: /etc/apache2/apache2.conf
+      register: apache_conf
+
+    - name: openstack_service_restart_apache
+      become: yes
+      become_method: sudo
+      ansible.builtin.service:
+        name: apache2
+        state: restarted
+        enabled: yes
+      when: apache_conf.changed
+      
+    # Need to var and or rework all of this
+    - name: openstack_glance_osservice_project_create
+      become: yes
+      become_method: sudo
+      command: |
+        openstack project create --domain default  --description "service_project" service \
+        --os-username admin \
+        --os-project-name admin \
+        --os-user-domain-id default \
+        --os-project-domain-id default \
+        --os-identity-api-version 3 \
+        --os-auth-url http://controller:5000 \
+        --os-password keystoneadmin1234 \
+      args:
+        strip_empty_ends: false
+        creates: /metal/lock/osserviceproject.lock
+      register: osserviceproject
+
+    - name: openstack_glance_osservice_project_create_touch_file
+      become: yes
+      become_method: sudo
+      file: 
+        path: /metal/lock/osserviceproject.lock
+        state: touch
+      when: osserviceproject.changed      

@@ -1,0 +1,376 @@
+---
+- hosts: tag_osc
+  vars:
+    neutron_mysql_password: neutronmysql1234
+    neutron_admin_password: neutronadmin1234
+    rabbitmq_openstack_password: rabbitmqopenstack123
+    placement_admin_password: placementadmin1234
+    os_metadata_secret: osmetadatasecret1234
+    # needed for templating
+    nova_admin_password: novaadmin1234
+    
+  tasks:
+    - name: openstack_install_neutron_controller_packages
+      become: yes
+      become_method: sudo
+      ansible.builtin.package:
+        name:
+          - neutron-server
+          - neutron-plugin-ml2
+          - neutron-linuxbridge-agent
+          - neutron-dhcp-agent
+          - neutron-metadata-agent
+        state: latest
+  
+    - name: openstack_neutron_mysql_db_create
+      become: yes
+      become_method: sudo     
+      mysql_db: 
+        name: "{{ item }}"
+        state: present
+        login_unix_socket: /var/run/mysqld/mysqld.sock
+      with_items:
+        - neutron
+
+    - name: openstack_neutron_mysql_neutron_db_user_create
+      become: yes
+      become_method: sudo    
+      mysql_user: 
+        name: neutron
+        append_privs: yes
+        password: "{{ neutron_mysql_password }}"
+        priv: 'neutron.*:ALL,GRANT'
+        login_unix_socket: /var/run/mysqld/mysqld.sock
+        state: present
+        host: "{{ item }}"
+      with_items:
+        - 127.0.0.1
+        - ::1
+        - localhost
+        - '%'
+
+################### OS Bootstrap
+    ##Need to var and or rework all of this
+    - name: openstack_neutron_os_user_create
+      become: yes
+      become_method: sudo
+      command: |
+        openstack user create --domain default --password neutronadmin1234 neutron \
+        --os-username admin \
+        --os-project-name admin \
+        --os-user-domain-id default \
+        --os-project-domain-id default \
+        --os-identity-api-version 3 \
+        --os-auth-url http://controller:5000 \
+        --os-password keystoneadmin1234
+      args:
+        strip_empty_ends: false
+        creates: /metal/lock/neutron_os_user_create.lock
+      register: neutron_os_user_create
+
+    - name: openstack_neutron_os_user_create_touch_file
+      become: yes
+      become_method: sudo
+      file: 
+        path: /metal/lock/neutron_os_user_create.lock
+        state: touch
+      when: neutron_os_user_create.changed
+      
+    - name: openstack_neutron_os_role_create
+      become: yes
+      become_method: sudo
+      command: |
+        openstack role add --project service --user neutron admin \
+        --os-username admin \
+        --os-project-name admin \
+        --os-user-domain-id default \
+        --os-project-domain-id default \
+        --os-identity-api-version 3 \
+        --os-auth-url http://controller:5000 \
+        --os-password keystoneadmin1234
+      args:
+        strip_empty_ends: false
+        creates: /metal/lock/neutron_os_role_create.lock
+      register: neutron_os_role_create
+
+    - name: openstack_neutron_os_role_create_touch_file
+      become: yes
+      become_method: sudo
+      file: 
+        path: /metal/lock/neutron_os_role_create.lock
+        state: touch
+      when: neutron_os_role_create.changed
+      
+    - name: openstack_neutron_os_service_create
+      become: yes
+      become_method: sudo
+      command: |
+        openstack service create --name neutron --description "os_working" network \
+        --os-username admin \
+        --os-project-name admin \
+        --os-user-domain-id default \
+        --os-project-domain-id default \
+        --os-identity-api-version 3 \
+        --os-auth-url http://controller:5000 \
+        --os-password keystoneadmin1234
+      args:
+        strip_empty_ends: false
+        creates: /metal/lock/neutron_os_service_create.lock
+      register: neutron_os_service_create
+
+    - name: openstack_neutron_os_service_create_touch_file
+      become: yes
+      become_method: sudo
+      file: 
+        path: /metal/lock/neutron_os_service_create.lock
+        state: touch
+      when: neutron_os_service_create.changed
+
+################### OS Bootstrap Endpoints
+
+    - name: openstack_neutron_os_endpoint_public_create
+      become: yes
+      become_method: sudo
+      command: |
+        openstack endpoint create --region RegionOne network public http://controller:9696 \
+        --os-username admin \
+        --os-project-name admin \
+        --os-user-domain-id default \
+        --os-project-domain-id default \
+        --os-identity-api-version 3 \
+        --os-auth-url http://controller:5000 \
+        --os-password keystoneadmin1234 \
+        --os-password keystoneadmin1234 \
+      args:
+        strip_empty_ends: false
+        creates: /metal/lock/neutron_os_endpoint_public.lock
+      register: neutron_os_endpoint_public
+      
+    - name: openstack_neutron_os_endpoint_public_create_touch_file
+      become: yes
+      become_method: sudo
+      file: 
+        path: /metal/lock/neutron_os_endpoint_public.lock
+        state: touch
+      when: neutron_os_endpoint_public.changed   
+
+    - name: openstack_neutron_os_endpoint_internal_create
+      become: yes
+      become_method: sudo
+      command: |
+        openstack endpoint create --region RegionOne network internal http://controller:9696 \
+        --os-username admin \
+        --os-project-name admin \
+        --os-user-domain-id default \
+        --os-project-domain-id default \
+        --os-identity-api-version 3 \
+        --os-auth-url http://controller:5000 \
+        --os-password keystoneadmin1234 \
+      args:
+        strip_empty_ends: false
+        creates: /metal/lock/neutron_os_endpoint_internal.lock
+      register: neutron_os_endpoint_internal
+
+    - name: openstack_neutron_os_endpoint_internal_create_touch_file
+      become: yes
+      become_method: sudo
+      file: 
+        path: /metal/lock/neutron_os_endpoint_internal.lock
+        state: touch
+      when: neutron_os_endpoint_internal.changed   
+
+    - name: openstack_neutron_os_endpoint_admin_create
+      become: yes
+      become_method: sudo
+      command: |
+        openstack endpoint create --region RegionOne network admin http://controller:9696 \
+        --os-username admin \
+        --os-project-name admin \
+        --os-user-domain-id default \
+        --os-project-domain-id default \
+        --os-identity-api-version 3 \
+        --os-auth-url http://controller:5000 \
+        --os-password keystoneadmin1234 \
+      args:
+        strip_empty_ends: false
+        creates: /metal/lock/neutron_os_endpoint_admin.lock
+      register: neutron_os_endpoint_admin
+
+    - name: openstack_neutron_os_endpoint_admin_create_touch_file
+      become: yes
+      become_method: sudo
+      file: 
+        path: /metal/lock/neutron_os_endpoint_admin.lock
+        state: touch
+      when: neutron_os_endpoint_admin.changed
+      
+      
+################### Template confs and restart
+# https://docs.openstack.org/neutron/victoria/install/controller-install-option1-ubuntu.html#configure-the-server-component
+
+    - name: openstack_neutron_template_conf
+      become: yes
+      become_method: sudo    
+      template:
+        src: neutron_controller.conf.j2
+        dest: /etc/neutron/neutron.conf
+      register: neutron_conf
+
+    - name: openstack_neutron_ml2_plugin_template_conf
+      become: yes
+      become_method: sudo    
+      template:
+        src: ml2_conf.ini.j2
+        dest: /etc/neutron/plugins/ml2/ml2_conf.ini
+      register: neutron_ml2_plugin_conf        
+      
+    - name: openstack_neutron_linuxbridge_agent_template_conf
+      become: yes
+      become_method: sudo    
+      template:
+        src: linuxbridge_agent.ini.j2
+        dest: /etc/neutron/plugins/ml2/linuxbridge_agent.ini
+      register: openstack_neutron_linuxbridge_agent_template_conf
+      
+    - name: openstack_neutron_dhcp_agent_template_conf
+      become: yes
+      become_method: sudo    
+      template:
+        src: dhcp_agent.ini.j2
+        dest: /etc/neutron/dhcp_agent.ini
+      register: neutron_dhcp_agent_conf
+
+    # https://docs.openstack.org/neutron/victoria/install/controller-install-ubuntu.html#configure-the-metadata-agent
+    - name: openstack_neutron_metadata_template_conf
+      become: yes
+      become_method: sudo    
+      template:
+        src: metadata_agent.ini.j2
+        dest: /etc/neutron/metadata_agent.ini
+      register: neutron_metadata_agent_conf
+
+
+
+        
+      #This is so horrible. Why?
+    - name: openstack_neutron_db_populate
+      become: yes
+      become_method: sudo  
+      # This is why people hate openstack right here
+      shell:  su -s /bin/sh -c "neutron-db-manage --config-file /etc/neutron/neutron.conf --config-file /etc/neutron/plugins/ml2/ml2_conf.ini upgrade head" neutron
+      args:
+        creates: /metal/lock/openstack_neutron_db_populate.lock
+      register: openstack_neutron_db_populate
+
+    - name: openstack_neutron_db_populate_touch_file
+      become: yes
+      become_method: sudo
+      file: 
+        path: /metal/lock/openstack_neutron_db_populate.lock
+        state: touch
+      when: openstack_neutron_db_populate.changed or openstack_neutron_db_populate.changed     
+
+    - name: openstack_neutron_controller_restart
+      become: yes
+      become_method: sudo
+      ansible.builtin.service:
+        name: "{{ item }}"
+        state: restarted
+        enabled: yes
+      when: neutron_conf.changed or neutron_ml2_plugin_conf.changed 
+      with_items:
+        - nova-api
+        - neutron-server
+
+    - name: openstack_neutron_dhcp_agent_restart
+      become: yes
+      become_method: sudo
+      ansible.builtin.service:
+        name: "{{ item }}"
+        state: restarted
+        enabled: yes
+      when: neutron_dhcp_agent_conf.changed or neutron_conf.changed
+      with_items:
+        - neutron-dhcp-agent
+ 
+    - name: openstack_neutron_linuxbridge_restart
+      become: yes
+      become_method: sudo
+      ansible.builtin.service:
+        name: "{{ item }}"
+        state: restarted
+        enabled: yes
+      when: openstack_neutron_linuxbridge_agent_template_conf.changed or neutron_conf.changed
+      with_items:
+        - neutron-linuxbridge-agent
+        - neutron-linuxbridge-cleanup
+   
+    - name: openstack_neutron_metadata_agent_conf_restart
+      become: yes
+      become_method: sudo
+      ansible.builtin.service:
+        name: "{{ item }}"
+        state: restarted
+        enabled: yes
+      when: neutron_metadata_agent_conf.changed or neutron_conf.changed
+      with_items:
+        - neutron-metadata-agent        
+
+################### Provider Network
+# https://docs.openstack.org/install-guide/launch-instance-networks-provider.html      
+      
+    - name: openstack_neutron_provider_network_create
+      become: yes
+      become_method: sudo
+      command: |
+        openstack network create --share --external \
+        --provider-physical-network provider \
+        --provider-network-type flat provider \
+        --os-username admin \
+        --os-project-name admin \
+        --os-user-domain-id default \
+        --os-project-domain-id default \
+        --os-identity-api-version 3 \
+        --os-auth-url http://controller:5000 \
+        --os-password keystoneadmin1234
+      args:
+        strip_empty_ends: false
+        creates: /metal/lock/openstack_neutron_provider_network_create.lock
+      register: openstack_neutron_provider_network_create
+
+    - name: openstack_neutron_provider_network_create_touch_file
+      become: yes
+      become_method: sudo
+      file: 
+        path: /metal/lock/openstack_neutron_provider_network_create.lock
+        state: touch
+      when: openstack_neutron_provider_network_create.changed
+
+    # VAR THIS #todo
+    - name: openstack_neutron_provider_network_subnet_create
+      become: yes
+      become_method: sudo
+      command: |
+        openstack subnet create --network provider \
+        --allocation-pool start=192.168.100.2,end=192.168.100.254 \
+        --dns-nameserver 127.0.0.1 --gateway 192.168.100.1 \
+        --subnet-range 192.168.100.0/24 provider \
+        --os-username admin \
+        --os-project-name admin \
+        --os-user-domain-id default \
+        --os-project-domain-id default \
+        --os-identity-api-version 3 \
+        --os-auth-url http://controller:5000 \
+        --os-password keystoneadmin1234
+      args:
+        strip_empty_ends: false
+        creates: /metal/lock/openstack_neutron_provider_network_subnet_create.lock
+      register: openstack_neutron_provider_network_subnet_create
+
+    - name: openstack_neutron_provider_network_subnet_create_touch_file
+      become: yes
+      become_method: sudo
+      file: 
+        path: /metal/lock/openstack_neutron_provider_network_subnet_create.lock
+        state: touch
+      when: openstack_neutron_provider_network_subnet_create.changed            

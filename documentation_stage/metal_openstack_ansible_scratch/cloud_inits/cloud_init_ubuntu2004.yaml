@@ -1,0 +1,106 @@
+ubuntu_user_data: |
+  #cloud-config
+
+  package_upgrade: true
+  package_reboot_if_required: true
+
+  packages:
+   - screen
+   - sysbench
+   - ethtool
+   - fail2ban
+   - iperf3
+   - lshw
+   - pciutils
+   - ufw
+   - vlan
+   - arping
+   - unattended-upgrades
+   - unzip
+   - strace
+   - git
+   - dnsutils
+
+  groups:
+   - cloud-users
+
+  users:
+    - name: adminuser
+      primary_group: cloud-users
+      sudo: ALL=(ALL) NOPASSWD:ALL
+      groups: [cloud-users, sudo]
+      shell: /bin/bash
+
+  datasource:
+    Ec2:
+      strict_id: false
+
+  # keep sshd disabled till everything is done at the end of runcmd
+  bootcmd:
+    - [ cloud-init-per, instance, systemctl, stop, sshd ]
+    - [ cloud-init-per, instance, systemctl, disable, sshd ]
+
+  runcmd:
+    - systemctl stop sshd
+    - systemctl disable sshd
+    - systemctl enable fail2ban
+    - systemctl start fail2ban
+    - systemctl enable unattended-upgrades
+    - systemctl start unattended-upgrades
+    - ufw default allow outgoing
+    - ufw default deny incoming
+    - ufw allow ssh
+    - ufw allow from 10.0.0.1/8
+    - ufw enable
+    - systemctl enable ufw
+    - systemctl start ufw
+    - modprobe 8021q
+    - echo "8021q" >> /etc/modules
+    - rsync -av /root/.ssh /home/adminuser/
+    - chown -R adminuser:cloud-users /home/adminuser/.ssh
+    - sed -i -e '/^#PermitRootLogin/s/^.*$/PermitRootLogin no/' /etc/ssh/sshd_config
+    - systemctl enable ssh
+    - systemctl start ssh
+
+  write_files:
+    - owner: root:root
+      path: /etc/fail2ban/jail.local
+      content: |
+        [DEFAULT]
+        bantime = 3600
+        banaction = ufw
+        ignoreip = 127.0.0.1/8 10.0.0.0/8
+        findtime = 600
+        maxretry = 5
+        [sshd]
+        enabled = true
+        logpath = %(sshd_log)s
+        mode = aggressive
+      permissions: '0644'
+    - owner: root:root
+      path: /etc/apt/apt.conf.d/50unattended-upgrades
+      content: |
+        Unattended-Upgrade::Allowed-Origins {
+        "${distro_id}:${distro_codename}";
+        "${distro_id}:${distro_codename}-security";
+        "${distro_id}ESMApps:${distro_codename}-apps-security";
+        "${distro_id}ESM:${distro_codename}-infra-security";
+        };
+      permissions: '0644'
+    - owner: root:root
+      path: /etc/apt/apt.conf.d/21auto-upgrades_on
+      content: |
+        APT::Periodic::Update-Package-Lists "1";
+        APT::Periodic::Download-Upgradeable-Packages "1";
+        APT::Periodic::AutocleanInterval "7";
+        APT::Periodic::Unattended-Upgrade "1";
+      permissions: '0644'
+    - owner: root:root
+      path: /etc/crontab
+      append: true
+      content: |
+        05 * * * * root /usr/bin/unattended-upgrade -v
+        05 11 * * * root systemctl restart sshd
+        15 11 * * * root systemctl restart serial-getty@ttyS1.service
+        20 11 * * * root systemctl restart getty@tty1.service
+      permissions: '0644'    

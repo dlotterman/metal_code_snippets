@@ -1,0 +1,333 @@
+---
+- hosts: tag_osc
+  vars:
+    nova_mysql_password: novamysql1234
+    nova_admin_password: novaadmin1234
+    rabbitmq_openstack_password: rabbitmqopenstack123
+    # Templating
+    placement_admin_password: placementadmin1234
+    neutron_admin_password: neutronadmin1234
+    os_metadata_secret: osmetadatasecret1234
+    
+  tasks:
+    - name: openstack_install_nova_controller_packages
+      become: yes
+      become_method: sudo
+      ansible.builtin.package:
+        name:
+          - nova-api
+          - nova-conductor
+          - nova-novncproxy
+          - nova-scheduler
+        state: latest
+
+    - name: openstack_nova_mysql_db_create
+      become: yes
+      become_method: sudo     
+      mysql_db: 
+        name: "{{ item }}"
+        state: present
+        login_unix_socket: /var/run/mysqld/mysqld.sock
+      with_items:
+        - nova_api
+        - nova
+        - nova_cell0
+
+    - name: openstack_nova_mysql_novadb_user_create
+      become: yes
+      become_method: sudo    
+      mysql_user: 
+        name: nova
+        append_privs: yes
+        password: "{{ nova_mysql_password }}"
+        priv: 'nova.*:ALL,GRANT'
+        login_unix_socket: /var/run/mysqld/mysqld.sock
+        state: present
+        host: "{{ item }}"
+      with_items:
+        - 127.0.0.1
+        - ::1
+        - localhost
+        - '%'
+
+    - name: openstack_nova_mysql_nova_api_db_user_create
+      become: yes
+      become_method: sudo    
+      mysql_user: 
+        name: nova
+        append_privs: yes
+        password: "{{ nova_mysql_password }}"
+        priv: 'nova_api.*:ALL,GRANT'
+        login_unix_socket: /var/run/mysqld/mysqld.sock
+        state: present
+        host: "{{ item }}"
+      with_items:
+        - 127.0.0.1
+        - ::1
+        - localhost
+        - '%'
+
+    - name: openstack_nova_mysql_nova_cell0_db_user_create
+      become: yes
+      become_method: sudo    
+      mysql_user: 
+        name: nova
+        append_privs: yes
+        password: "{{ nova_mysql_password }}"
+        priv: 'nova_cell0.*:ALL,GRANT'
+        login_unix_socket: /var/run/mysqld/mysqld.sock
+        state: present
+        host: "{{ item }}"
+      with_items:
+        - 127.0.0.1
+        - ::1
+        - localhost
+        - '%'
+
+    ##Need to var and or rework all of this
+    - name: openstack_nova_osuser_create
+      become: yes
+      become_method: sudo
+      command: |
+        openstack user create --domain default --password novaadmin1234 nova \
+        --os-username admin \
+        --os-project-name admin \
+        --os-user-domain-id default \
+        --os-project-domain-id default \
+        --os-identity-api-version 3 \
+        --os-auth-url http://controller:5000 \
+        --os-password keystoneadmin1234
+      args:
+        strip_empty_ends: false
+        creates: /metal/lock/novaosusercreate.lock
+      register: novaosusercreate
+
+    - name: openstack_nova_osuser_create_touch_file
+      become: yes
+      become_method: sudo
+      file: 
+        path: /metal/lock/novaosusercreate.lock
+        state: touch
+      when: novaosusercreate.changed
+
+    - name: openstack_nova_osrole_create
+      become: yes
+      become_method: sudo
+      command: |
+        openstack role add --project service --user nova admin \
+        --os-username admin \
+        --os-project-name admin \
+        --os-user-domain-id default \
+        --os-project-domain-id default \
+        --os-identity-api-version 3 \
+        --os-auth-url http://controller:5000 \
+        --os-password keystoneadmin1234
+      args:
+        strip_empty_ends: false
+        creates: /metal/lock/novaosrolecreate.lock
+      register: novaosrolecreate
+
+    - name: openstack_nova_osrole_create_touch_file
+      become: yes
+      become_method: sudo
+      file: 
+        path: /metal/lock/novaosrolecreate.lock
+        state: touch
+      when: novaosrolecreate.changed
+      
+    - name: openstack_nova_osservice_create
+      become: yes
+      become_method: sudo
+      command: |
+        openstack service create --name nova --description "os_compute" compute \
+        --os-username admin \
+        --os-project-name admin \
+        --os-user-domain-id default \
+        --os-project-domain-id default \
+        --os-identity-api-version 3 \
+        --os-auth-url http://controller:5000 \
+        --os-password keystoneadmin1234
+      args:
+        strip_empty_ends: false
+        creates: /metal/lock/novaosservicecreate.lock
+      register: novaosservicecreate
+
+    - name: openstack_nova_osservice_create_touch_file
+      become: yes
+      become_method: sudo
+      file: 
+        path: /metal/lock/novaosservicecreate.lock
+        state: touch
+      when: novaosservicecreate.changed          
+
+    - name: openstack_nova_osendpoint_public_create
+      become: yes
+      become_method: sudo
+      command: |
+        openstack endpoint create --region RegionOne compute public http://controller:8774/v2.1 \
+        --os-username admin \
+        --os-project-name admin \
+        --os-user-domain-id default \
+        --os-project-domain-id default \
+        --os-identity-api-version 3 \
+        --os-auth-url http://controller:5000 \
+        --os-password keystoneadmin1234 \
+      args:
+        strip_empty_ends: false
+        creates: /metal/lock/novaosendpointpublic.lock
+      register: novaosendpointpublic
+
+    - name: openstack_nova_osendpoint_public_create_touch_file
+      become: yes
+      become_method: sudo
+      file: 
+        path: /metal/lock/novaosendpointpublic.lock
+        state: touch
+      when: novaosendpointpublic.changed   
+
+    - name: openstack_nova_osendpoint_internal_create
+      become: yes
+      become_method: sudo
+      command: |
+        openstack endpoint create --region RegionOne compute internal http://controller:8774/v2.1 \
+        --os-username admin \
+        --os-project-name admin \
+        --os-user-domain-id default \
+        --os-project-domain-id default \
+        --os-identity-api-version 3 \
+        --os-auth-url http://controller:5000 \
+        --os-password keystoneadmin1234 \
+      args:
+        strip_empty_ends: false
+        creates: /metal/lock/novaosendpointinternal.lock
+      register: novaosendpointinternal
+
+    - name: openstack_nova_osendpoint_internal_create_touch_file
+      become: yes
+      become_method: sudo
+      file: 
+        path: /metal/lock/novaosendpointinternal.lock
+        state: touch
+      when: novaosendpointinternal.changed   
+
+    - name: openstack_nova_osendpoint_admin_create
+      become: yes
+      become_method: sudo
+      command: |
+        openstack endpoint create --region RegionOne compute admin http://controller:8774/v2.1 \
+        --os-username admin \
+        --os-project-name admin \
+        --os-user-domain-id default \
+        --os-project-domain-id default \
+        --os-identity-api-version 3 \
+        --os-auth-url http://controller:5000 \
+        --os-password keystoneadmin1234 \
+      args:
+        strip_empty_ends: false
+        creates: /metal/lock/novaosendpointadmin.lock
+      register: novaosendpointadmin
+
+    - name: openstack_nova_osendpoint_admin_create_touch_file
+      become: yes
+      become_method: sudo
+      file: 
+        path: /metal/lock/novaosendpointadmin.lock
+        state: touch
+      when: novaosendpointadmin.changed
+
+    - name: openstack_nova_template_conf
+      become: yes
+      become_method: sudo    
+      template:
+        src: nova_controller.conf.j2
+        dest: /etc/nova/nova.conf
+      register: nova_conf
+      
+    - name: openstack_apache_restart
+      become: yes
+      become_method: sudo
+      ansible.builtin.service:
+        name: apache2
+        state: restarted
+        enabled: yes
+      when: nova_conf.changed 
+
+    - name: openstack_nova_restart
+      become: yes
+      become_method: sudo
+      ansible.builtin.service:
+        name: "{{ item }}"
+        state: restarted
+        enabled: yes
+      when: nova_conf.changed    
+      with_items:
+        - nova-api
+        - nova-scheduler
+        - nova-conductor
+        - nova-novncproxy
+        
+    - name: openstack_nova_api_db_populate
+      become: yes
+      become_method: sudo  
+      shell: su -s /bin/sh -c "nova-manage api_db sync" nova
+      args:
+        creates: /metal/lock/nova_api_manage_db_sync.lock
+      register: nova_api_manage_db_sync
+
+    - name: openstack_nova_api_db_touch_file
+      become: yes
+      become_method: sudo
+      file: 
+        path: /metal/lock/nova_api_manage_db_sync.lock
+        state: touch
+      when: nova_api_manage_db_sync.changed
+
+    - name: openstack_novacellv2_mapcell0_db_populate
+      become: yes
+      become_method: sudo  
+      shell: su -s /bin/sh -c "nova-manage cell_v2 map_cell0" nova
+      args:
+        creates: /metal/lock/nova_cellv2_map_cell0_db_sync.lock
+      register: nova_cellv2_map_cell0_db_sync
+
+    - name: openstack_novacellv2_mapcell0_db_touch_file
+      become: yes
+      become_method: sudo
+      file: 
+        path: /metal/lock/nova_cellv2_map_cell0_db_sync.lock
+        state: touch
+      when: nova_cellv2_map_cell0_db_sync.changed
+      
+    - name: openstack_novacellv2_createcell1_db_populate
+      become: yes
+      become_method: sudo  
+      shell: su -s /bin/sh -c "nova-manage cell_v2 create_cell --name=cell1 --verbose" nova
+      args:
+        creates: /metal/lock/nova_cellv2_create_cell1_db_sync.lock
+      register: nova_cellv2_create_cell1_db_sync
+
+    - name: openstack_novacellv2_createcell1_db_touch_file
+      become: yes
+      become_method: sudo
+      file: 
+        path: /metal/lock/nova_cellv2_create_cell1_db_sync.lock
+        state: touch
+      when: nova_cellv2_create_cell1_db_sync.changed            
+
+      #This is so horrible. Why?
+    - name: openstack_nova_db_populate
+      become: yes
+      become_method: sudo  
+      shell: su -s /bin/sh -c "nova-manage db sync" nova
+      args:
+        creates: /metal/lock/nova_manage_db_sync.lock
+      register: nova_manage_db_sync
+
+    - name: openstack_nova_db_touch_file
+      become: yes
+      become_method: sudo
+      file: 
+        path: /metal/lock/nova_manage_db_sync.lock
+        state: touch
+      when: nova_manage_db_sync.changed
+

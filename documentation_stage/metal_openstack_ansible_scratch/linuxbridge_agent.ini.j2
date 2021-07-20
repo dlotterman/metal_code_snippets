@@ -1,0 +1,10 @@
+[DEFAULT]
+[agent]
+[linux_bridge]
+physical_interface_mappings = provider:bond0.2335
+[network_log]
+[securitygroup]
+enable_security_group = true
+firewall_driver = neutron.agent.linux.iptables_firewall.IptablesFirewallDriver
+[vxlan]
+enable_vxlan = false

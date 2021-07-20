@@ -1,0 +1,103 @@
+[DEFAULT]
+lock_path = /var/lock/nova
+state_path = /var/lib/nova
+transport_url = rabbit://openstack:{{ rabbitmq_openstack_password }}@controller:5672/
+{% for host in groups['tag_osc'] %}
+{{"my_ip = " + hostvars[host]['ansible_facts']['bond0_0']['ipv4']['address']}}
+{% endfor %}
+[api]
+auth_strategy = keystone
+[api_database]
+connection = mysql+pymysql://nova:{{ nova_mysql_password }}@controller/nova_api
+[barbican]
+[cache]
+[cinder]
+[compute]
+[conductor]
+[console]
+[consoleauth]
+[cors]
+[cyborg]
+[database]
+connection = mysql+pymysql://nova:{{ nova_mysql_password }}@controller/nova
+[devices]
+[ephemeral_storage_encryption]
+[filter_scheduler]
+[glance]
+api_servers = http://controller:9292
+[guestfs]
+[healthcheck]
+[hyperv]
+[image_cache]
+[ironic]
+[key_manager]
+[keystone]
+[keystone_authtoken]
+www_authenticate_uri = http://controller:5000/
+auth_url = http://controller:5000/
+memcached_servers = controller:11211
+auth_type = password
+project_domain_name = Default
+user_domain_name = Default
+project_name = service
+username = nova
+password = {{ nova_admin_password }}
+[libvirt]
+[metrics]
+[mks]
+[neutron]
+auth_url = http://controller:5000
+auth_type = password
+project_domain_name = default
+user_domain_name = default
+region_name = RegionOne
+project_name = service
+username = neutron
+password = {{ neutron_admin_password }}
+service_metadata_proxy = true
+metadata_proxy_shared_secret = {{ os_metadata_secret }}
+[notifications]
+[oslo_concurrency]
+lock_path = /var/lib/nova/tmp
+[oslo_messaging_amqp]
+[oslo_messaging_kafka]
+[oslo_messaging_notifications]
+[oslo_messaging_rabbit]
+[oslo_middleware]
+[oslo_policy]
+[pci]
+[placement]
+region_name = RegionOne
+project_domain_name = Default
+project_name = service
+auth_type = password
+user_domain_name = Default
+auth_url = http://controller:5000/v3
+username = placement
+password = {{ placement_admin_password }}
+[powervm]
+[privsep]
+[profiler]
+[quota]
+[rdp]
+[remote_debug]
+[scheduler]
+discover_hosts_in_cells_interval = 60
+[serial_console]
+[service_user]
+[spice]
+[upgrade_levels]
+[vault]
+[vendordata_dynamic_auth]
+[vmware]
+[vnc]
+enabled = true
+server_listen = $my_ip
+server_proxyclient_address = $my_ip
+[workarounds]
+[wsgi]
+[zvm]
+[cells]
+enable = False
+[os_region_name]
+openstack =

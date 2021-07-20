@@ -1,0 +1,18 @@
+#jinja2: trim_blocks:False
+listen-address=::1,127.0.0.1
+expand-hosts
+domain-needed
+bogus-priv
+dns-forward-max=150
+cache-size=1000
+neg-ttl=360
+no-poll
+server=147.75.207.207
+server=147.75.207.208
+
+{% for host in groups['tag_os'] %}
+{{"address=/" + hostvars[host]['ansible_facts']['hostname'] +"/" + hostvars[host]['ansible_facts']['bond0_0']['ipv4']['address']}}
+{% endfor %}
+{% for host in groups['tag_osc'] %}
+{{"address=/controller/" +  hostvars[host]['ansible_facts']['bond0_0']['ipv4']['address']}}
+{% endfor %}

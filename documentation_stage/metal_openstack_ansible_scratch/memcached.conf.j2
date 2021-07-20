@@ -1,0 +1,9 @@
+-d
+logfile /var/log/memcached.log
+-m 64
+-p 11211
+-u memcache
+-P /var/run/memcached/memcached.pid
+{% for host in groups['tag_osc'] %}
+{{"-l 127.0.0.1," +  hostvars[host]['ansible_facts']['bond0_0']['ipv4']['address']}}
+{% endfor %}

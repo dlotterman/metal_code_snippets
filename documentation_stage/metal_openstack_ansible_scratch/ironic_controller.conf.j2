@@ -1,0 +1,60 @@
+[DEFAULT]
+log_dir = /var/log/ironic
+transport_url = rabbit://openstack:{{ rabbitmq_openstack_password }}@controller:5672/
+auth_strategy=keystone
+[agent]
+[anaconda]
+[ansible]
+[api]
+[audit]
+[cinder]
+[conductor]
+[console]
+[cors]
+[database]
+connection=mysql+pymysql://ironic:{{ ironic_mysql_password }}@controller/ironic?charset=utf8
+[deploy]
+[dhcp]
+[disk_partitioner]
+[disk_utils]
+[drac]
+[glance]
+[healthcheck]
+[ilo]
+[inspector]
+[ipmi]
+[irmc]
+[ironic_lib]
+[iscsi]
+[keystone_authtoken]
+www_authenticate_uri = http://controller:5000/
+auth_url = http://controller:5000/
+auth_type = password
+project_domain_name = Default
+user_domain_name = Default
+project_name = service
+username = ironic
+password = {{ ironic_admin_password }}
+[mdns]
+[metrics]
+[metrics_statsd]
+[molds]
+[neutron]
+[nova]
+[oslo_concurrency]
+[oslo_messaging_amqp]
+[oslo_messaging_kafka]
+[oslo_messaging_notifications]
+[oslo_messaging_rabbit]
+[oslo_middleware]
+[oslo_policy]
+[oslo_reports]
+[profiler]
+[pxe]
+[redfish]
+[service_catalog]
+[snmp]
+[ssl]
+[swift]
+[xclarity]
+

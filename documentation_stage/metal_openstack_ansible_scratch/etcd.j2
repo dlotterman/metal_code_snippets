@@ -1,0 +1,11 @@
+ETCD_NAME="controller"
+ETCD_DATA_DIR="/var/lib/etcd"
+ETCD_INITIAL_CLUSTER_STATE="new"
+ETCD_INITIAL_CLUSTER_TOKEN="etcd-cluster-01"
+{% for host in groups['tag_osc'] %}
+{{'ETCD_INITIAL_CLUSTER="controller=http://' + hostvars[host]['ansible_facts']['bond0_0']['ipv4']['address'] + ':2380"'}}
+{{'ETCD_INITIAL_ADVERTISE_PEER_URLS="http://' + hostvars[host]['ansible_facts']['bond0_0']['ipv4']['address'] + ':2380"'}}
+{{'ETCD_ADVERTISE_CLIENT_URLS="http://' + hostvars[host]['ansible_facts']['bond0_0']['ipv4']['address'] + ':2379"'}}
+{{'ETCD_LISTEN_CLIENT_URLS="http://' + hostvars[host]['ansible_facts']['bond0_0']['ipv4']['address'] + ':2379"'}}
+{{'ETCD_LISTEN_PEER_URLS="http://' + hostvars[host]['ansible_facts']['bond0_0']['ipv4']['address'] + ':2380"'}}
+{% endfor %}

@@ -1,0 +1,93 @@
+---
+- hosts: tag_osc
+  vars:
+    ironic_mysql_password: ironicmysql1234
+    ironic_admin_password: ironicadmin1234
+    rabbitmq_openstack_password: rabbitmqopenstack123
+
+  tasks:
+    - name: openstack_install_ironic_packages
+      become: yes
+      become_method: sudo
+      ansible.builtin.package:
+        name:
+          - ironic-api
+          - ironic-conductor
+          - python3-ironicclient
+        state: latest
+
+    - name: openstack_ironic_mysql_db_create
+      become: yes
+      become_method: sudo     
+      mysql_db: 
+        name: ironic
+        state: present
+        login_unix_socket: /var/run/mysqld/mysqld.sock
+
+    - name: openstack_ironice_mysql_user_create
+      become: yes
+      become_method: sudo    
+      mysql_user: 
+        name: ironic
+        password: "{{ ironic_mysql_password }}"
+        priv: 'ironic.*:ALL,GRANT'
+        login_unix_socket: /var/run/mysqld/mysqld.sock
+        state: present
+        host: "{{ item }}"
+      with_items:
+        - 127.0.0.1
+        - ::1
+        - localhost
+        - '%'
+
+    - name: openstack_ironic_template_conf
+      become: yes
+      become_method: sudo    
+      template:
+        src: ironic_controller.conf.j2
+        dest: /etc/ironic/ironic.conf
+      register: ironic_conf
+      
+    - name: openstack_ironic_restart
+      become: yes
+      become_method: sudo
+      ansible.builtin.service:
+        name: ironic-api
+        state: restarted
+        enabled: yes
+      when: ironic_conf.changed
+
+      #This is so horrible. Why?
+    - name: openstack_ironic_db_populate
+      become: yes
+      become_method: sudo  
+      shell: ironic-dbsync --config-file /etc/ironic/ironic.conf create_schema
+      args:
+        creates: /metal/lock/openstack_ironic_db_populate.lock
+      register: openstack_ironic_db_populate
+
+    - name: openstack_ironic_db_populate_touch_file
+      become: yes
+      become_method: sudo
+      file: 
+        path: /metal/lock/openstack_ironic_db_populate.lock
+        state: touch
+      when: openstack_ironic_db_populate.changed
+      
+      #TODO this should go to available then symlink to be debian-like apache
+    - name: openstack_ironic_template_apache_conf
+      become: yes
+      become_method: sudo    
+      template:
+        src: apache_ironic.conf
+        dest: /etc/apache2/sites-available/ironic.conf
+      register: openstack_ironic_template_apache_conf
+      
+    - name: openstack_service_restart_apache
+      become: yes
+      become_method: sudo
+      ansible.builtin.service:
+        name: apache2
+        state: restarted
+        enabled: yes
+      when: openstack_ironic_template_apache_conf.changed      
