@@ -49,10 +49,11 @@ datasource:
 
 # keep sshd disabled till everything is done at the end of runcmd
 bootcmd:
-  - systemctl stop sshd || true
-  - systemctl disable sshd || true
+  - systemctl enable sshd || true
  
 runcmd:
+  - systemctl disable sshd
+  - systemctl stop sshd
   - mv /etc/yum.repos.d/packet.repo /root/packet.repo.bak
   - echo "8021q"  >> /etc/modules-load.d/networking.conf
   - modprobe 8021q
@@ -72,8 +73,6 @@ runcmd:
   - chown -R adminuser:cloud-users /home/adminuser/.ssh
   - sed -i -e '/^#PermitRootLogin/s/^.*$/PermitRootLogin no/' /etc/ssh/sshd_config
   - systemctl restart network
-  - systemctl start sshd
-  - systemctl enable sshd
 
 write_files:
   - owner: root:root
