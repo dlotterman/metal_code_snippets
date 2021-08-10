@@ -44,7 +44,7 @@ The options for self-hosted on Metal are too many and with vastly different pro'
 
   * The advertised `7.6TB` of NVMe in the *m3.large.x86* is actually 2x 3.8TB drives, where each drive is a high performance Micron 9XXX line device local to the chassis. [With each drive being capable of ~120k IOPs per drive](https://in.micron.com/about/blog/2019/june/using-namespaces-on-the-micron-9300-nvme-ssd-to-improve-application-performance), the `m3.large.x86` can be capable of north of ~240k IOPs per box. Having these drives a PCI lane away from the [CPU unlocks performance profiles not available in other platforms](https://www.micron.com/-/media/client/global/documents/products/technical-marketing-brief/9300_nvme_ssds_future_proof_cassandra_tech_brief.pdf), and is truly a differentiator for BYO / Self Hosted storage designs.
 
-* NVMe and tiering inside of the `s3.xlarge.x86`
+* NVMe and tiering inside of the [s3.xlarge.x86](https://metal.equinix.com/product/servers/s3-xlarge/)
 
   * The *s3.xlarge.x86* has three tiers of internal disk, SSD (intended for boot), NVMe (intended for cache) and HDD (intended for volume storage). The varying tactical options around disk layout and tiering mean the s3 can both fill a "higher performance" (Tier 1.5) function as well as archival (tier 3) functions. *nix in particular has a number of paths for creating resilient but performant disk tiering designs relevant to the *s3.xlarge.x86* instance type.
     * [ZFS Tiering](http://www.c0t0d0s0.org/2021-04-02/tiering-and-zfs.markdown)
@@ -61,14 +61,13 @@ The options for self-hosted on Metal are too many and with vastly different pro'
 
   * Available as a feature in our platform for reserved instances only. Please consult a sales team for additional information
 
-* * 
 
 * Cohesity - https://metal.equinix.com/solutions/cohesity/
 
   * Cohesity has partnered with Equinix Metal to provide a unique performant, resilient and supported storage and services platform inside of a customer's Equinix Metal environment. 
   * This pre-certified solution takes advantage of all of the advantages detailed her and provides them in an easier to consume, fully supported and certified platform.
 
-* Layer-2 + Customer Owned Network
+* [Layer-2 + Customer Owned Network](https://metal.equinix.com/developers/docs/layer2-networking/)
 
   * Storage is functionally useless without a supporting network. For storage designs that require specific constraints (floating VIPs, BYO-Subnets, BYO-Overlay etc), our Layer-2 functionality gives customers their own entirely dedicated Layer-2 domains (presented as 802.1q VLANs).
     * This also gives us a point of control for [storage traffic shaping](https://octetz.com/docs/2020/2020-09-16-tc/) on multi-tenant networks
@@ -107,8 +106,8 @@ Nodes that participate in these data sets generally have the same operational li
 * Backup
 * Decommission intentionally or unintentionally 
 
-In the scenario where we have a number of *m3.large.x86*'s hosting flat file datasets, each data set can be broken up across [NVMe namespaces](https://www.snia.org/sites/default/files/SDCEMEA/2020/4%20-%20Or%20Lapid%20Micron%20-%20Understanding%20NVMe%20namespaces%20-%20Final.pdf) for control and easy [sharding / scaling](https://en.wikipedia.org/wiki/Shard_(database_architecture)). A great ecosystem of tooling exists to back up large flat file datasets to *S3-like* endpoints, which we can leverage here. The backup target could be an *s3.xlarge.x86* running Minio with tiering, where that *s3.xlarge.x86* can be configured to backup it's own dataset to another `s3.xlarge.x86` in another site leveraging *Backend Transfer*.
+In the scenario where we have a number of *m3.large.x86*'s hosting flat file datasets, each data set can be broken up across [NVMe namespaces](https://www.snia.org/sites/default/files/SDCEMEA/2020/4%20-%20Or%20Lapid%20Micron%20-%20Understanding%20NVMe%20namespaces%20-%20Final.pdf) for control and easy [sharding / scaling](https://en.wikipedia.org/wiki/Shard_(database_architecture)). A great ecosystem of tooling exists to back up large flat file datasets to *S3-like* endpoints, which we can leverage here. The backup target could be an *s3.xlarge.x86* running Minio with tiering, where that *s3.xlarge.x86* can be configured to backup it's own dataset to another *s3.xlarge.x86* in another site leveraging *Backend Transfer*.
 
-When a new *m3.large.x86* joins the cluster or replaces a previous node, it can pull the shard dataset down from the local *s3.xlarge.x86* and become a participant in the cluster. It can seed this shard dataset at the full 10G or 20G available to the *s3.xlarge.x86*, so node entry into the cluster can be both performant and cost effective.  In the event that an entire site is lost, the *m3.large.x86* cluster can be brought up in the same site as the backup *s3.xlarge.x86*. For datasets that are sensitive to exact dataset position relatively to data timeline, we can configure our message queue  or data pipeline (Kafka, NSQ, Fluentd, Pulsar, RabbitMQ ) that fronts the data set to also send a copy of the relevant data stream to the redundant site via Backend Transfer for replay.
+When a new *m3.large.x86* joins the cluster or replaces a previous node, it can pull the shard dataset down from the local *s3.xlarge.x86* and become a participant in the cluster. It can seed this shard dataset at the full 10G or 20G available to the *s3.xlarge.x86*, so node entry into the cluster can be both performant and cost effective.  In the event that an entire site is lost, the *m3.large.x86* cluster can be brought up in the same site as the backup *s3.xlarge.x86*. For datasets that are sensitive to exact dataset position relative to a data timeline or history, we can configure our message queue or data pipeline (Kafka, NSQ, Fluentd, Pulsar, RabbitMQ ) that fronts the data set to also send a copy of the relevant data stream to the redundant site via Backend Transfer for replay.
 
 With this perspective on a design, we can introduce pragmatic flexibility, cost effectiveness, performance and resilience with relatively minimal overhead into an Equinix Metal deployment. 
