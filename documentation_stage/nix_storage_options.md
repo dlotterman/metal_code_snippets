@@ -63,6 +63,7 @@ The options for self-hosted on Metal are too many and with vastly different pro'
 * [RAID](https://metal.equinix.com/developers/docs/storage/storage-options/#customizing-your-disk-configurations)
 
   * Available as a feature in our platform for reserved instances only. Please consult a sales team for additional information
+  * To be explicit and declarative, Equinix Metal instances launched with defaults have **NO** disk parity or protection enabled.
 
 
 * Cohesity - https://metal.equinix.com/solutions/cohesity/
@@ -84,11 +85,26 @@ The options for self-hosted on Metal are too many and with vastly different pro'
 
   The Equinix Metal API and associated integrations enable Metal instances and configuration to be managed and lifecycled as "Infrastructure as Code", which also enables "Storage as Code" workflows. When designing distributed or robust storage architectures,  tools like ansible, terraform and cloud-init can be used to have nodes auto-join clusters, pull seed data from object stores and configure clients. 
 
-  
+* Hosting a Virtual Appliance
+
+
+  * Equinix Metal is a great host for Virtual Appliances, which can be especially useful when a proprietary storage technology is required or a concept needs to be quickly mocked out. 
+
+    * [Virtual Appliance Host as Code](https://github.com/dlotterman/metal_code_snippets/blob/main/virtual_appliance_host/no_code_with_guardrails/README.md)
 
 ### SAN-as-a-Service
 
 Equinix Metal has partnered with a handful of strategic partners such as [Pure](https://metal.equinix.com/solutions/pure-storage/) to provide SAN-as-a-Service to customers with sufficient requirements to justify the implementation (generally around 50TB or higher). Please contact an Equinix Metal sales team for more information regarding this storage path. 
+
+[Hints of what this looks like can be seen here](https://support.purestorage.com/Solutions/VMware_Platform_Guide/User_Guides_for_VMware_Solutions/Pure_Storage_on_Equinix_Metal).
+
+
+
+### Inter-connection
+
+
+
+[Via Equinix Inter-connection](https://metal.equinix.com/developers/docs/equinix-interconnect/introduction/), Metal can access IPv4 or IPv6 enabled storage resources colocated or hosted in another environment. For example via physical x-conn from a customers colocation footprint in the same facility, customers can achieve sub millisecond RTT for storage based networking.
 
 
 
