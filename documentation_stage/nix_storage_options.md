@@ -83,7 +83,7 @@ The options for self-hosted on Metal are too many and with vastly different pro'
 
 * The [Equinix Metal API](https://metal.equinix.com/developers/api/) and [Integrations](https://metal.equinix.com/developers/docs/integrations/)
 
-  The Equinix Metal API and associated integrations enable Metal instances and configuration to be managed and lifecycled as "Infrastructure as Code", which also enables "Storage as Code" workflows. When designing distributed or robust storage architectures,  tools like ansible, terraform and cloud-init can be used to have nodes auto-join clusters, pull seed data from object stores and configure clients. 
+  The Equinix Metal API and associated integrations enable Metal instances and configuration to be managed and lifecycled as "Infrastructure as Code", which also enables "Storage as Code" workflows. When designing distributed or robust storage architectures,  tools like [ansible](https://github.com/equinix/ansible-collection-metal), [terraform](https://registry.terraform.io/providers/equinix/metal/latest) and [cloud-init](https://metal.equinix.com/developers/docs/servers/user-data/) can be used to have nodes auto-join clusters, pull seed data from object stores and configure clients. 
 
 * Hosting a Virtual Appliance
 
