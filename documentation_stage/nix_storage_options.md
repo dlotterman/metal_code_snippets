@@ -28,6 +28,9 @@ Examples:
   * Uniquely *nix oriented data host that is an active member of the OSS cloud community
   * Includes ZFS send / receive functionality
 
+#### Using Backend Transfer to consolidate smaller site storage to a larger one
+
+For customers who are deploying smaller sites globally with a central or larger main site, Backend Transfer (see below) can be used as a easy enabler for shipping data from an edge or smaller site back to a central aggregation point, minimizing the operational overhead needed per smaller site.
 
 
 ### Self Hosted on Metal
