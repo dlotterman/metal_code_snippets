@@ -11,7 +11,7 @@ keyed_groups:
     prefix: equinix_metal_state
 
 projects:
-  - 9c419265-c12d-4dc4-9240-98962691b939
+  - YYYYY5-c12d-4dc4-9240-XXXXX
 
 compose:
   ansible_host: (ip_addresses | selectattr('address_family', 'equalto', 4) | selectattr('public', 'equalto', true) | first).address
