@@ -48,12 +48,12 @@ datasource:
 
 # keep sshd disabled till everything is done at the end of runcmd
 bootcmd:
-  - [ cloud-init-per, instance, systemctl, start, sshd ]
-  - [ cloud-init-per, instance, systemctl, enable, sshd ]
+  - [ cloud-init-per, instance, systemctl, start, ssh ]
+  - [ cloud-init-per, instance, systemctl, enable, ssh ]
 
 runcmd:
-  - systemctl stop sshd
-  - systemctl disable sshd
+  - systemctl stop ssh
+  - systemctl disable ssh
   - systemctl enable fail2ban
   - systemctl start fail2ban
   - systemctl enable unattended-upgrades
@@ -70,6 +70,8 @@ runcmd:
   - mv /root/.ssh /home/adminuser/
   - chown -R adminuser:cloud-users /home/adminuser/.ssh
   - sed -i -e '/^#PermitRootLogin/s/^.*$/PermitRootLogin no/' /etc/ssh/sshd_config
+  - systemctl enable ssh
+  - systemctl start ssh  
   - yes | unminimize  &
 
 write_files:
