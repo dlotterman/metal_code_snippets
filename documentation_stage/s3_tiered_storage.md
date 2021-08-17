@@ -173,12 +173,6 @@ It can also be useful to adjust the cache policy, in particular for the `cleaner
 * `lvchange --cachepolicy cleaner vg_01/lv_01`
 * `lvchange --cachepolicy smq vg_01/lv_01`
 
-
-
-This document 
-
-
-
 Other useful commands stashed here with no reference:
 
 * `lvs -o cache_dirty_blocks,cache_policy`
