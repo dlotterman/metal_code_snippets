@@ -22,7 +22,7 @@ The scope of choosing one path or the other falls outside of this document. Both
 Redhat is a primary sponsor of the LVM ecosystem, and as such Redhat LVM / storage documentation should be considered the starting place and authoratative source for LVM / dm-cache related subjects
 * [RHEL 7 Storage Administration Guide](https://access.redhat.com/documentation/en-us/red_hat_enterprise_linux/7/html/storage_administration_guide/)
 * [RHEL 8 managing logical volumes](https://access.redhat.com/documentation/en-us/red_hat_enterprise_linux/8/html/configuring_and_managing_logical_volumes)
-* [dm-cache presentation from RH] (https://people.redhat.com/mskinner/rhug/q1.2016/dm-cache.pdf)
+* [dm-cache presentation from RH](https://people.redhat.com/mskinner/rhug/q1.2016/dm-cache.pdf)
 * [Linux Kernel dm-cache documentation](https://www.kernel.org/doc/Documentation/device-mapper/cache.txt)
 * [LVM lvmcache documentation](https://www.systutorials.com/docs/linux/man/7-lvmcache/)
 * [dm-cache blog](https://blog.delouw.ch/2020/01/29/using-lvm-cache-for-storage-tiering/)
