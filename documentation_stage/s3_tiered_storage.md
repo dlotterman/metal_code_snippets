@@ -1,5 +1,7 @@
 ## Using LVM + dm-cache with the Equinix Metal s3.xlarge.x86 instance
 
+This document is meant for supplementary use only. Anything in this subject matter is considered the jurisdiction of the end operator. This document is not supported by Equinix Metal.
+
 The Equinix Metal [s3.xlarge.x86](https://metal.equinix.com/product/servers/s3-xlarge/) is a storage focused instance configuration that leverages three seperate tiers of storage, with the intent to provide a flexible platform for featureful and thoughtful storage deployments.
 
 This guide will cover a high level approach to leveraging these disk tiers with Linux's native [Logical Volume Manager](https://en.wikipedia.org/wiki/Logical_Volume_Manager_(Linux)) and it's built in [dm-cache](https://en.wikipedia.org/wiki/Dm-cache) integration.
