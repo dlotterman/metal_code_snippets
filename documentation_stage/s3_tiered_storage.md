@@ -121,6 +121,10 @@ Also note this is where the second NVMe drive is attached as a metadata target f
 lvconvert --type cache-pool --cachemode writeback --poolmetadata vg_01/lv_01_cache_meta vg_01/lv_01_cache
 ```
 
+```
+lvconvert --type cache --cachepool vg_01/lv_01_cache vg_01/lv_01
+```
+
 #### Confirm 
 The `lvs -a -o +devices` command can be used to get a quick sense of a complete configuration:
 
