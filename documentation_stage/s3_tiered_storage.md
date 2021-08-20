@@ -100,7 +100,7 @@ vgcreate vg_01 /dev/sdk /dev/sdg /dev/sdn /dev/sde /dev/sdh /dev/sdf /dev/sdi /d
 
 The first Logical Volume to create is the RAID10 Device Mapper of the HDDs. Note that to leverage each HDD, we need the number of stripes (`6`) multiplied  by the mirror (1 mirror for 2 drives) to equal the number of drives (`12`)
 ```
-lvcreate --type raid10 -l 100%FREE -i 6 -m 1 -n lv_01 vg_01 /dev/sdk /dev/sdg /dev/sdn /dev/sde /dev/sdh /dev/sdf /dev/sdi /dev/sdj /dev/sdc /dev/sdm /dev/sdl /dev/sdd
+lvcreate --type raid10 -l 100%FREE -i 6 -m 1 -n lv_01 vg_01
 ```
 ```
 lvcreate -l 100%FREE -n lv_01_cache vg_01 /dev/nvme0n1
