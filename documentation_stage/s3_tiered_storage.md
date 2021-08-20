@@ -72,6 +72,24 @@ pvcreate /dev/nvme0n1
 pvcreate /dev/nvme1n1
 ```
 
+Untrusted one-liner:
+
+```
+# for DRIVE in $(lsblk  | grep "7.3" | awk '{print$1}' ); do pvcreate /dev/$DRIVE ; done
+  Physical volume "/dev/sda" successfully created.
+  Physical volume "/dev/sdb" successfully created.
+  Physical volume "/dev/sdc" successfully created.
+  Physical volume "/dev/sdd" successfully created.
+  Physical volume "/dev/sde" successfully created.
+  Physical volume "/dev/sdf" successfully created.
+  Physical volume "/dev/sdg" successfully created.
+  Physical volume "/dev/sdh" successfully created.
+  Physical volume "/dev/sdi" successfully created.
+  Physical volume "/dev/sdj" successfully created.
+  Physical volume "/dev/sdk" successfully created.
+  Physical volume "/dev/sdl" successfully created.
+```
+
 #### Create Volume Group of PV's
 
 ```
