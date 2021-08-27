@@ -7,8 +7,9 @@
 # 2. Installs commonly used packages
 # 3. Moves from root user -> adminuser
 # 4. Turns up the firewall with deny all, allow ssh, allow management traffic (10.x.x.x) network)
-# 5. Enables automatic updates (for security, so things like SSHD are automatically updated)
-# 6. Enables fail2ban on SSHD
+# 5. Enables the UFW limit function on ssh to double guard with fail2ban
+# 6. Enables automatic updates (for security, so things like SSHD are automatically updated)
+# 7. Enables fail2ban on SSHD
 
 
 package_upgrade: true
@@ -52,27 +53,30 @@ bootcmd:
   - [ cloud-init-per, instance, systemctl, enable, ssh ]
 
 runcmd:
-  - systemctl stop ssh
-  - systemctl disable ssh
+  - yes | unminimize  &
   - systemctl enable fail2ban
   - systemctl start fail2ban
   - systemctl enable unattended-upgrades
   - systemctl start unattended-upgrades
+  - systemctl enable ufw
+  - systemctl start ufw  
   - ufw default allow outgoing
   - ufw default deny incoming
   - ufw allow ssh
   - ufw allow from 10.0.0.1/8
+  - ufw limit ssh
   - ufw enable
-  - systemctl enable ufw
-  - systemctl start ufw
+  - echo "interface ignore wildcard" >> /etc/ntp.conf
+  - echo "interface listen 127.0.0.1" >> /etc/ntp.conf
+  - systemctl restart ntp
   - modprobe 8021q
   - echo "8021q" >> /etc/modules
   - mv /root/.ssh /home/adminuser/
   - chown -R adminuser:cloud-users /home/adminuser/.ssh
   - sed -i -e '/^#PermitRootLogin/s/^.*$/PermitRootLogin no/' /etc/ssh/sshd_config
+  - echo "DebianBanner no" >> /etc/ssh/sshd_config
   - systemctl enable ssh
-  - systemctl start ssh  
-  - yes | unminimize  &
+  - systemctl start ssh
 
 write_files:
   - owner: root:root
