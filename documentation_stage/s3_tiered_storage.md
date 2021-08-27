@@ -22,7 +22,7 @@ The scope of choosing one path or the other falls outside of this document. Both
 Redhat is a primary sponsor of the LVM ecosystem, and as such Redhat LVM / storage documentation should be considered the starting place and authoratative source for LVM / dm-cache related subjects
 * [RHEL 7 Storage Administration Guide](https://access.redhat.com/documentation/en-us/red_hat_enterprise_linux/7/html/storage_administration_guide/)
 * [RHEL 8 managing logical volumes](https://access.redhat.com/documentation/en-us/red_hat_enterprise_linux/8/html/configuring_and_managing_logical_volumes)
-* [dm-cache presentation from RH] (https://people.redhat.com/mskinner/rhug/q1.2016/dm-cache.pdf)
+* [dm-cache presentation from RH](https://people.redhat.com/mskinner/rhug/q1.2016/dm-cache.pdf)
 * [Linux Kernel dm-cache documentation](https://www.kernel.org/doc/Documentation/device-mapper/cache.txt)
 * [LVM lvmcache documentation](https://www.systutorials.com/docs/linux/man/7-lvmcache/)
 * [dm-cache blog](https://blog.delouw.ch/2020/01/29/using-lvm-cache-for-storage-tiering/)
@@ -72,6 +72,24 @@ pvcreate /dev/nvme0n1
 pvcreate /dev/nvme1n1
 ```
 
+Untrusted one-liner:
+
+```
+# for DRIVE in $(lsblk  | grep "7.3" | awk '{print$1}' ); do pvcreate /dev/$DRIVE ; done
+  Physical volume "/dev/sda" successfully created.
+  Physical volume "/dev/sdb" successfully created.
+  Physical volume "/dev/sdc" successfully created.
+  Physical volume "/dev/sdd" successfully created.
+  Physical volume "/dev/sde" successfully created.
+  Physical volume "/dev/sdf" successfully created.
+  Physical volume "/dev/sdg" successfully created.
+  Physical volume "/dev/sdh" successfully created.
+  Physical volume "/dev/sdi" successfully created.
+  Physical volume "/dev/sdj" successfully created.
+  Physical volume "/dev/sdk" successfully created.
+  Physical volume "/dev/sdl" successfully created.
+```
+
 #### Create Volume Group of PV's
 
 ```
@@ -85,10 +103,10 @@ The first Logical Volume to create is the RAID10 Device Mapper of the HDDs. Note
 lvcreate --type raid10 -l 100%FREE -i 6 -m 1 -n lv_01 vg_01 /dev/sdk /dev/sdg /dev/sdn /dev/sde /dev/sdh /dev/sdf /dev/sdi /dev/sdj /dev/sdc /dev/sdm /dev/sdl /dev/sdd
 ```
 ```
-lvcreate -l 100%FREE --discards passdown -n lv_01_cache vg_01 /dev/nvme0n1
+lvcreate -l 100%FREE -n lv_01_cache vg_01 /dev/nvme0n1
 ```
 ```
-lvcreate -l 90%FREE --discards passdown -n lv_01_cache_meta vg_01 /dev/nvme1n1
+lvcreate -l 90%FREE -n lv_01_cache_meta vg_01 /dev/nvme1n1
 ```
 
 The second two LV's are Note that the `90%FREE` for the second NVMe drive is to maintain some free extents within the PV for Device Mapper overhead
@@ -101,6 +119,10 @@ Also note this is where the second NVMe drive is attached as a metadata target f
 
 ```
 lvconvert --type cache-pool --cachemode writeback --poolmetadata vg_01/lv_01_cache_meta vg_01/lv_01_cache
+```
+
+```
+lvconvert --type cache --cachepool vg_01/lv_01_cache vg_01/lv_01
 ```
 
 #### Confirm 
@@ -172,12 +194,6 @@ It can also be useful to adjust the cache policy, in particular for the `cleaner
 
 * `lvchange --cachepolicy cleaner vg_01/lv_01`
 * `lvchange --cachepolicy smq vg_01/lv_01`
-
-
-
-This document 
-
-
 
 Other useful commands stashed here with no reference:
 
