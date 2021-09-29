@@ -63,6 +63,7 @@ runcmd:
   - ufw default allow outgoing
   - ufw default deny incoming
   - ufw allow ssh
+  - ufw allow http
   - ufw allow from 10.0.0.1/8
   - ufw limit ssh
   - ufw enable
