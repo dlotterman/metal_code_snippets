@@ -1,4 +1,5 @@
 #!/bin/bash
+## Full credit to https://www.vultr.com/docs/monitor-latency-with-smokeping-on-ubuntu-20-04 for baseline steps
 
 set -e 
 
