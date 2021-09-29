@@ -68,7 +68,7 @@ server {
     }
 
     location / {
-            return 301 http://$server_name/smokeping/smokeping.cgi;
+            return 301 http://$METAL_PUBLIC_IP/smokeping/smokeping.cgi;
     }
 }
 EOL
