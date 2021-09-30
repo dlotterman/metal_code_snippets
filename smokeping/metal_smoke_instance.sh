@@ -205,4 +205,7 @@ sudo service smokeping restart
 
 sudo rm -f /tmp/smokeping_general
 sudo rm -f /tmp/smokeping_targets_gw
-sudo rm -rf /tmp/sites_available_smokeping
+sudo rm -f /tmp/sites_available_smokeping
+sudo rm -f /tmp/smokeping_probes
+sudo rm -f /tmp/metal_metadata.json
+touch /var/lib/smokeping/metal_instance_smoking_done.touch
