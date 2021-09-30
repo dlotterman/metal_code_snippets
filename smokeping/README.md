@@ -5,8 +5,8 @@ This script, in conjunction with the associated [cloud-init](../boiler_plate_clo
 The cloud-init file will take care of various security and operations tasks, and then it will download this script and execute it to install and configure the smokeping instance.
 
 Currently, the smokeping instance is configured to monitor:
-- The hosts [public gateway on the Metal Layer-3 network](https://metal.equinix.com/developers/docs/networking/ip-addresses/), gathered from the instance's metadata
-- The hosts private gateway on the Metal Layer-3 network
+- The host's [public gateway on the Metal Layer-3 network](https://metal.equinix.com/developers/docs/networking/ip-addresses/), gathered from the instance's metadata
+- The host's private gateway on the Metal Layer-3 network
 - An endpoint for every Metal region, gathered from the [Equinix Metal Looking Glass](https://metal.equinix.com/developers/looking-glass/) tool
 - An endpoint for each AWS region
 - An HTTP endpoint for each GCP region
