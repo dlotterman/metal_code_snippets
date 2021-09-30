@@ -179,7 +179,7 @@ for ROUTER in "${METAL_ROUTER_IPS[@]}"; do
 	
 	sudo cat > /tmp/metal_router_$(echo $ROUTER | tr -d ".")_mtr << EOL
 #!/bin/bash
-sleep \$[ ( $RANDOM % 100 )  + 1 ]s
+sleep 5
 DATE=\$(date -u +"%Y_%m_%d_%H")
 sudo mtr -r $ROUTER > /var/www/html/mtrs/$(echo $ROUTER | tr -d ".")_\$DATE.mtr 2>&1
 EOL
@@ -200,7 +200,7 @@ for ENDPOINT in "${AWS_ENDPOINTS[@]}"; do
 
 	sudo cat > /tmp/aws_endpoint_$(echo $ENDPOINT | tr -d ".")_mtr << EOL
 #!/bin/bash
-sleep \$[ ( $RANDOM % 100 )  + 1 ]s
+sleep 5
 DATE=\$(date -u +"%Y_%m_%d_%H")
 sudo mtr -r $ENDPOINT > /var/www/html/mtrs/$(echo $ENDPOINT | tr -d ".")_\$DATE.mtr 2>&1
 EOL
@@ -231,7 +231,7 @@ for ENDPOINT in "${RANDOM_ENDPOINTS[@]}"; do
 	
 	sudo cat > /tmp/random_endpoint_$(echo $ENDPOINT | tr -d ".")_mtr<< EOL
 #!/bin/bash
-sleep \$[ ( $RANDOM % 100 )  + 1 ]s
+sleep 5
 DATE=\$(date -u +"%Y_%m_%d_%H")
 mtr -r $ENDPOINT > /var/www/html/mtrs/$(echo $ENDPOINT | tr -d ".")_\$DATE.mtr 2>&1
 EOL
@@ -246,7 +246,7 @@ sudo service smokeping restart
 
 sudo cat > /tmp/netstat.sh << EOL
 #!/bin/bash
-sleep \$[ ( $RANDOM % 100 )  + 1 ]s
+sleep 5
 DATE=\$(date -u +"%Y_%m_%d_%H")
 netstat -s > /var/www/html/mtrs/netstat_\$DATE.netstat 2>&1
 EOL
