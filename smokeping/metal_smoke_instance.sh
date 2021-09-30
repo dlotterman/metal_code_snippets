@@ -74,8 +74,19 @@ server {
     location / {
             return 301 http://$METAL_PUBLIC_IP/smokeping/smokeping.cgi;
     }
+
+	location /mtrs/ {
+		alias /var/www/html/mtrs/;
+		autoindex on;
+		autoindex_exact_size off;
+		autoindex_format html;
+		autoindex_localtime on;
+	}	
 }
 EOL
+
+sudo mkdir -p /var/www/html/mtrs/
+sudo chown -R www-data:www-data /var/www/html/mtrs
 
 sudo cp -f /tmp/sites_available_smokeping /etc/nginx/sites-available/smokeping
 
@@ -163,6 +174,16 @@ for ROUTER in "${METAL_ROUTER_IPS[@]}"; do
     echo "probe = FPing" >> /tmp/smokeping_targets_gw
     echo "host = $ROUTER" >> /tmp/smokeping_targets_gw
     echo "title = metal_router_$(echo $ROUTER | tr -d ".")" >> /tmp/smokeping_targets_gw
+	
+	sudo cat > /tmp/metal_router_$(echo $ROUTER | tr -d ".")_mtr.sh << EOL
+#!/bin/bash
+sleep \$[ ( $RANDOM % 100 )  + 1 ]s
+DATE=\$(date -u +"%Y_%m_%d_%H")
+mtr -r $ROUTER > /var/www/html/mtrs/$(echo $ROUTER | tr -d ".")_\$DATE.mtr 2>&1
+EOL
+	
+	sudo chmod 0750 /tmp/metal_router_$(echo $ROUTER | tr -d ".")_mtr.sh
+	sudo mv -f /tmp/metal_router_$(echo $ROUTER | tr -d ".")_mtr.sh /etc/cron.hourly/
 done
 
 echo "+ global_aws_endpoints" >> /tmp/smokeping_targets_gw
@@ -174,6 +195,15 @@ for ENDPOINT in "${AWS_ENDPOINTS[@]}"; do
     echo "probe = FPing" >> /tmp/smokeping_targets_gw
     echo "host = $ENDPOINT" >> /tmp/smokeping_targets_gw
     echo "title = aws_endpoint_$(echo $ENDPOINT | tr -d ".")" >> /tmp/smokeping_targets_gw
+
+	sudo cat > /tmp/aws_endpoint_$(echo $ENDPOINT | tr -d ".")_mtr.sh << EOL
+#!/bin/bash
+sleep \$[ ( $RANDOM % 100 )  + 1 ]s
+DATE=\$(date -u +"%Y_%m_%d_%H")
+mtr -r $ENDPOINT > /var/www/html/mtrs/$(echo $ENDPOINT | tr -d ".")_\$DATE.mtr 2>&1
+EOL
+	sudo chmod 0750 /tmp/aws_endpoint_$(echo $ENDPOINT | tr -d ".")_mtr.sh
+	sudo mv -f /tmp/aws_endpoint_$(echo $ENDPOINT | tr -d ".")_mtr.sh /etc/cron.hourly/	
 done
 
 echo "+ global_gcp_endpoints" >> /tmp/smokeping_targets_gw
@@ -196,6 +226,15 @@ for ENDPOINT in "${RANDOM_ENDPOINTS[@]}"; do
     echo "probe = FPing" >> /tmp/smokeping_targets_gw
     echo "host = $ENDPOINT" >> /tmp/smokeping_targets_gw
     echo "title = random_endpoint_$(echo $ENDPOINT | tr -d ".")" >> /tmp/smokeping_targets_gw
+	
+	sudo cat > /tmp/random_endpoint_$(echo $ENDPOINT | tr -d ".")_mtr.sh << EOL
+#!/bin/bash
+sleep \$[ ( $RANDOM % 100 )  + 1 ]s
+DATE=\$(date -u +"%Y_%m_%d_%H")
+mtr -r $ENDPOINT > /var/www/html/mtrs/$(echo $ENDPOINT | tr -d ".")_\$DATE.mtr 2>&1
+EOL
+	sudo chmod 0750 /tmp/random_endpoint_$(echo $ENDPOINT | tr -d ".")_mtr.sh
+	sudo mv -f /tmp/random_endpoint_$(echo $ENDPOINT | tr -d ".")_mtr.sh /etc/cron.hourly/		
 done
 
 
@@ -203,9 +242,20 @@ sudo cp -f /tmp/smokeping_targets_gw /etc/smokeping/config.d/Targets
 
 sudo service smokeping restart
 
+sudo cat > /tmp/netstat.sh << EOL
+#!/bin/bash
+sleep \$[ ( $RANDOM % 100 )  + 1 ]s
+DATE=\$(date -u +"%Y_%m_%d_%H")
+netstat -s /var/www/html/mtrs/netstat_\$DATE.netstat 2>&1
+EOL
+
+sudo chmod 0750 /tmp/netstat.sh
+sudo mv -f /tmp/netstat.sh /etc/cron.hourly/
+
+
 sudo rm -f /tmp/smokeping_general
 sudo rm -f /tmp/smokeping_targets_gw
 sudo rm -f /tmp/sites_available_smokeping
 sudo rm -f /tmp/smokeping_probes
 sudo rm -f /tmp/metal_metadata.json
-touch /var/lib/smokeping/metal_instance_smoking_done.touch
+sudo touch /var/lib/smokeping/metal_instance_done.touch
