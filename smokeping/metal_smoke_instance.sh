@@ -8,10 +8,13 @@ METAL_ROUTER_IPS=('136.144.56.179' '145.40.125.17' '145.40.75.3' '147.75.87.3'
 '136.144.55.31' '145.40.77.1' '145.40.93.77' '145.40.71.21' '145.40.109.1' 
 '136.144.60.195' '147.75.92.5' '136.144.50.171' '145.40.87.43' '145.40.121.9'
 '139.178.82.17' '147.75.70.17' '147.75.66.143' '147.75.94.153' '147.75.33.169')
+
 # http://ec2-reachability.amazonaws.com/
 AWS_ENDPOINTS=('3.80.0.0' '68.66.113.112' '15.181.176.161' '15.181.192.183' '72.41.10.180' '15.181.98.141' '64.187.131.1' '15.181.144.146' '3.12.0.0' '18.252.0.253' '13.52.0.0' '18.236.0.0' '15.181.17.111' '15.253.0.254' '3.32.0.253' '3.96.0.0' '15.228.0.0' '3.248.0.0' '3.64.0.0' '3.8.0.0' '15.160.0.0' '13.36.0.0' '13.48.0.0' '13.245.0.253' '15.184.0.253' '3.112.0.0' '3.34.0.0' '13.208.32.253' '3.0.0.9' '3.24.0.0' '3.6.0.0' '16.162.0.253' '52.80.5.207' '52.82.0.253')	
+
 # https://github.com/GoogleCloudPlatform/gcping/blob/main/internal/config/endpoints.go
 GCP_ENDPOINTS=('asia-east1-5tkroniexa-de.a.run.app' 'asia-east2-5tkroniexa-df.a.run.app' 'asia-northeast1-5tkroniexa-an.a.run.app' 'asia-northeast2-5tkroniexa-dt.a.run.app' 'asia-northeast3-5tkroniexa-du.a.run.app' 'asia-south1-5tkroniexa-el.a.run.app' 'asia-south2-5tkroniexa-em.a.run.app' 'asia-southeast1-5tkroniexa-as.a.run.app' 'asia-southeast2-5tkroniexa-et.a.run.app' 'australia-southeast1-5tkroniexa-ts.a.run.app' 'australia-southeast2-5tkroniexa-km.a.run.app' 'europe-central2-5tkroniexa-lm.a.run.app' 'europe-north1-5tkroniexa-lz.a.run.app' 'europe-west1-5tkroniexa-ew.a.run.app' 'europe-west2-5tkroniexa-nw.a.run.app' 'europe-west3-5tkroniexa-ey.a.run.app' 'europe-west4-5tkroniexa-ez.a.run.app' 'europe-west6-5tkroniexa-oa.a.run.app' 'northamerica-northeast1-5tkroniexa-nn.a.run.app' 'northamerica-northeast2-5tkroniexa-pd.a.run.app' 'southamerica-east1-5tkroniexa-rj.a.run.app' 'us-central1-5tkroniexa-uc.a.run.app' 'us-east1-5tkroniexa-ue.a.run.app' 'us-east4-5tkroniexa-uk.a.run.app' 'us-west1-5tkroniexa-uw.a.run.app' 'us-west2-5tkroniexa-wl.a.run.app' 'us-west3-5tkroniexa-wm.a.run.app' 'us-west4-5tkroniexa-wn.a.run.app')
+
 # DNS carriers + https://www.dotcom-monitor.com/blog/technical-tools/network-location-ip-addresses/
 RANDOM_ENDPOINTS=('208.67.222.222' '208.67.220.220' '1.1.1.1' '1.0.0.1' '8.8.8.8' '8.8.4.4' '139.130.4.5' '69.162.81.155' '192.199.248.75' '162.254.206.227' '207.250.234.100' '184.107.126.165' '206.71.50.230' '65.49.22.66' '23.81.0.59' '207.228.238.7')
 METADATA_JSON_FILE='/tmp/metal_metadata.json'
@@ -101,6 +104,30 @@ EOL
 
 sudo cp -f /tmp/smokeping_general /etc/smokeping/config.d/General
 
+sudo rm -f /etc/smokeping/config.d/Probes
+
+sudo cat > /tmp/smokeping_probes << EOL
+*** Probes ***
+
++ FPing
+
+binary = /usr/bin/fping
+
++Curl
+
+binary = /usr/bin/curl
+forks = 5
+offset = 50%
+step = 300
+follow_redirects = yes
+include_redirects = yes
+insecure_ssl = 1
+pings = 5
+timeout = 20
+urlformat = http://%host%/
+EOL
+
+sudo cp -f /tmp/smokeping_probes /etc/smokeping/config.d/Probes
 
 sudo rm -f /etc/smokeping/config.d/Targets
 
@@ -155,7 +182,7 @@ echo "title = global_gcp_endpoints" >> /tmp/smokeping_targets_gw
 
 for ENDPOINT in "${GCP_ENDPOINTS[@]}"; do
     echo "++ $(echo $ENDPOINT | tr -d ".")" >> /tmp/smokeping_targets_gw
-    echo "probe = FPing" >> /tmp/smokeping_targets_gw
+    echo "probe = Curl" >> /tmp/smokeping_targets_gw
     echo "host = $ENDPOINT" >> /tmp/smokeping_targets_gw
     echo "title = gcp_endpoint_$(echo $ENDPOINT | tr -d ".")" >> /tmp/smokeping_targets_gw
 done
