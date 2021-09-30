@@ -10,6 +10,7 @@ Currently, the smokeping instance is configured to monitor:
 - An endpoint for every Metal region, gathered from the [Equinix Metal Looking Glass](https://metal.equinix.com/developers/looking-glass/) tool
 - An endpoint for each AWS region
 - An HTTP endpoint for each GCP region
+  - Please note, this is a HTTP request for latency measurement, NOT ICMP ping. It is not valid to measure this against the latency of ICMP endpoints, but can be useful to compare one GCP region to another.
 - Various known popular public endpoints such as DNS hosts
 
 NGINX is configured to host the smokeping instance as the default HTTP host, so just taking the public IP into a browser should be all thats needed to reach the smokeping read-only WebUI.

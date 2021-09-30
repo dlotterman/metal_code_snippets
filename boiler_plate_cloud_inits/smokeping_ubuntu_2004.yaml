@@ -10,6 +10,7 @@
 # 5. Enables the UFW limit function on ssh to double guard with fail2ban
 # 6. Enables automatic updates (for security, so things like SSHD are automatically updated)
 # 7. Enables fail2ban on SSHD
+# 8. Downloads and runs the metal_smoke_instance.sh
 
 
 package_upgrade: true
@@ -31,7 +32,6 @@ packages:
  - strace
  - git
  - dnsutils
- - echoping
 
 groups:
  - cloud-users
