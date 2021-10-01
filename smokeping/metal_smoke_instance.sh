@@ -24,9 +24,9 @@ curl --silent --retry 5 -o $METADATA_JSON_FILE https://metadata.platformequinix.
 
 chmod 0400 $METADATA_JSON_FILE
 
-METAL_PUBLIC_IP=$(jq -r '.network.addresses[0].address' $METADATA_JSON_FILE)
-METAL_PUBLIC_GW=$(jq -r '.network.addresses[0].gateway' $METADATA_JSON_FILE)
-METAL_PRIVATE_GW=$(jq -r '.network.addresses[2].gateway' $METADATA_JSON_FILE)
+METAL_PUBLIC_IP=$(jq -r '.network.addresses[] | select((.public==true) and .address_family==4) | .address' $METADATA_JSON_FILE)
+METAL_PUBLIC_GW=$(jq -r '.network.addresses[] | select((.public==true) and .address_family==4) | .gateway' $METADATA_JSON_FILE)
+METAL_PRIVATE_GW=$(jq -r '.network.addresses[] | select((.public==false) and .address_family==4) | .gateway' $METADATA_JSON_FILE)
 
 sudo DEBIAN_FRONTEND=noninteractive apt-get  -yq --no-install-suggests --no-install-recommends --force-yes install nginx fcgiwrap smokeping > /dev/null 2>&1
 
@@ -81,13 +81,16 @@ server {
 		autoindex_exact_size off;
 		autoindex_format html;
 		autoindex_localtime on;
+		limit_except GET {
+		    deny all;
+		}
 	}	
 }
 EOL
 
 sudo mkdir -p /var/www/html/mtrs/
 sudo chown -R www-data:www-data /var/www/html/mtrs
-sudo chmod 0777 /var/www/html/mtrs
+sudo chmod 0755 /var/www/html/mtrs
 sudo rm -rf /etc/cron.hourly/*mtr*
 
 sudo cp -f /tmp/sites_available_smokeping /etc/nginx/sites-available/smokeping
@@ -172,20 +175,21 @@ echo "menu = global_metal_routers" >> /tmp/smokeping_targets_gw
 echo "title = global_metal_routers" >> /tmp/smokeping_targets_gw
 
 for ROUTER in "${METAL_ROUTER_IPS[@]}"; do
-    echo "++ $(echo $ROUTER | tr -d ".")" >> /tmp/smokeping_targets_gw
+    echo "++ $(echo "$ROUTER" | tr -d ".")" >> /tmp/smokeping_targets_gw
     echo "probe = FPing" >> /tmp/smokeping_targets_gw
     echo "host = $ROUTER" >> /tmp/smokeping_targets_gw
-    echo "title = metal_router_$(echo $ROUTER | tr -d ".")" >> /tmp/smokeping_targets_gw
+    echo "title = metal_router_$(echo "$ROUTER" | tr -d ".")" >> /tmp/smokeping_targets_gw
 	
-	sudo cat > /tmp/metal_router_$(echo $ROUTER | tr -d ".")_mtr << EOL
+	sudo cat > /tmp/metal_router_'$(echo "$ROUTER" | tr -d ".")'_mtr << EOL
 #!/bin/bash
 sleep 5
 DATE=\$(date -u +"%Y_%m_%d_%H")
-sudo mtr -r $ROUTER > /var/www/html/mtrs/$(echo $ROUTER | tr -d ".")_\$DATE.mtr 2>&1
+mtr -r $ROUTER > /tmp/'$(echo "$ROUTER" | tr -d ".")'_"\$DATE"_mtr.txt 2>&1
+sudo mv -f /tmp/'$(echo "$ROUTER" | tr -d ".")'_"\$DATE"_mtr.txt /var/www/html/mtrs/
 EOL
 	
-	sudo chmod 0750 /tmp/metal_router_$(echo $ROUTER | tr -d ".")_mtr
-	sudo mv -f /tmp/metal_router_$(echo $ROUTER | tr -d ".")_mtr /etc/cron.hourly/
+	sudo chmod 0750 /tmp/metal_router_'$(echo "$ROUTER" | tr -d ".")'_mtr
+	sudo mv -f /tmp/metal_router_'$(echo "$ROUTER" | tr -d ".")'_mtr /etc/cron.hourly/
 done
 
 echo "+ global_aws_endpoints" >> /tmp/smokeping_targets_gw
@@ -193,19 +197,20 @@ echo "menu = global_aws_endpoints" >> /tmp/smokeping_targets_gw
 echo "title = global_aws_endpoints" >> /tmp/smokeping_targets_gw
 
 for ENDPOINT in "${AWS_ENDPOINTS[@]}"; do
-    echo "++ $(echo $ENDPOINT | tr -d ".")" >> /tmp/smokeping_targets_gw
+    echo "++ $(echo "$ENDPOINT" | tr -d ".")" >> /tmp/smokeping_targets_gw
     echo "probe = FPing" >> /tmp/smokeping_targets_gw
     echo "host = $ENDPOINT" >> /tmp/smokeping_targets_gw
-    echo "title = aws_endpoint_$(echo $ENDPOINT | tr -d ".")" >> /tmp/smokeping_targets_gw
+    echo "title = aws_endpoint_$(echo "$ENDPOINT" | tr -d ".")" >> /tmp/smokeping_targets_gw
 
-	sudo cat > /tmp/aws_endpoint_$(echo $ENDPOINT | tr -d ".")_mtr << EOL
+	sudo cat > /tmp/aws_endpoint_'$(echo "$ENDPOINT" | tr -d ".")'_mtr << EOL
 #!/bin/bash
 sleep 5
 DATE=\$(date -u +"%Y_%m_%d_%H")
-sudo mtr -r $ENDPOINT > /var/www/html/mtrs/$(echo $ENDPOINT | tr -d ".")_\$DATE.mtr 2>&1
+mtr -r $ENDPOINT > /tmp/$(echo "$ENDPOINT" | tr -d ".")_"\$DATE"_mtr.txt 2>&1
+sudo mv -f /tmp/$(echo "$ENDPOINT" | tr -d ".")_"\$DATE"_mtr.txt /var/www/html/mtrs/
 EOL
-	sudo chmod 0750 /tmp/aws_endpoint_$(echo $ENDPOINT | tr -d ".")_mtr
-	sudo mv -f /tmp/aws_endpoint_$(echo $ENDPOINT | tr -d ".")_mtr /etc/cron.hourly/	
+	sudo chmod 0750 /tmp/aws_endpoint_'$(echo "$ENDPOINT" | tr -d ".")'_mtr
+	sudo mv -f /tmp/aws_endpoint_'$(echo "$ENDPOINT" | tr -d ".")'_mtr /etc/cron.hourly/	
 done
 
 echo "+ global_gcp_endpoints" >> /tmp/smokeping_targets_gw
@@ -213,10 +218,10 @@ echo "menu = global_gcp_endpoints" >> /tmp/smokeping_targets_gw
 echo "title = global_gcp_endpoints" >> /tmp/smokeping_targets_gw
 
 for ENDPOINT in "${GCP_ENDPOINTS[@]}"; do
-    echo "++ $(echo $ENDPOINT | tr -d ".")" >> /tmp/smokeping_targets_gw
+    echo "++ $(echo "$ENDPOINT" | tr -d ".")" >> /tmp/smokeping_targets_gw
     echo "probe = Curl" >> /tmp/smokeping_targets_gw
     echo "host = $ENDPOINT" >> /tmp/smokeping_targets_gw
-    echo "title = gcp_endpoint_$(echo $ENDPOINT | tr -d ".")" >> /tmp/smokeping_targets_gw
+    echo "title = gcp_endpoint_$(echo "$ENDPOINT" | tr -d ".")" >> /tmp/smokeping_targets_gw
 done
 
 echo "+ random_endpoints" >> /tmp/smokeping_targets_gw
@@ -224,19 +229,20 @@ echo "menu = random_endpoints" >> /tmp/smokeping_targets_gw
 echo "title = random_endpoints" >> /tmp/smokeping_targets_gw
 
 for ENDPOINT in "${RANDOM_ENDPOINTS[@]}"; do
-    echo "++ $(echo $ENDPOINT | tr -d ".")" >> /tmp/smokeping_targets_gw
+    echo "++ $(echo "$ENDPOINT" | tr -d ".")" >> /tmp/smokeping_targets_gw
     echo "probe = FPing" >> /tmp/smokeping_targets_gw
     echo "host = $ENDPOINT" >> /tmp/smokeping_targets_gw
-    echo "title = random_endpoint_$(echo $ENDPOINT | tr -d ".")" >> /tmp/smokeping_targets_gw
+    echo "title = random_endpoint_$(echo "$ENDPOINT" | tr -d ".")" >> /tmp/smokeping_targets_gw
 	
-	sudo cat > /tmp/random_endpoint_$(echo $ENDPOINT | tr -d ".")_mtr<< EOL
+	sudo cat > /tmp/random_endpoint_'$(echo "$ENDPOINT" | tr -d ".")'_mtr<< EOL
 #!/bin/bash
 sleep 5
 DATE=\$(date -u +"%Y_%m_%d_%H")
-mtr -r $ENDPOINT > /var/www/html/mtrs/$(echo $ENDPOINT | tr -d ".")_\$DATE.mtr 2>&1
+mtr -r $ENDPOINT > /tmp/$(echo "$ENDPOINT" | tr -d ".")_"\$DATE"_mtr.txt 2>&1
+sudo mv -f /tmp/$(echo "$ENDPOINT" | tr -d ".")_"\$DATE"_mtr.txt /var/www/html/mtrs/
 EOL
-	sudo chmod 0750 /tmp/random_endpoint_$(echo $ENDPOINT | tr -d ".")_mtr
-	sudo mv -f /tmp/random_endpoint_$(echo $ENDPOINT | tr -d ".")_mtr /etc/cron.hourly/		
+	sudo chmod 0750 /tmp/random_endpoint_'$(echo "$ENDPOINT" | tr -d ".")'_mtr
+	sudo mv -f /tmp/random_endpoint_'$(echo "$ENDPOINT" | tr -d ".")'_mtr /etc/cron.hourly/		
 done
 
 
@@ -248,7 +254,8 @@ sudo cat > /tmp/netstat.sh << EOL
 #!/bin/bash
 sleep 5
 DATE=\$(date -u +"%Y_%m_%d_%H")
-netstat -s > /var/www/html/mtrs/netstat_\$DATE.netstat 2>&1
+sudo netstat -s > /tmp/netstat_"\$DATE".txt 2>&1
+sudo mv -f /tmp/netstat_"\$DATE".txt /var/www/html/mtrs/
 EOL
 
 sudo chmod 0750 /tmp/netstat.sh
