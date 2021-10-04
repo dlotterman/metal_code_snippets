@@ -76,7 +76,6 @@ server {
     }
 
         location /mtrs/ {
-        location /mtrs/ {
                 alias /var/www/html/mtrs/;
                 autoindex on;
                 autoindex_exact_size off;
