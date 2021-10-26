@@ -75,7 +75,7 @@ pvcreate /dev/nvme1n1
 Untrusted one-liner:
 
 ```
-# for DRIVE in $(lsblk  | grep "7.3" | awk '{print$1}' ); do pvcreate /dev/$DRIVE ; done
+# for DRIVE in $(lsblk  | grep "7.3T" | awk '{print$1}' ); do pvcreate /dev/$DRIVE ; done
   Physical volume "/dev/sda" successfully created.
   Physical volume "/dev/sdb" successfully created.
   Physical volume "/dev/sdc" successfully created.
