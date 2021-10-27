@@ -16,6 +16,8 @@
 # /etc/network/interfaces of write_files, and also updating the UFW section in runcmd
 # to punch a hole for the network you choose
 
+# NOTE the instance must still be placed into the needed VLAN via the portal or API
+
 package_upgrade: true
 package_reboot_if_required: true
 
