@@ -8,8 +8,8 @@ sudo apt-get update
 
 sudo apt install -y srvadmin-server-cli
 
+# credit to: https://askubuntu.com/questions/1363450/how-to-install-dell-command-and-configure-tool-on-dell-inspiron-5520-running-ubu
 sudo rm /var/lib/dpkg/info/srvadmin-hapi.postinst
-
 
 echo "#!/bin/bash" | sudo tee /var/lib/dpkg/info/srvadmin-hapi.postinst
 echo "/bin/true" | sudo tee -a /var/lib/dpkg/info/srvadmin-hapi.postinst
