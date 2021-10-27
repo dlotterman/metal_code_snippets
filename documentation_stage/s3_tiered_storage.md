@@ -103,11 +103,13 @@ The first Logical Volume to create is the RAID10 Device Mapper of the HDDs. Note
 lvcreate --type raid10 -l 95%FREE -i 6 -m 1 -n lv_01 vg_01 /dev/sdk /dev/sdg /dev/sdn /dev/sde /dev/sdh /dev/sdf /dev/sdi /dev/sdj /dev/sdc /dev/sdm /dev/sdl /dev/sdd
 ```
 ```
-lvcreate -l 90%FREE -n lv_01_cache vg_01 /dev/nvme0n1 /dev/nvme1n1
+lvcreate -l 1%FREE -n lv_01_cache_meta vg_01 /dev/nvme0n1 /dev/nvme1n1
 ```
+
 ```
-lvcreate -l 5%FREE -n lv_01_cache_meta vg_01 /dev/nvme0n1 /dev/nvme1n1
+lvcreate -l 95%FREE -n lv_01_cache vg_01 /dev/nvme0n1 /dev/nvme1n1
 ```
+
 
 The second two LV's are Note that the `90%FREE` for the second NVMe drive is to maintain some free extents within the PV for Device Mapper overhead
 

@@ -1,0 +1,153 @@
+#cloud-config
+
+# This cloud-init file is intended to provide a "no-code" way of deploying
+# a safe and sane Ubuntu 20.04 instance on Metal
+# It does the following:
+# 1. Updates all packages / system state, including necessary reboots
+# 2. Installs commonly used packages
+# 3. Moves from root user -> adminuser
+# 4. Turns up the firewall with deny all, allow ssh, allow management traffic (10.x.x.x) network)
+# 5. Enables the UFW limit function on ssh to double guard with fail2ban
+# 6. Enables automatic updates (for security, so things like SSHD are automatically updated)
+# 7. Enables fail2ban on SSHD
+
+# This cloud-init file will also configure a c3.medium as a open iSCSI target 
+# The only thing that should need to be modified is the networking section
+# /etc/network/interfaces of write_files, and also updating the UFW section in runcmd
+# to punch a hole for the network you choose
+
+package_upgrade: true
+package_reboot_if_required: true
+
+packages:
+ - screen
+ - sysbench
+ - ethtool
+ - fail2ban
+ - iperf3
+ - lshw
+ - pciutils
+ - ufw
+ - vlan
+ - arping
+ - unattended-upgrades
+ - unzip
+ - strace
+ - git
+ - dnsutils
+ - tgt
+
+groups:
+ - cloud-users
+
+users:
+  - name: adminuser
+    primary_group: cloud-users
+    sudo: ALL=(ALL) NOPASSWD:ALL
+    groups: [cloud-users, sudo]
+    shell: /bin/bash
+
+datasource_list: [Ec2, Equinix]
+datasource:
+  Ec2:
+    strict_id: false
+
+# keep sshd disabled till everything is done at the end of runcmd
+bootcmd:
+  - [ cloud-init-per, instance, systemctl, start, ssh ]
+  - [ cloud-init-per, instance, systemctl, enable, ssh ]
+
+runcmd:
+  - yes | unminimize  &
+  - systemctl enable fail2ban
+  - systemctl start fail2ban
+  - systemctl enable unattended-upgrades
+  - systemctl start unattended-upgrades
+  - systemctl enable ufw
+  - systemctl start ufw
+  - ufw default allow outgoing
+  - ufw default deny incoming
+  - ufw allow ssh
+  - ufw allow from 10.0.0.1/8
+  - ufw allow from 172.16.0.0/12
+  - ufw limit ssh
+  - ufw enable
+  - echo "interface ignore wildcard" >> /etc/ntp.conf
+  - echo "interface listen 127.0.0.1" >> /etc/ntp.conf
+  - systemctl restart ntp
+  - modprobe 8021q
+  - echo "8021q" >> /etc/modules
+  - mv /root/.ssh /home/adminuser/
+  - chown -R adminuser:cloud-users /home/adminuser/.ssh
+  - sed -i -e '/^#PermitRootLogin/s/^.*$/PermitRootLogin no/' /etc/ssh/sshd_config
+  - echo "DebianBanner no" >> /etc/ssh/sshd_config
+  - for DRIVE in $(lsblk  | grep "44[7-8].1G" | awk '{print$1}' ); do pvcreate /dev/$DRIVE && echo "/dev/$DRIVE" >> /tmp/drives.tmp ; done
+  - vgcreate vg_01 $(paste -d " "  - - < /tmp/drives.tmp)
+  - lvcreate --type raid0 -l 98%FREE -i 2 -n lv_01 vg_01 $(paste -d " "  - - < /tmp/drives.tmp)
+  - systemctl restart tgt
+  - systemctl enable ssh
+  - systemctl start ssh
+
+write_files:
+  - owner: root:root
+    path: /etc/fail2ban/jail.local
+    content: |
+      [DEFAULT]
+      bantime = 3600
+      banaction = ufw
+      ignoreip = 127.0.0.1/8 10.0.0.0/8
+      findtime = 600
+      maxretry = 5
+      [sshd]
+      enabled = true
+      logpath = %(sshd_log)s
+      mode = aggressive
+    permissions: '0644'
+  - owner: root:root
+    path: /etc/apt/apt.conf.d/50unattended-upgrades
+    content: |
+      Unattended-Upgrade::Allowed-Origins {
+      "${distro_id}:${distro_codename}";
+      "${distro_id}:${distro_codename}-updates";
+      "${distro_id}:${distro_codename}-security";
+      "${distro_id}ESMApps:${distro_codename}-apps-security";
+      "${distro_id}ESM:${distro_codename}-infra-security";
+      };
+    permissions: '0644'
+  - owner: root:root
+    path: /etc/tgt/conf.d/iscsi.conf
+    append: true
+    content: |
+      <target iqn.2020-07.example.com:metallun0>
+        backing-store /dev/vg_01/lv_01
+      </target>
+    permissions: '0644'
+  - owner: root:root
+    path: /etc/network/interfaces
+    append: true
+    content: |
+      auto bond0.1000
+      iface bond0.1000 inet static
+        pre-up sleep 5
+        address 172.16.14.20
+        netmask 255.255.255.0
+        vlan-raw-device bond0
+    permissions: '0644'
+  - owner: root:root
+    path: /etc/apt/apt.conf.d/21auto-upgrades_on
+    content: |
+      APT::Periodic::Update-Package-Lists "1";
+      APT::Periodic::Download-Upgradeable-Packages "1";
+      APT::Periodic::AutocleanInterval "7";
+      APT::Periodic::Unattended-Upgrade "1";
+    permissions: '0644'
+  - owner: root:root
+    path: /etc/crontab
+    append: true
+    content: |
+      05 * * * * root /usr/bin/unattended-upgrade -v
+      05 11 * * * root systemctl restart sshd
+      15 11 * * * root systemctl restart serial-getty@ttyS1.service
+      20 11 * * * root systemctl restart getty@tty1.service
+    permissions: '0644'
+
