@@ -54,7 +54,6 @@ datasource:
   Ec2:
     strict_id: false
 
-# keep sshd disabled till everything is done at the end of runcmd
 bootcmd:
   - [ cloud-init-per, instance, systemctl, start, ssh ]
   - [ cloud-init-per, instance, systemctl, enable, ssh ]
@@ -83,7 +82,7 @@ runcmd:
   - chown -R adminuser:cloud-users /home/adminuser/.ssh
   - sed -i -e '/^#PermitRootLogin/s/^.*$/PermitRootLogin no/' /etc/ssh/sshd_config
   - echo "DebianBanner no" >> /etc/ssh/sshd_config
-  - for DRIVE in $(lsblk  | grep "44[7-8].1G" | awk '{print$1}' ); do pvcreate /dev/$DRIVE && echo "/dev/$DRIVE" >> /tmp/drives.tmp ; done
+  - for DRIVE in $(lsblk  | grep "44[7-8]" | awk '{print$1}' ); do pvcreate /dev/$DRIVE && echo "/dev/$DRIVE" >> /tmp/drives.tmp ; done
   - vgcreate vg_01 $(paste -d " "  - - < /tmp/drives.tmp)
   - lvcreate --type raid0 -l 98%FREE -i 2 -n lv_01 vg_01 $(paste -d " "  - - < /tmp/drives.tmp)
   - systemctl restart tgt
