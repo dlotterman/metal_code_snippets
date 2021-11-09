@@ -148,11 +148,11 @@ While not a fully-featured monitoring stack itself, smartmontools is a useful fo
 
 ##### Nagios-Icinga / Zabbix / OpenNMS
 
-These monitoring software stacks are well known and well documented. They all have robust features for monitoring the [Subject Areas]() covered earlier, and are also all relatively easy to extend where needed. Equinix Metal instances will behave as "just any other server" to these tools. 
+These monitoring software stacks are well known and well documented. They all have robust features for monitoring the [Subject Areas](#monitoring-subject-areas) covered earlier, and are also all relatively easy to extend where needed. Equinix Metal instances will behave as "just any other server" to these tools. 
 
 Using Nagios-Icinga as a reference, here are some examples of packages which cover these specifc subjects:
 
-- Disk: [smartmon](https://www.thomas-krenn.com/en/wiki/SMART_Attributes_Monitoring_Plugin_setup)[software-raid](https://exchange.nagios.org/directory/Plugins/Operating-Systems/Linux/check_md_raid/details)
+- Disk: [smartmon](https://www.thomas-krenn.com/en/wiki/SMART_Attributes_Monitoring_Plugin_setup), [software-raid](https://exchange.nagios.org/directory/Plugins/Operating-Systems/Linux/check_md_raid/details)
 
 - Chassis: [chassis temperatures](https://exchange.nagios.org/directory/Plugins/Operating-Systems/Linux/check_temp/details)
 
@@ -162,7 +162,7 @@ Using Nagios-Icinga as a reference, here are some examples of packages which cov
 
 While originally purposed for application-level monitoring, the community around [Prometheus](https://prometheus.io/docs/guides/node-exporter/) and particularly its [node_exporter](https://github.com/prometheus/node_exporter) role rapidly extended it into a variety of other monitoring domains including hardware. 
 
-Beyond the list of built-in `collectors`, it is relatively easy to extend `node_exporter` with it's `textfile` collectors, for example this [textfile] collector extension](https://github.com/prometheus-community/node-exporter-textfile-collector-scripts) that supports [SMART monitoring](https://github.com/prometheus-community/node-exporter-textfile-collector-scripts/blob/master/smartmon.py) among other attributes.
+Beyond the list of built-in `collectors`, it is relatively easy to extend `node_exporter` with it's `textfile` collectors, for example this [textfile collector extension](https://github.com/prometheus-community/node-exporter-textfile-collector-scripts) that supports [SMART monitoring](https://github.com/prometheus-community/node-exporter-textfile-collector-scripts/blob/master/smartmon.py) among other attributes.
 
 Prometheus is also relatively easy to template out with tools like *Ansible* and *Terraform* , which can both leverage [the automation integrations]() we provide for those tools, and can also be leveraged in many deployment models outside of the traditional *Nix environments, for example [vSphere]() and [Windows](https://github.com/prometheus-community/windows_exporter)
 
