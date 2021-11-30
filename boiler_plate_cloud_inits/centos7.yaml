@@ -47,7 +47,6 @@ datasource:
   Ec2:
     strict_id: false
 
-# keep sshd disabled till everything is done at the end of runcmd
 bootcmd:
   - systemctl enable sshd || true
  
@@ -73,6 +72,7 @@ runcmd:
   - chown -R adminuser:cloud-users /home/adminuser/.ssh
   - sed -i -e '/^#PermitRootLogin/s/^.*$/PermitRootLogin no/' /etc/ssh/sshd_config
   - systemctl restart network
+  - systemctl start sshd
 
 write_files:
   - owner: root:root
