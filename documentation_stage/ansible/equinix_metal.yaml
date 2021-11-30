@@ -1,0 +1,14 @@
+# metal_inventory.yaml
+plugin: equinix.metal.device
+
+strict: False
+keyed_groups:
+  - prefix: tag
+    key: tags
+  - key: facility
+    prefix: equinix_metal_facility
+  - key: state
+    prefix: equinix_metal_state
+
+compose:
+  ansible_host: (ip_addresses | selectattr('address_family', 'equalto', 4) | selectattr('public', 'equalto', true) | first).address
