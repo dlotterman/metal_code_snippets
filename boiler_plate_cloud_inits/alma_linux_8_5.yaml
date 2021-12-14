@@ -176,7 +176,6 @@ write_files:
     path: /etc/crontab
     append: true
     content: |
-      05 * * * * root /usr/bin/unattended-upgrade -v
       05 11 * * * root systemctl restart sshd
       15 11 * * * root systemctl restart serial-getty@ttyS1.service
       20 11 * * * root systemctl restart getty@tty1.service
