@@ -1,4 +1,4 @@
-# Equinix Metal Demo "Follow-along" documentation
+# Equinix Metal Demo "Follow-along" Documentation
 
 This document is intended to be used as a resource to "follow along" with while attending a demo of the Equinix Metal platform. 
 
@@ -17,7 +17,7 @@ The aim is to provide additional context and resources that may be of interest a
 - Deployment models
 	- [On-demand](https://metal.equinix.com/developers/docs/deploy/on-demand/) vs [Reserved](https://metal.equinix.com/developers/docs/deploy/reserved/) vs [Spot](https://metal.equinix.com/developers/docs/deploy/spot-market/)
 
-	- Deployment Selections
+- Deployment Selections
 	- [Locations](https://metal.equinix.com/developers/docs/locations/locations-about/)
 	- [Current Server Lineup / Catalog](https://metal.equinix.com/product/servers/) and [Historical Server Lineup](https://metal.equinix.com/developers/docs/servers/server-specs/)
 	- [Operating Systems](https://metal.equinix.com/developers/docs/operating-systems/)
