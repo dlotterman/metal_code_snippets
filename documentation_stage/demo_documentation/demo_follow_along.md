@@ -15,14 +15,11 @@ The aim is to provide additional context and resources that may be of interest a
 
 - Deployment models
 	- [On-demand](https://metal.equinix.com/developers/docs/deploy/on-demand/) vs [Reserved](https://metal.equinix.com/developers/docs/deploy/reserved/) vs [Spot](https://metal.equinix.com/developers/docs/deploy/spot-market/)
-
 - Deployment Selections
 	- [Locations](https://metal.equinix.com/developers/docs/locations/locations-about/)
 	- [Current Server Lineup / Catalog](https://metal.equinix.com/product/servers/) and [Historical Server Lineup](https://metal.equinix.com/developers/docs/servers/server-specs/)
 	- [Operating Systems](https://metal.equinix.com/developers/docs/operating-systems/)
 		- [iPXE](https://metal.equinix.com/developers/docs/operating-systems/custom-ipxe/) and [iPXE example](https://metal.equinix.com/developers/guides/smart-os/)
-
-	
 - Instance Configuration Options at Deploy Time
 	- [Number of instances AKA Batch](https://metal.equinix.com/developers/docs/deploy/batch-deployment/)
 	- [Userdata](https://metal.equinix.com/developers/docs/servers/user-data/)
@@ -32,7 +29,6 @@ The aim is to provide additional context and resources that may be of interest a
 		- [Public and Private IP Addresses](https://metal.equinix.com/developers/docs/networking/ip-addresses/)
 		- [VMWare Specific considerations with IP addressing at provision time](https://metal.equinix.com/developers/guides/vmware-esxi/#esxi-networking)
 	- [SSH Keys](https://metal.equinix.com/developers/docs/accounts/ssh-keys/)
-	
 - Provisioning Engine
 	- [Tinkerbell](https://tinkerbell.org/)
 
