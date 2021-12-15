@@ -42,7 +42,7 @@ The aim is to provide additional context and resources that may be of interest a
 - [Reserved IPs](https://metal.equinix.com/developers/docs/networking/reserve-public-ipv4s/) and ["Elastic" IPs](https://metal.equinix.com/developers/docs/networking/elastic-ips/)
 - [BGP](https://metal.equinix.com/developers/docs/bgp/)
 - [Layer 2](https://metal.equinix.com/developers/docs/layer2-networking/overview/)
-- Interconnection
+### Interconnection
 	![](https://s3.wasabisys.com/metalstaticassets/interconnect.JPG)
 
 
