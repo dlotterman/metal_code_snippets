@@ -6,7 +6,6 @@ The aim is to provide additional context and resources that may be of interest a
 
 ## Platform and Ecosystem
 
-- API and Integrations
 - [API Documentation](https://metal.equinix.com/developers/api/) and [API Tools](https://metal.equinix.com/developers/guides/equinix-metal-api-with-postman/)
 - [Equinix Metal CLI](https://metal.equinix.com/developers/docs/libraries/cli/)
 - [Equinix Metal DevOps Integrations](https://metal.equinix.com/developers/docs/more-resources/devops/) including [Terraform](https://registry.terraform.io/providers/equinix/metal/latest) and [Ansible](https://github.com/equinix/ansible-collection-metal)
