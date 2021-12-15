@@ -4,7 +4,7 @@ This document is intended to be used as a resource to "follow along" with while 
 
 The aim is to provide additional context and resources that may be of interest as the demo progresses.
 
-## Platform and Ecosystem
+## Platform and ecosystem
 
 - [API Documentation](https://metal.equinix.com/developers/api/) and [API Tools](https://metal.equinix.com/developers/guides/equinix-metal-api-with-postman/)
 - [Equinix Metal CLI](https://metal.equinix.com/developers/docs/libraries/cli/)
@@ -15,12 +15,12 @@ The aim is to provide additional context and resources that may be of interest a
 
 - Deployment models
 	- [On-demand](https://metal.equinix.com/developers/docs/deploy/on-demand/) vs [Reserved](https://metal.equinix.com/developers/docs/deploy/reserved/) vs [Spot](https://metal.equinix.com/developers/docs/deploy/spot-market/)
-- Deployment Selections
+- Deployment selections
 	- [Locations](https://metal.equinix.com/developers/docs/locations/locations-about/)
 	- [Current Server Lineup / Catalog](https://metal.equinix.com/product/servers/) and [Historical Server Lineup](https://metal.equinix.com/developers/docs/servers/server-specs/)
 	- [Operating Systems](https://metal.equinix.com/developers/docs/operating-systems/)
 		- [iPXE](https://metal.equinix.com/developers/docs/operating-systems/custom-ipxe/) and [iPXE example](https://metal.equinix.com/developers/guides/smart-os/)
-- Instance Configuration Options at Deploy Time
+- Instance configuration options at deploy time
 	- [Number of instances AKA Batch](https://metal.equinix.com/developers/docs/deploy/batch-deployment/)
 	- [Userdata](https://metal.equinix.com/developers/docs/servers/user-data/)
 		- [Metadata](https://metal.equinix.com/developers/docs/servers/metadata/)
@@ -29,10 +29,10 @@ The aim is to provide additional context and resources that may be of interest a
 		- [Public and Private IP Addresses](https://metal.equinix.com/developers/docs/networking/ip-addresses/)
 		- [VMWare Specific considerations with IP addressing at provision time](https://metal.equinix.com/developers/guides/vmware-esxi/#esxi-networking)
 	- [SSH Keys](https://metal.equinix.com/developers/docs/accounts/ssh-keys/)
-- Provisioning Engine
+- Provisioning engine
 	- [Tinkerbell](https://tinkerbell.org/)
 
-## Features Walk Through
+## Features walk through
 
 - [Reserved IPs](https://metal.equinix.com/developers/docs/networking/reserve-public-ipv4s/) and ["Elastic" IPs](https://metal.equinix.com/developers/docs/networking/elastic-ips/)
 - [BGP](https://metal.equinix.com/developers/docs/bgp/)
@@ -46,5 +46,5 @@ The aim is to provide additional context and resources that may be of interest a
 - [Equinix Fabric Product Page](https://www.equinix.com/interconnection-services/equinix-fabric) and [Documentation](https://docs.equinix.com/en-us/Content/Interconnection/Fabric/Fabric-landing-main.htm)
 - [Equinix Network Edge Product Page](https://edgeservices.equinix.com/) and [Documentation](https://docs.equinix.com/en-us/Content/Interconnection/NE/landing-pages/NE-landing-main.htm)
 
-## Code from Demo Dashboard
+## Code from demo dashboard
 - The code from the demo is publicly  visible (if ugly) on [Github](https://github.com/dlotterman/metal_benchmark_demo)
