@@ -1,4 +1,4 @@
-# Documentation "Follow-along" for my Equinix Metal Demo
+# Equinix Metal Demo "Follow-along" documentation
 
 This document is intended to be used as a resource to "follow along" with while attending a demo of the Equinix Metal platform. 
 
