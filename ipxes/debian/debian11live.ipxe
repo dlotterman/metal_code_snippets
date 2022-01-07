@@ -1,0 +1,28 @@
+#!ipxe
+
+# Steps to prep
+# 1) Build HTTP host / endpoint of choice (s3 / nginx / apache)
+# 2) Download "Debian Live Standard $ARCH" 
+# 2a) Exmaple: "debian-live-11.2.0-amd64-standard.iso"
+# 3) Mount, unpack the iso and copy the following files from "Live\" into your http endpoint:
+# 3a) vmlinuz-$VERSION-amd64
+# 3b) initrd.img-$VERSION-amd64
+# 3c) filesystem.squashfs
+# 4) Update this iPXE file to reflect and host
+# 5) Boot / provision system with this as iPXE target
+# 5a) iPXE must be in "always on" to provide DHCP lease
+# 5) System will output to Metal OOB
+# 6) System will pickup Metal IP during DHCP lease
+# 6a) this will go to eth0, if needed, break bond for eth1+MetalVLAN
+# 7) User / Pass is user / live
+# 7a) this user can sudo
+# 8) System is fully valid livecd, can apt install etc
+# DOES NOT WORK WITH c2.medium
+
+dhcp
+
+kernel $YOUR_URL/vmlinuz-$VERSION-amd64 console=ttyS1,115200n8 boot=live shell components  fetch=http://$YOUR_URL/filesystem.squashfs
+
+initrd $YOUR_URL/initrd.img-$VERSION-amd64
+
+boot
