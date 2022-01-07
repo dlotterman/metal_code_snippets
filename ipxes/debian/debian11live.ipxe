@@ -18,6 +18,9 @@
 # 7a) this user can sudo
 # 8) System is fully valid livecd, can apt install etc
 # DOES NOT WORK WITH c2.medium
+# https://live-team.pages.debian.net/live-manual/html/live-manual.en.html
+## See "webboot" ^^
+# https://www.debian.org/CD/live/
 
 dhcp
 
