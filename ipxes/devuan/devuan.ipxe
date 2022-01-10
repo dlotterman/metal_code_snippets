@@ -1,0 +1,13 @@
+#Devuan is relatively easy to iPXE the installer for, just download the packaged installer and unpack the kernel / initrds with basic kernel params for Debian
+
+#!ipxe
+dhcp
+
+set base-url https://pkgmaster.devuan.org/devuan/dists/chimaera/main/installer-amd64/current/images/netboot/debian-installer/amd64/
+
+kernel ${base-url}/linux console=ttyS1,115200n8 ip=dhcp initrd=initrd.gz
+initrd ${base-url}/initrd.gz
+
+
+boot
+
