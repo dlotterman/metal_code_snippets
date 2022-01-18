@@ -10,7 +10,6 @@
 # 5. Enables the UFW limit function on ssh to double guard with fail2ban
 # 6. Enables automatic updates (for security, so things like SSHD are automatically updated)
 # 7. Enables fail2ban on SSHD
-# 8. Downloads and runs the metal_smoke_instance.sh
 
 
 package_upgrade: true
@@ -18,6 +17,7 @@ package_reboot_if_required: true
 
 packages:
  - screen
+ - tmux
  - sysbench
  - ethtool
  - fail2ban
@@ -44,45 +44,29 @@ users:
     groups: [cloud-users, sudo]
     shell: /bin/bash
 
-datasource_list: [Ec2, Equinix]
 datasource:
   Ec2:
     strict_id: false
 
-# keep sshd disabled till everything is done at the end of runcmd
-bootcmd:
-  - [ cloud-init-per, instance, systemctl, start, ssh ]
-  - [ cloud-init-per, instance, systemctl, enable, ssh ]
-
 runcmd:
   - yes | unminimize  &
-  - systemctl enable fail2ban
-  - systemctl start fail2ban
-  - systemctl enable unattended-upgrades
-  - systemctl start unattended-upgrades
-  - systemctl enable ufw
-  - systemctl start ufw  
-  - ufw default allow outgoing
-  - ufw default deny incoming
-  - ufw allow ssh
-  - ufw allow http
-  - ufw allow from 10.0.0.1/8
-  - ufw limit ssh
-  - ufw enable
-  - echo "interface ignore wildcard" >> /etc/ntp.conf
-  - echo "interface listen 127.0.0.1" >> /etc/ntp.conf
-  - systemctl restart ntp
-  - modprobe 8021q
-  - echo "8021q" >> /etc/modules
-  - mv /root/.ssh /home/adminuser/
-  - chown -R adminuser:cloud-users /home/adminuser/.ssh
-  - sed -i -e '/^#PermitRootLogin/s/^.*$/PermitRootLogin no/' /etc/ssh/sshd_config
-  - echo "DebianBanner no" >> /etc/ssh/sshd_config
-  - systemctl enable ssh
-  - systemctl start ssh
-  - curl --silent --retry 5 -o /tmp/metal_smoke_instance.sh https://raw.githubusercontent.com/dlotterman/metal_code_snippets/main/smokeping/metal_smoke_instance.sh
-  - chmod 0750 /tmp/metal_smoke_instance.sh
-  - bash /tmp/metal_smoke_instance.sh
+  - [ systemctl, enable, --now, fail2ban ]
+  - [ systemctl, enable, --now, unattended-upgrades ]
+  - [ systemctl, enable, --now, ufw ]
+  - [ ufw, default, allow, outgoing ]
+  - [ ufw, default, deny, incoming ]
+  - [ ufw, allow, ssh ]
+  - [ ufw, allow, from, 10.0.0.1/8 ]
+  - [ ufw, limit, ssh ]
+  - [ ufw, enable ]
+  - [ modprobe, 8021q ]
+  - [ rsync, -av, "/root/.ssh", /home/adminuser/ ]
+  - [ chown, -R, "adminuser:cloud-users", "/home/adminuser/.ssh" ]
+  - [ sed, -i, -e, '/^PermitRootLogin/s/^.*$/PermitRootLogin no/', /etc/ssh/sshd_config ]
+  - [ sed, -i, -e, '/^#MaxAuthTries/s/^.*$/MaxAuthTries 5/', /etc/ssh/sshd_config ]
+  - [ sed, -i, -e, '/^X11Forwarding/s/^.*$/X11Forwarding no/', /etc/ssh/sshd_config ]
+  - [ systemctl, enable, --now, sshd ]
+
 
 write_files:
   - owner: root:root
@@ -99,6 +83,7 @@ write_files:
       logpath = %(sshd_log)s
       mode = aggressive
     permissions: '0644'
+
   - owner: root:root
     path: /etc/apt/apt.conf.d/50unattended-upgrades
     content: |
@@ -110,6 +95,7 @@ write_files:
       "${distro_id}ESM:${distro_codename}-infra-security";
       };
     permissions: '0644'
+
   - owner: root:root
     path: /etc/apt/apt.conf.d/21auto-upgrades_on
     content: |
@@ -118,6 +104,7 @@ write_files:
       APT::Periodic::AutocleanInterval "7";
       APT::Periodic::Unattended-Upgrade "1";
     permissions: '0644'
+
   - owner: root:root
     path: /etc/crontab
     append: true
@@ -127,3 +114,12 @@ write_files:
       15 11 * * * root systemctl restart serial-getty@ttyS1.service
       20 11 * * * root systemctl restart getty@tty1.service
     permissions: '0644'    
+
+  - path: "/etc/modules-load.d/networking.conf"
+    permissions: "0644"
+    owner: "root:root"
+    append: true
+    content: |
+      bonding
+      8021q
+    permissions: "0644"
