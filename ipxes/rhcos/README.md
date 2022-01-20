@@ -27,7 +27,7 @@ For the most part, this follows the documentation on FC / RH branded sites for i
 	- Pure convenience
 	
 * `rd.net.timeout.carrier=30 rd.neednet=1`
-	- `rd.neednet` should supposedly not need to be here anymore, timeout.carreir helps with the delay Equinix Metal instances have in getting networking going because of the need to link-up two interfaces and negotiate LACP
+	- `rd.neednet` should supposedly not need to be here anymore, `timeout.carrier` helps with the delay Equinix Metal instances have in getting networking going because of the need to link-up two interfaces and negotiate LACP
 	
 * `ip=bond0:dhcp bond=bond0:enp1s0f0:enp1s0f1:mode=802.3ad,lacp_rate=slow:miimon=100,xmit_hash_policy=layer3+4,updelay=1000,downdelay=1000`
 	- These kernel args both configure bonded networking for the LiveOS / installer env, and are also [supposed to be picked up by dracut / networkmanager downstream to be used as the configuration values for networkmanager in the installed](https://docs.openshift.com/container-platform/4.6/installing/installing_bare_metal/installing-bare-metal-network-customizations.html#installation-user-infra-machines-advanced_network_installing-bare-metal-network-customizations) environment. My experience with 4.8 is this expected behavior was broken, and I had to patch the systemd unit file for the `coreos-installer` to re-pass the kernel args to get picked up post install. This appears to be fixed in 4.10-expiramental and works as intended in the documentation. 
@@ -37,7 +37,7 @@ For the most part, this follows the documentation on FC / RH branded sites for i
 
 The unit file patch here shouldn't be necessary, but the CoreOS ecosystem seems to be deadset on either completely re-writing or breaking this functionality with every minor release. 
 
-Ignition will path the systemd unit file for the `coreos-installer` before the service is started, letting us configure the installer. Our patch deletes an old / stale console config thats left in the installer default, adds the correct console line for Equinix Metal. This apppears to be needed for 4.8 through 4.10. It also re-appends the kernel args for networking we set in the iPXE kernel args. This line is needed in 4.8, it is not needed in 4.10-expiramental. 
+Ignition will path the systemd unit file for the `coreos-installer` before the service is started, letting us configure the installer. Our patch [deletes an old / stale console](https://github.com/coreos/fedora-coreos-tracker/issues/567) config thats left in the installer default, adds the correct console line for Equinix Metal. This apppears to be needed for 4.8 through 4.10. It also re-appends the kernel args for networking we set in the iPXE kernel args. This line is needed in 4.8, it is not needed in 4.10-expiramental. 
 
 Also the Ignition file example here currently has a hardcoded URL for the Ignition file to be re-downloaded by the installer in the unit patch, this should not be necessary but is there for example.
 
