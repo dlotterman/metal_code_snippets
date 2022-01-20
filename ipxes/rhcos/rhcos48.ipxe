@@ -1,0 +1,12 @@
+#!ipxe
+
+
+set BASEURL DIR_PATH_DIR_UNPACKED_LIVE_ISO_CONTENTS
+
+kernel ${BASEURL}/rhcos-4.8.14-x86_64-live-kernel-x86_64 initrd=main coreos.live.rootfs_url=${BASEURL}/rhcos-4.8.14-x86_64-live-rootfs.x86_64.img ignition.firstboot ignition.platform.id=metal coreos.inst=yes coreos.inst.install_dev=sda ignition.config.url=${BASEURL}/rhcosmetal.ign coreos.inst.ignition_url=${BASEURL}/rhcosmetal.ign systemd.unified_cgroup_hierarchy=0 console=tty0 console=ttyS1,115200n8 inst.text inst.sshd rd.net.timeout.carrier=30 rd.neednet=1 ip=bond0:dhcp bond=bond0:enp1s0f0:enp1s0f1:mode=802.3ad,lacp_rate=slow:miimon=100,xmit_hash_policy=layer3+4,updelay=1000,downdelay=1000 systemd.journald.max_level_console=debug
+
+
+initrd --name main ${BASEURL}/rhcos-4.8.14-x86_64-live-initramfs.x86_64.img
+
+boot
+

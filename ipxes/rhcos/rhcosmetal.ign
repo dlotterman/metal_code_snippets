@@ -1,0 +1,30 @@
+{
+  "ignition": {
+    "version": "3.2.0"
+  },
+   "systemd":{
+      "units":[
+         {
+            "contents":"[Unit]\nDescription=Run after install\nAfter=coreos-installer.service\nBefore=coreos-installer.target\n\n[Service]\nType=oneshot\nExecStart=/usr/bin/coreos-installer install /dev/sda --delete-karg console=ttyS0,115200n8 --append-karg console=ttyS1,115200n8 --append-karg ip=bond0:dhcp --append-karg bond=bond0:enp1s0f0:enp1s0f1:mode=802.3ad,lacp_rate=slow:miimon=100,xmit_hash_policy=layer3+4,updelay=1000,downdelay=1000  --ignition-url BASEURLFROMIPXE/rhcosmetal.ign --insecure-ignition\n\n[Install]\nRequiredBy=coreos-installer.target\n",
+            "enabled":true,
+            "name":"post-install-hook.service"
+         }
+      ]
+   },
+  "passwd": {
+    "users": [
+      {
+        "groups": [
+          "sudo"
+        ],
+        "name": "core",
+        "passwordHash": "https://linuxconfig.org/how-to-hash-passwords-on-linux",
+        "sshAuthorizedKeys": [
+          "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABgQDnge/Lkpw4",
+          "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAACAQC74G3CW6..."
+        ]
+      }
+    ]
+  }
+}
+

@@ -1,0 +1,15 @@
+variant: fcos
+version: 1.4.0
+kernel_arguments:
+  - console=ttyS1,115200
+
+passwd:
+  users:
+    - name: core
+      password_hash: "$1$Tsx8Qv-google-generate-password-hash-linux."
+      groups:
+        - sudo
+      ssh_authorized_keys:
+        - ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABgQDnge/Lkpw4..
+        - ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAACAQC74G3CW6....
+
