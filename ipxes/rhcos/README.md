@@ -1,8 +1,8 @@
 ### Installing Redhat CoreOS on Equinix Metal via iPXE
 
-Disclaimer: This was written as a quick todo brain dump, apologies for horrible formatting and writting.
+Disclaimer: This was written as a quick todo brain dump, apologies for horrible formatting and writing.
 
-In the iPXE file for RedHat CoreOS, there are some attributes that deserve a explanation. It is worth noting that the CoreOS project seems to have a number of "provisioning level" architecture changes in flight, between the seperation of Operating System and OpenShift, FC <-> RH and it's current place in that versioning between 4.8 -> 4.10. It is highly likely that this documentation will be out of date before too long.
+In the iPXE file for RedHat CoreOS, there are some attributes that deserve an explanation. It is worth noting that the CoreOS project seems to have a number of "provisioning level" architecture changes in flight, between the separation of Operating System and OpenShift, FC <-> RH, and its current place in that versioning between 4.8 -> 4.10. It is highly likely that this documentation will be out of date before too long.
 
 For the most part, this follows the documentation on FC / RH branded sites for installing FC/RH CoreOS to Bare Metal via PXE / LiveOS / iPXE:
 
@@ -14,7 +14,7 @@ For the most part, this follows the documentation on FC / RH branded sites for i
 #### iPXE file options
 
 * `ignition.platform.id=metal`
-	- This should be self explanatory, this deviates from older documentation which asks for `coreos.inst.platform_id=packet`, and I haven't looked into the change here
+	- This should be self-explanatory, this deviates from older documentation which asks for `coreos.inst.platform_id=packet`, and I haven't looked into the change here
 	
 * `coreos.inst.ignition_url`
 	- This is the URL for the ignition file for the `coreos-installer` that gets run inside the live environment. It's important to note that because we are getting to the `coreos-installer` inside of the live environment, we do need this config as well as the live OS, which is `ignition.config.url`
@@ -50,3 +50,4 @@ There is some confusing overlap with Butane documentation regarding the ignition
 #### Networking
 
 The way this is currently put together leans on Equinix Metal providing DHCP for "iPXE" instances with public networking. The documentation from the RedHat branded RHCOS installer covers how to assign this statically. It would be pretty trivial to pull this data dynamically from [Equinix Metal's metadata api](https://metal.equinix.com/developers/docs/servers/metadata/) [or add VLANs to the bond.](https://docs.openshift.com/container-platform/4.6/installing/installing_bare_metal/installing-bare-metal-network-customizations.html#installation-user-infra-machines-advanced_network_installing-bare-metal-network-customizations)
+
