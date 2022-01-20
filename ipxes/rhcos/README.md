@@ -43,7 +43,7 @@ Also the Ignition file example here currently has a hardcoded URL for the Igniti
 
 #### Ignition vs Butane documentation
 
-There is some confusing overlap with Butane documentation regarding the ignition spec's for fcos vs rhcos vs openshift. For the installer of the Operating System, which is `coreos-installer` as of 4.8, we want butane `3.2`-ish era configs. References to the RHCOS specific configuration spec of Ignition / Butane are primarily for the OpenShift ecosystem that lives above the CoreOS operating system installer. That is to say, OpenShift can eventually become responsible for it's own provisioning of new hosts. That path has it's own conflicting documentation / configuration paths as the RHCOS Operating System installer itself. 
+There is some confusing overlap with Butane documentation regarding the ignition spec's for fcos vs rhcos vs openshift. For the installer of the Operating System, which is `coreos-installer` as of 4.8, we [want Ignition `3.2`-ish era configs](https://coreos.github.io/butane/upgrading/). References to the RHCOS specific configuration spec of Ignition / Butane are primarily for the OpenShift ecosystem that lives above the CoreOS operating system installer. That is to say, OpenShift can eventually become responsible for it's own provisioning of new hosts. That path has it's own conflicting documentation / configuration paths as the RHCOS Operating System installer itself. 
 
 * https://coreos.github.io/butane/
 
