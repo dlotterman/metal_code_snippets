@@ -2,6 +2,8 @@
 
 # License: WTFPL
 
+# WARNING: THIS SCRIPT WILL HAPPILY DESTROY DATA
+
 # This script will take a "vanilla" Equinix Metal instance
 # Where that instance was provisioned with a stock Rocky 8.5 image
 # And that instance is booted off of 1x of 2x internal drives,
@@ -82,7 +84,8 @@ sleep 5
 
 # copy partition table to get bios_grub parition
 # build other partitions as a little diff than Metal default
-
+# The reason we take this approach is to protect the 1MB 
+# bios_grub legacy boot partition used by Equinix Metal
 sgdisk -R /dev/$DESTDRIVE /dev/$TARGETDRIVE
 sgdisk -G /dev/$DESTDRIVE
 sgdisk -d 2 /dev/$DESTDRIVE
