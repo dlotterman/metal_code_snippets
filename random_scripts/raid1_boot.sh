@@ -20,6 +20,9 @@
 # for a live Metal instance
 # It is NOT production ready, it should be read and understood
 # and re-written entirely to not be as terrible as it currently is
+# In particular this script messes with /etc/default/grub, this is dangerous
+# An operator should have an understanding of /etc/default/grub and the grub
+# rebuild process in general as to not break future kernel / boot updates.
 
 # After script is run, reboot so server is standing on RAID leg
 # and add old drive in
