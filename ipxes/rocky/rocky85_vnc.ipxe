@@ -1,0 +1,6 @@
+#!ipxe
+dhcp
+set base http://ipxe.dlott.casa/util/rocky/85
+kernel ${base}/images/pxeboot/vmlinuz initrd=initrd.img inst.repo=${base}/ console=tty0 console=ttyS1,115200n8 inst.vnc inst.vncpassword=Lolwag8 ip=dhcp
+initrd ${base}/images/pxeboot/initrd.img
+boot || read void
