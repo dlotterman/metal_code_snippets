@@ -14,7 +14,6 @@ This document aims to quickly describe:
 * Applying and using that generated SSH key with Equinix Metal
 
 
-
 ### Equinix Metal and its use of SSH
 
 Equinix Metal uses SSH and SSH keys for two key functions of systems administration:
@@ -23,6 +22,7 @@ Equinix Metal uses SSH and SSH keys for two key functions of systems administrat
 1) Primary operator management vector for configuration of the host OS via the host Operating Systems environment and networking (aka SSH into host OS after provision as OS user)
 2) Secondary, "Out of Band" (or more appropriately named: Serial over SSH or SOS) operator management vector for instance, and host OS configuration, where Equinix Metal provides an SSH endpoint that drops the operator at an emulated Serial (ttyS1 in Linux speak) console attached to the lifecycle controller of the Bare Metal Instance.
 
+Most importantly, it should be understood that the use of SSH keys with Equinix Metal is a critical function of the platform, and an essential consideration for a succesful deployment. These SSH keys, especially in conjunction with the SOS / OOB functionality described below, are part of your operator toolchain for recovering Metal instances under the most critical times of duress, and these mechanics should be understood specific to your deployment.
 
 #### Primary Management Vector
 
