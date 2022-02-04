@@ -3,30 +3,30 @@
 **Disclaimer:**
 *This document is UN-official, is only meant to be used as a reference, and is in no way supported by Equinix Metal itself.*
 
-Since ~2018, most up to date distributions of Windows 10 and adjacent releases (Server etc) have included a commandline SSH client as part of it's standard distrobution. This ssh client, which can be reach via `cmd` terminal or powershell terminal, closely mimics / behaves in line with the common behaviors exhibited by default SSH clients on *nix platforms. 
+Since ~2018, most up-to-date distributions of Windows 10 and adjacent releases (Server etc) have included a command-line SSH client as part of it's standard distrobution. This ssh client, which can be found via the `cmd` terminal or powershell terminal, closely mimics/behaves in line with the common behaviors exhibited by default SSH clients on *nix platforms. 
 
-This greatly simplifies paths to *nix systems administration and operation from Windows 10 based workstations, however the native client still has some behavior deviations from the standard *nix clients that can be confusing, and can potentially clash with other "ssh client" documentation easily found via search engines. 
+This greatly simplifies paths to *nix systems administration and operation from Windows 10 based workstations, however, the native client has some behavior deviations from the standard *nix clients that can be confusing, and can potentially clash with other "ssh client" documentation easily found via search engines. 
 
 This document aims to quickly describe:
 
-* Equinix Metal and it's use of SSH
+* Equinix Metal and its use of SSH
 * Generating an SSH key on a Windows 10 workstation with the native Windows 10 ssh toolchain
 * Applying and using that generated SSH key with Equinix Metal
 
 
 
-### Equinix Metal and it's use of SSH
+### Equinix Metal and its use of SSH
 
-Equinix Metal uses SSH and SSH-keys for two key functions of systems administration:
+Equinix Metal uses SSH and SSH keys for two key functions of systems administration:
 
 
 1) Primary operator management vector for configuration of the host OS via the host Operating Systems environment and networking (aka SSH into host OS after provision as OS user)
-2) Secondary, "Out of Band" (or more appropriately named: Serial over SSH or SOS) operator management vector for instance and host OS configuration, where Equinix Metal provides an SSH endpoint that drops the operator at an emulated Serial (ttyS1 in Linux speak) console attached to the lifecycle controller of the Bare Metal Instance.
+2) Secondary, "Out of Band" (or more appropriately named: Serial over SSH or SOS) operator management vector for instance, and host OS configuration, where Equinix Metal provides an SSH endpoint that drops the operator at an emulated Serial (ttyS1 in Linux speak) console attached to the lifecycle controller of the Bare Metal Instance.
 
 
 #### Primary Management Vector
 
-When an Equinix Metal instance is provisioned with an [Equinix Metal provided image](https://metal.equinix.com/developers/docs/operating-systems/), it is loaded with the [cloud-init](https://cloudinit.readthedocs.io/en/latest/) service, which on first boot will pull a variety of metadata from the [Metal Metadata API](https://metal.equinix.com/developers/docs/servers/metadata/). This metadata includes a variety of things including hostnames, networking, user provided data, [and also SSH keys](https://metal.equinix.com/developers/docs/accounts/ssh-keys/). When deploying an instance, the operator can choose which user's SSH keys are available to the instance at provision time. The SSH keys are copied from the Metadata API and written to the `root` user's SSH `~/.ssh/authorized_keys` file, which opens up the initial management vector for the instance, via the instances own networking that is also stood up at provision time.
+When an Equinix Metal instance is provisioned with an [Equinix Metal provided image](https://metal.equinix.com/developers/docs/operating-systems/), it is loaded with the [cloud-init](https://cloudinit.readthedocs.io/en/latest/) service, which on first boot will pull a variety of metadata attributes from the [Metal Metadata API](https://metal.equinix.com/developers/docs/servers/metadata/). This metadata includes a variety of things including hostnames, networking, user provided data, [and also SSH keys](https://metal.equinix.com/developers/docs/accounts/ssh-keys/). When deploying an instance, the operator can choose which user's SSH keys are available to the instance at provision time. The SSH keys are copied from the Metadata API and written to the `root` user's SSH `~/.ssh/authorized_keys` file, which opens up the initial management vector for the instance, via the instances own networking that is also stood up at provision time.
 
 This means that SSH keys, and their installation onto a Metal instance by the Metal platform, is a one time, at provision time event, where because of the Equinix Metal Joint Management Paradigm, the Equinix Metal platform is unable to modify or reconfigure the SSH keys on a host after provision time. Any changes to the SSH keys on the host OS after initial provisioning must come from the operators themselves.
 
@@ -37,7 +37,7 @@ The Equinix Metal SOS is a secondary management vector for the management of Equ
 
 When an Equinix Metal instance is provisioned, the same SSH-keys that are provided to the host via the Metadata API, are also installed at the SSH keys granting access to the SOS console. Similar to host Operating System SSH keys, these SOS SSH keys are primarily managed at install time. Unlike the host OS management problem, Equinix Metal has end to end lifecycle control over the SOS console, and hence can manage and update SSH keys after provisioning time. This can be key to recovering an instance where the initial management SSH keys may have been lost, or new users are added to the platform that may need that management access.
 
-It is worth being extremely clear here: The SOS console ONLY provides logical ACCESS to the Bare Metal instance's host OS, it does NOT provide a user or an authentication vector to the host OS behind the SOS console. The operator must have the local login credentials to the box, even with the SOS console. Think of the SOS console as your IP-KVM, where you still need a local user to the host OS in order to subsequently login to the Operating Systems environment. 
+It is worth being extremely clear here: The SOS console ONLY provides logical ACCESS to the Bare Metal instance's host OS, it does NOT provide a user or an authentication vector to the host OS behind the SOS console. The operator must have the local login credentials to the box, even with the SOS console. Think of the SOS console as your IP-KVM, where you still need a local user inside the host OS in order to subsequently login to the Operating Systems environment. 
 
 It should be noted that the feature to update the SSH keys of the SOS console is new to the platform as of Q4 2021. Previously it was a static configuration set at deploy time.
 
@@ -88,3 +88,4 @@ Warning: Permanently added 'sos.ny5.platformequinix.com,IP' (RSA) to the list of
 [SOS Session Ready. Use ~? for help.]
 [Note: You may need to press RETURN or Ctrl+L to get a prompt.]
 ```
+

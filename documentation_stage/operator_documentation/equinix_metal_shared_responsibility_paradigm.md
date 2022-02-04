@@ -1,4 +1,4 @@
-#### The Equinix Metal Shared Management Paradigm
+#### The Equinix Metal Shared Responsibility / Management Paradigm
 
 When Amazon launched it's AWS, and in particular is I.a.a.S EC2 platform, it established a new (then) [joint or "shared" operator / vendor management model](https://aws.amazon.com/compliance/shared-responsibility-model/) that has become the defacto standard for cloud platforms going forward.
 
