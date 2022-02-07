@@ -67,7 +67,7 @@ When a new key is uploaded to the Equinix Metal platform, there is an option to 
 
 ![](https://s3.wasabisys.com/metalstaticassets/metal_ssh_key_add.JPG)
 
-Per the documentation above, Equinix Metal *CAN NOT* update the SSH keys installed to the host OS after provision time. This means that the uploaded key will *NOT* be present on the instance until the operator uploads the key themselves, or the instance is "reinstalled" via the Equinix Metal platform, which functionally triggers a full re-provision, which gives the oppertunity for the new key to be loaded. 
+Per the documentation above, Equinix Metal *CANNOT* update the SSH keys installed to the host OS after provision time. This means that the uploaded key will *NOT* be present on the instance until the operator uploads the key themselves, or the instance is "reinstalled" via the Equinix Metal platform, which functionally triggers a full re-provision, which gives the oppertunity for the new key to be loaded. 
 
 However, the SSH keys for the SOS / OOB endpoint for the instances WILL be updated, such that the new key should immediately be available for use with the SOS / OOB console after it is uploaded, so long as the correct instances are selected at upload time.
 
