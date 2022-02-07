@@ -24,7 +24,8 @@ This document does not address the use of [Metal's Gateway](https://metal.equini
 
 #### Configuring the Metal Instance for Unbonded Layer-2 aware modes
 
-[This section is convered by the Metal "Hybrid Unbonded" documentation visible here](https://metal.equinix.com/developers/docs/layer2-networking/hybrid-unbonded-mode/): https://metal.equinix.com/developers/docs/layer2-networking/hybrid-unbonded-mode/
+[This section is convered by the Metal "Hybrid Unbonded" documentation visible here](https://metal.equinix.com/developers/docs/layer2-networking/hybrid-unbonded-mode/): 
+
 1) Find the newly provisioned ESXi instance and load it's details page
 2) Under the "Network" details page where "Network" is visible on the lefthand side page selection bar:
 	1) Click the blue "Convert to Other Network Type" button
