@@ -8,13 +8,13 @@ The following steps allow an operator to move that management interface to a Met
 
 This guide makes the following assumptions where you can make changes or substitutions as relevant for your deployment.
 
-Layer-3 Networks:
-	Metal Public: 147.28.150.96/29	
-	Metal Private: 10.68.93.184/29
-	Operator Management Network: 172.16.10.15/24
-		Where Operator has gateway in that network assigned to IP: 172.16.10.1/24
-VLANS: Operator has two VLANs provisioned in Metal for the correct Metro. This guide assumes VLAN ID `1000` & `1001` where VLAN `1000` is the correct Layer-2 VLAN for the Operator Management Network 172.16.10.0/24, and `1001` is here as the second VLAN that will be unconfigured on the host itself.
-SSH Keys: [That the customer has correctly configured SSH keys in the Equinix Metal platform](https://metal.equinix.com/developers/docs/accounts/ssh-keys/)
+* Layer-3 Networks:
+	* Metal Public: 147.28.150.96/29	
+	* Metal Private: 10.68.93.184/29
+	* Operator Management Network: 172.16.10.15/24
+		* Where Operator has gateway in that network assigned to IP: 172.16.10.1/24
+* VLANS: Operator has two VLANs provisioned in Metal for the correct Metro. This guide assumes VLAN ID `1000` & `1001` where VLAN `1000` is the correct Layer-2 VLAN for the Operator Management Network 172.16.10.0/24, and `1001` is here as the second VLAN that will be unconfigured on the host itself.
+* SSH Keys: [That the customer has correctly configured SSH keys in the Equinix Metal platform](https://metal.equinix.com/developers/docs/accounts/ssh-keys/)
 
 ### Using Metal Gateways for network connectivity
 
