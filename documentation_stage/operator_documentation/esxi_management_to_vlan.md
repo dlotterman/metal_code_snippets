@@ -9,11 +9,11 @@ The following steps allow an operator to move that management interface to a Met
 This guide makes the following assumptions where you can make changes or substitutions as relevant for your deployment.
 
 * Layer-3 Networks:
-	* Metal Public: 147.28.150.96/29	
-	* Metal Private: 10.68.93.184/29
-	* Operator Management Network: 172.16.10.15/24
-		* Where Operator has gateway in that network assigned to IP: 172.16.10.1/24
-* VLANS: Operator has two VLANs provisioned in Metal for the correct Metro. This guide assumes VLAN ID `1000` & `1001` where VLAN `1000` is the correct Layer-2 VLAN for the Operator Management Network 172.16.10.0/24, and `1001` is here as the second VLAN that will be unconfigured on the host itself.
+	* Metal Public: `147.28.150.96/29`	
+	* Metal Private: `10.68.93.184/29`
+	* Operator Management Network: `172.16.10.15/24`
+		* Where Operator has gateway in that network assigned to IP: `172.16.10.1/24`
+* VLANS: Operator has two VLANs provisioned in Metal for the correct Metro. This guide assumes VLAN ID `1000` & `1001` where VLAN `1000` is the correct Layer-2 VLAN for the Operator Management Network `172.16.10.0/24`, and `1001` is here as the second VLAN that will be unconfigured on the host itself.
 * SSH Keys: [That the customer has correctly configured SSH keys in the Equinix Metal platform](https://metal.equinix.com/developers/docs/accounts/ssh-keys/)
 
 ### Using Metal Gateways for network connectivity
@@ -34,7 +34,7 @@ This document does not address the use of [Metal's Gateway](https://metal.equini
 	4) Click the "Convert to Hybrid Networking" button at the bottom of the side panel
 	5) The Metal instances switch ports will now be converted to Hybrid Unbonded mode
 3) Once complete, the blue "+ Add New Vlan" button should be visible in the lower right hand side
-	1) Add your first VLAN to the `eth1` interface (this represent the second physical interface of the box, for `n2` instances this would likely be `eth3`)
+	1) Add your first VLAN to the `eth1` interface (this represent the second physical interface of the box, for `n2.xlarge.x86` instances this would likely be `eth3`)
 	2) Add a second VLAN to the `eth1` interface. The reasoning for this is it enforces `802.1q` tagging all the way to the host. 
 4) Connect to the "Out-of-band console", [the details for which should be exposed by a clickable button at the top of the instances details page](https://metal.equinix.com/developers/docs/resilience-recovery/serial-over-ssh/)
 	* It is strongly recommended to ensure your SSH / terminal client is sized for *at least* 80x pixels wide by 25x pixels tall. It may be useful for operator sanity to have your terminal be signifincalty larger than that.
