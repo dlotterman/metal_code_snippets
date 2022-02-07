@@ -20,7 +20,7 @@ This guide makes the following assumptions where you can make changes or substit
 
 This document does not address the use of [Metal's Gateway](https://metal.equinix.com/developers/docs/networking/metal-gateway/) feature as another vector for management access, though there may be very good reasons to do so. While the use of a Metal Gateway may be the preferred path, the reasons for / agaisnt fall outside the scope of this document and will not be addressed. For questions about the usage of Equinix Metal Gateway instances, please consult with your Equinix Metal sales and support team.
 
-### Configuring the Equinix Metal instance in the Equinix Metal platform (Console / GUI)
+### Configuring the Equinix Metal instance in the Equinix Metal platform
 
 #### Configuring the Metal Instance for Unbonded Layer-2 aware modes
 
