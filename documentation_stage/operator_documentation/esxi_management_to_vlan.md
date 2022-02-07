@@ -31,7 +31,7 @@ This document does not address the use of [Metal's Gateway](https://metal.equini
 	1) Click the blue "Convert to Other Network Type" button
 	2) Select `Hybrid` or `Layer-2` depending on your design, this guide assumes Hybrid
 	3) Select `Unbonded`, as we are working with a currently unlicensed ESXi instance, LACP is unavailable to us so the switch bond must be broken.
-		* **If the reasoning behind breaking the bond / interaction with LACP is not understood, please reach out to your Equinix Metal sales and support team as this requires substantial contextual understanding **
+		* **If the reasoning behind breaking the bond / interaction with LACP is not understood, please reach out to your Equinix Metal sales and support team as this requires substantial contextual understanding**
 	4) Click the "Convert to Hybrid Networking" button at the bottom of the side panel
 	5) The Metal instances switch ports will now be converted to Hybrid Unbonded mode
 3) Once complete, the blue "+ Add New Vlan" button should be visible in the lower right hand side
