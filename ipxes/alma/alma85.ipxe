@@ -1,0 +1,8 @@
+#!ipxe
+dhcp
+set base http://ipxe.dlott.casa/util/alma/85
+#kernel ${base}/images/pxeboot/vmlinuz initrd=initrd.img inst.repo=${base}/ inst.stage2=${base}/ console=tty0 console=ttyS1,115200n8 inst.text ip=dhcp inst.rescue inst.ks=${base}/85.ks inst.nompath
+kernel ${base}/images/pxeboot/vmlinuz initrd=initrd.img inst.repo=${base}/ console=tty0 console=ttyS1,115200n8 inst.text ip=dhcp rd.shell
+initrd ${base}/images/pxeboot/initrd.img
+boot || read void
+
