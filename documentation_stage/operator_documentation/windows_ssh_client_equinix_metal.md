@@ -49,7 +49,7 @@ Most often, this can mean SSH key files are generated either in unexpected direc
 
 The flag for this is the `-f` option in the `ssh-keygen` command. My example would be:
 
-`ssh-keygen -t rsa -b 40969 -C "myemail@domain.com" -f myname_metal_ssh_key`
+`ssh-keygen -t rsa -b 4096 -C "myemail@domain.com" -f myname_metal_ssh_key`
 
 This will generate an SSH key, identified by the defined email address, and it will write out the private key as a file named `myname_metal_ssh_key` as the private key and a file named `myname_metal_ssh_key.pub` as the public key in the working directory the command was run from.
 
@@ -60,9 +60,10 @@ Please be sure to see the section of this document titled "Using your SSH key wi
 ### Applying and using that generated SSH key with Equinix Metal
 
 The **exact** string contents of the `myname_metal_ssh_key.pub` file are [what need to be uploaded to the Equinix Metal platform as the users public side of their SSH key](https://metal.equinix.com/developers/docs/accounts/ssh-keys/#ssh-keys). For example from the command issued above, the string to be entered would be: 
+
 ```ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAACAQCqotlb6DnOg9b/5suwqpo+hcXFMQRaRWot7+OQ0MBkWxM62nBg/efFiaNsOptj1pFhtMmOT8sphRsiW6UWbA70w2fzYemGxVPiQ4zMiScoUDf7T5M+ZdtQ5LKBxf3scsTl4/ovUPYQF6w2091Dwsl5Ao60ZFGTZlrXfFoD9DcaBLxu3ZgM8hORl3H/UWbYSZx27n/x+M/2GIVatgy1JA2z8vyVClpOknCSdbxlYddNHi01OZUf1Qe7fsKGOvzctnWbpV2bYc0VmtpsbjfBDqtzxtRC/2YBbNW6QSOobpsBk1ubPRnkmUhOOU55zx9a/Ozf2PgX2jGo9quB+XWa3snm5jPj7IiN7cPcwdL2B/1T+BBuf/Ib8NEdaBLxNN379m4gDlT7p6A6G2kFNq+IhWB9PlIW/ycXiYYUL4U4alF6BhIv1deVI4RBYfrZgOzJAX/ETt8RfptSTLF8kvJ+ljjpbEwg6MUZDkBDaR5ayu+TbaLQTr+lw9iFDFP/SOfuM1HgCTkuGwomlWDbJTobhf2rWBf6fOaHjz7YDN07Wvv01pqEeWvc2IHs/O84rXJxssRA1vI2aKqSADy0UmTi13N0T3Vtp1Gdbh3Cy+VsWE9tEeCOqaUfuOB5DZ4MZDn4IQKFBhIoQndSCoE7MfG4w4ejVxYIa2d6YyuA37+/sFdZtw== myemail@domain.com```
 
-. Note that if your string contains the substring `-----BEGIN OPENSSH PRIVATE KEY-----`, you are looking at the PRIVATE key, which is the incorrect side to upload to the Metal platform.
+Note that if your string contains the substring `-----BEGIN OPENSSH PRIVATE KEY-----`, you are looking at the PRIVATE key, which is the incorrect side to upload to the Metal platform.
 
 #### Updating the SOS console 
 
