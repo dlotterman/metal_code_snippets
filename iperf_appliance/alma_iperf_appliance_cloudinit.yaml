@@ -1,0 +1,191 @@
+#cloud-config
+
+package_upgrade: true
+package_reboot_if_required: true
+
+datasource:
+  Ec2:
+    strict_id: false
+
+datasource:
+  Ec2:
+    strict_id: false
+
+packages:
+  - iperf3
+  - tmux
+  - firewalld
+  - jq
+  - vim
+  - fail2ban
+  - fail2ban-firewalld
+  - nc
+  - git
+  - dnf-automatic
+ 
+groups:
+  - sftp_users
+
+users:
+  - name: sftpuser
+    primary_group: sftp_users
+    passwd: $$REPLACE ME: `mkpasswd --method=SHA-512 --rounds=4096`
+    shell: /sbin/nologin
+    home: /data/sftp_chroot/sftp_user
+    no_create_home: true
+    lock_passwd: false
+
+
+runcmd:
+  - mkdir -p /data/sftp_chroot/sftp_user
+  - chown root:root /data/sftp_chroot/
+  - chmod 755 /data/sftp_chroot/
+  - chown sftp_user /data/sftp_chroot/sftp_user
+  - chmod 755 /data/sftp_chroot/sftp_user
+  - grep -v "PasswordAuthentication no" /etc/ssh/sshd_config > /tmp/sshd_config && mv /tmp/sshd_config /etc/ssh/sshd_config
+  - echo "PasswordAuthentication yes" >> /etc/ssh/sshd_config
+  - echo "Match Group sftp_users" >> /etc/ssh/sshd_config
+  - echo "ChrootDirectory /data/sftp_chroot/" >> /etc/ssh/sshd_config
+  - echo "ForceCommand internal-sftp" >> /etc/ssh/sshd_config
+  - systemctl restart sshd
+  - systemctl enable fail2ban
+  - systemctl start fail2ban
+  - systemctl start firewalld
+  - systemctl enable firewalld
+  - firewall-cmd --permanent --zone=public --add-service=ssh
+  - firewall-cmd --permanent --zone=public --add-port=5101/tcp
+  - firewall-cmd --permanent --zone=public --add-port=5101/udp
+  - firewall-cmd --permanent --zone=public --add-port=5202/tcp
+  - firewall-cmd --permanent --zone=public --add-port=5202/udp
+  - firewall-cmd --permanent --zone=public --add-port=5303/tcp
+  - firewall-cmd --permanent --zone=public --add-port=5303/udp
+  - firewall-cmd --permanent --zone=public --add-port=5404/tcp
+  - firewall-cmd --permanent --zone=public --add-port=5404/udp
+  - firewall-cmd --permanent --zone=public --add-source=10.0.0.0/8
+  - firewall-cmd --reload
+  - /usr/bin/iperf3 --server --daemon --logfile /var/log/iperf_5101.log --pidfile /var/run/iperf_5101.pid -p 5101
+  - /usr/bin/iperf3 --server --daemon --logfile /var/log/iperf_5202.log --pidfile /var/run/iperf_5202.pid -p 5202
+  - /usr/bin/iperf3 --server --daemon --logfile /var/log/iperf_5303.log --pidfile /var/run/iperf_5303.pid -p 5303
+  - /usr/bin/iperf3 --server --daemon --logfile /var/log/iperf_5404.log --pidfile /var/run/iperf_5404.pid -p 5404
+  - chmod +x /etc/rc.d/rc.local
+
+write_files:
+  - owner: root:root
+    path: /etc/cron.d/iperf_watch
+    content: "*/5 * * * * root /root/iperf_watch.sh >> /var/log/iperf_watch_cron.log \n"
+  - owner: root:root
+    path: /etc/rc.local
+    content: |
+      firewall-cmd --permanent --zone=public --add-service=ssh
+      firewall-cmd --permanent --zone=public --add-port=5101/tcp
+      firewall-cmd --permanent --zone=public --add-port=5101/udp
+      firewall-cmd --permanent --zone=public --add-port=5202/tcp
+      firewall-cmd --permanent --zone=public --add-port=5202/udp
+      firewall-cmd --permanent --zone=public --add-port=5303/tcp
+      firewall-cmd --permanent --zone=public --add-port=5303/udp
+      firewall-cmd --permanent --zone=public --add-port=5404/tcp
+      firewall-cmd --permanent --zone=public --add-port=5404/udp
+      firewall-cmd --permanent --zone=public --add-source=10.0.0.0/8
+      firewall-cmd --reload
+      /usr/bin/iperf3 --server --daemon --logfile /var/log/iperf_5101.log --pidfile /var/run/iperf_5101.pid -p 5101
+      /usr/bin/iperf3 --server --daemon --logfile /var/log/iperf_5202.log --pidfile /var/run/iperf_5202.pid -p 5202
+      /usr/bin/iperf3 --server --daemon --logfile /var/log/iperf_5303.log --pidfile /var/run/iperf_5303.pid -p 5303
+      /usr/bin/iperf3 --server --daemon --logfile /var/log/iperf_5404.log --pidfile /var/run/iperf_5404.pid -p 5404
+    append: true
+  - owner: root:root
+    path: /etc/fail2ban/jail.local
+    content: |
+      [DEFAULT]
+      bantime = 3600
+      banaction = iptables-multiport
+      ignoreip = 127.0.0.1/8 10.0.0.0/8
+      findtime = 600
+      maxretry = 5
+      [sshd]
+      enabled = true
+      logpath = %(sshd_log)s
+    permissions: '0644'
+  - owner: root:root
+    path: /root/iperf_watch.sh
+    content: |
+      #!/bin/bash
+      PORTS="5101 5202 5303 5404"
+      for PORT in $PORTS; do
+      RESULTS=$(tail -5 /var/log/iperf_"$PORT".log | grep "0.00 Bytes  0.00 bits/sec" )
+      if [ -z "$RESULTS" ]
+      then
+              true
+      else
+              PID=$(tr -d '\0' < /var/run/iperf_"$PORT".pid)
+              echo "$(date --rfc-3339=ns) iperf_$PORT looks frozen, restarting PID "$PID""
+              kill -9 "$PID"
+              echo "iperf_watch from cron restarted this server" >> /var/log/iperf_"$PORT".log
+              /usr/bin/iperf3 --server --daemon \
+                  --logfile /var/log/iperf_"$PORT".log \
+                  --pidfile /var/run/iperf_"$PORT".pid \
+                  -p "$PORT"
+      fi
+      done
+    permissions: '0754'
+
+  - path: "/etc/pki/rpm-gpg/RPM-GPG-KEY-EPEL-8"
+    permissions: "0644"
+    owner: "root:root"
+    content: |
+      -----BEGIN PGP PUBLIC KEY BLOCK-----
+
+      mQINBFz3zvsBEADJOIIWllGudxnpvJnkxQz2CtoWI7godVnoclrdl83kVjqSQp+2
+      dgxuG5mUiADUfYHaRQzxKw8efuQnwxzU9kZ70ngCxtmbQWGmUmfSThiapOz00018
+      +eo5MFabd2vdiGo1y+51m2sRDpN8qdCaqXko65cyMuLXrojJHIuvRA/x7iqOrRfy
+      a8x3OxC4PEgl5pgDnP8pVK0lLYncDEQCN76D9ubhZQWhISF/zJI+e806V71hzfyL
+      /Mt3mQm/li+lRKU25Usk9dWaf4NH/wZHMIPAkVJ4uD4H/uS49wqWnyiTYGT7hUbi
+      ecF7crhLCmlRzvJR8mkRP6/4T/F3tNDPWZeDNEDVFUkTFHNU6/h2+O398MNY/fOh
+      yKaNK3nnE0g6QJ1dOH31lXHARlpFOtWt3VmZU0JnWLeYdvap4Eff9qTWZJhI7Cq0
+      Wm8DgLUpXgNlkmquvE7P2W5EAr2E5AqKQoDbfw/GiWdRvHWKeNGMRLnGI3QuoX3U
+      pAlXD7v13VdZxNydvpeypbf/AfRyrHRKhkUj3cU1pYkM3DNZE77C5JUe6/0nxbt4
+      ETUZBTgLgYJGP8c7PbkVnO6I/KgL1jw+7MW6Az8Ox+RXZLyGMVmbW/TMc8haJfKL
+      MoUo3TVk8nPiUhoOC0/kI7j9ilFrBxBU5dUtF4ITAWc8xnG6jJs/IsvRpQARAQAB
+      tChGZWRvcmEgRVBFTCAoOCkgPGVwZWxAZmVkb3JhcHJvamVjdC5vcmc+iQI4BBMB
+      AgAiBQJc9877AhsPBgsJCAcDAgYVCAIJCgsEFgIDAQIeAQIXgAAKCRAh6kWrL4bW
+      oWagD/4xnLWws34GByVDQkjprk0fX7Iyhpm/U7BsIHKspHLL+Y46vAAGY/9vMvdE
+      0fcr9Ek2Zp7zE1RWmSCzzzUgTG6BFoTG1H4Fho/7Z8BXK/jybowXSZfqXnTOfhSF
+      alwDdwlSJvfYNV9MbyvbxN8qZRU1z7PEWZrIzFDDToFRk0R71zHpnPTNIJ5/YXTw
+      NqU9OxII8hMQj4ufF11040AJQZ7br3rzerlyBOB+Jd1zSPVrAPpeMyJppWFHSDAI
+      WK6x+am13VIInXtqB/Cz4GBHLFK5d2/IYspVw47Solj8jiFEtnAq6+1Aq5WH3iB4
+      bE2e6z00DSF93frwOyWN7WmPIoc2QsNRJhgfJC+isGQAwwq8xAbHEBeuyMG8GZjz
+      xohg0H4bOSEujVLTjH1xbAG4DnhWO/1VXLX+LXELycO8ZQTcjj/4AQKuo4wvMPrv
+      9A169oETG+VwQlNd74VBPGCvhnzwGXNbTK/KH1+WRH0YSb+41flB3NKhMSU6dGI0
+      SGtIxDSHhVVNmx2/6XiT9U/znrZsG5Kw8nIbbFz+9MGUUWgJMsd1Zl9R8gz7V9fp
+      n7L7y5LhJ8HOCMsY/Z7/7HUs+t/A1MI4g7Q5g5UuSZdgi0zxukiWuCkLeAiAP4y7
+      zKK4OjJ644NDcWCHa36znwVmkz3ixL8Q0auR15Oqq2BjR/fyog==
+      =84m8
+      -----END PGP PUBLIC KEY BLOCK-----
+
+  - path: "/etc/yum.repos.d/epel.repo"
+    owner: "root:root"
+    content: |
+      [epel]
+      name=Extra Packages for Enterprise Linux $releasever - $basearch
+      #baseurl=https://download.fedoraproject.org/pub/epel/$releasever/Everything/$basearch
+      metalink=https://mirrors.fedoraproject.org/metalink?repo=epel-$releasever&arch=$basearch&infra=$infra&content=$contentdir
+      enabled=1
+      gpgcheck=1
+      countme=1
+      gpgkey=file:///etc/pki/rpm-gpg/RPM-GPG-KEY-EPEL-8
+
+      [epel-debuginfo]
+      name=Extra Packages for Enterprise Linux $releasever - $basearch - Debug
+      #baseurl=https://download.fedoraproject.org/pub/epel/$releasever/Everything/$basearch/debug
+      metalink=https://mirrors.fedoraproject.org/metalink?repo=epel-debug-$releasever&arch=$basearch&infra=$infra&content=$contentdir
+      enabled=0
+      gpgkey=file:///etc/pki/rpm-gpg/RPM-GPG-KEY-EPEL-8
+      gpgcheck=1
+
+      [epel-source]
+      name=Extra Packages for Enterprise Linux $releasever - $basearch - Source
+      #baseurl=https://download.fedoraproject.org/pub/epel/$releasever/Everything/SRPMS
+      metalink=https://mirrors.fedoraproject.org/metalink?repo=epel-source-$releasever&arch=$basearch&infra=$infra&content=$contentdir
+      enabled=0
+      gpgkey=file:///etc/pki/rpm-gpg/RPM-GPG-KEY-EPEL-8
+      gpgcheck=1
+    permissions: "0644"    

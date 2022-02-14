@@ -1,6 +1,0 @@
----
-- include_tasks: os_packages.yaml
-- include_tasks: hosts_disks.yaml
-- include_tasks: hosts_firewall.yaml
-- include_tasks: os_settings.yaml
-

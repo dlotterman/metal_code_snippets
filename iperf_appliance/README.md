@@ -1,6 +1,6 @@
 ### Metal iperf appliance cloud-init file ####
 
-This cloud-init userdata file will turn a [Equinix Metal](http://metal.equinix.com/) instance provisioned with `CentOS 8` into a psuedo [iperf3](https://iperf.fr/) appliance.
+This cloud-init userdata file will turn a [Equinix Metal](http://metal.equinix.com/) instance provisioned with `Alma 8` into a psuedo [iperf3](https://iperf.fr/) appliance.
 
 The instructions in the cloud-init file will:
 
@@ -14,7 +14,7 @@ The instructions in the cloud-init file will:
   * Ban an IP after 5 failed attempts within 10 minutes
   * That ban will stay in place for 10 minutes
   * Only watch "public" or "internet" side traffic, and will ignore or whitelist localhost and 10.0.0.0/8 (Metal management) networks
-* Create a user `sftp_user` and a group `sftp_users`
+* Create a user `sftpuser` and a group `sftp_users`
 * Configure OpenSSH to:
   * Allow Password based authentication (normally disabled on Metal instances by default)
   * Chroot SFTP traffic to a specific, generic directory
