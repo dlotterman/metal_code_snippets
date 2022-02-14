@@ -1,12 +1,12 @@
-### Elastic Virtual Vircuit Keepalived Disco
+### Elastic Virtual Circuit Keepalived Disco
 
-This folder is a document dump of a Proof of Concept to use `keepalived` as a skeleton for managing VLAN <-> VC mappings as a result of detected availability changes.
+This folder is a documention dump of a Proof of Concept to use `keepalived` as a skeleton for managing VLAN <-> VC mappings as a result of detected availability changes.
 
-In short, two VRRP instances watch down different paths of the same connection. In the event of a failure on the primary path, fail whole thing over to the up virtual circuit.
+In short, two VRRP instances watch down different paths of the same connection. In the event of a failure on the primary path, fail the whole thing over to the up virtual circuit.
 
 When *MASTER* faults, *BACKUP* will become master, orchestrate the failover, then *BACKUP* will also self-fault.
 
-Total observed failover time, the discovery of which this was the primary purpose, is **around ~20 seconds**, the majority of that time is spent making API calls for failover:
+Total observed failover time, the discovery of which this was the primary purpose of the project, is **around ~20 seconds**, the majority of that time is spent making API calls for failover:
 
 ```
 ping -D -O 192.168.200.55
