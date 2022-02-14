@@ -1,0 +1,233 @@
+### vrrp01-ny
+### This is pure documentation, not a script
+
+public $$$
+mgmt: $$$ # BE SURE TO UPDATE ME curl -s https://metadata.platformequinix.com/metadata | jq -r '.network.addresses[] | select((.public==false) and .address_family==4) | .address'
+VLAN 2084: 10.60.75.20
+VLAN 1529: 172.16.25.20
+
+ip link add link bond0 name bond0.2084 type vlan id 2084
+ip addr add 10.60.75.20/24 dev bond0.2084
+ip link set dev bond0.2084 up
+
+ip link add link bond0 name bond0.1529 type vlan id 1529
+ip addr add 172.16.25.20/24 dev bond0.1529
+ip link set dev bond0.1529 up
+
+ufw allow from 172.16.0.0/12 
+
+
+
+
+
+apt-get install -y build-essential libssl-dev fping snmp libsnmp-dev libnfnetlink-dev pkg-config libnl-genl-3-dev libsensors-config libsensors5 libsnmp-base libsnmp35 lm-sensors snmp-mibs-downloader
+
+wget http://ipxe.dlott.casa/util/keepalived-2.2.7.tar.gz
+
+tar xzvf keepalived-2.2.7.tar.gz
+
+cd keepalived-2.2.7
+
+./configure --enable-snmp-vrrp --disable-lvs --enable-optimise
+make
+make install
+
+cat > /etc/systemd/system/keepalived.service << EOL
+[Unit]
+Description=Keepalive Daemon (VRRP and EVKD)
+After=syslog.target network-online.target
+Wants=syslog.target network-online.target
+# Only start if there is a configuration file
+ConditionFileNotEmpty=/usr/local/etc/keepalived/keepalived.conf
+
+
+[Service]
+Type=simple
+KillMode=process
+# Read configuration variable file if it is present
+EnvironmentFile=-/usr/local/etc/default/keepalived
+ExecStart=/usr/local/sbin/keepalived --dont-fork --log-detail --dump-conf --vrrp --snmp \$DAEMON_ARG
+ExecReload=/bin/kill -1 \$MAINPID
+
+[Install]
+WantedBy=multi-user.target
+EOL
+
+# TODO MASTER needs a way to keep in fault state after transition
+cat > /usr/local/etc/keepalived/keepalived.conf << \EOL
+
+global_defs {   
+    log_unknown_vrids
+    enable_script_security
+}
+
+vrrp_script VC_1_VI_1_peer_check {
+    script "/usr/local/sbin/pingcheck 10.66.59.129 1 1 /tmp/vrrp_VC_1_VI_1_peer_check.log /tmp/vrrp_VC_1_VI_1.trackfile"
+    interval 2
+    timeout 5
+    rise 10
+    fall 1
+    user adminuser
+}
+
+vrrp_script VC_1_VI_1_remote_check {
+    script "/usr/local/sbin/pingcheck 10.60.75.10 1 8 /tmp/vrrp_VC_1_VI_1_remote_check.log /tmp/vrrp_VC_1_VI_1.trackfile"
+    interval 2
+    timeout 5
+    rise 10
+    fall 3
+    user adminuser
+}
+
+track_file VC_1_VI_1_track_file {
+      file /tmp/vrrp_VC_1_VI_1.trackfile
+}
+
+vrrp_instance VC_1_VI_1 {
+    interface bond0
+    state MASTER
+    priority 200
+    advert_int 1
+    nopreempt
+
+    virtual_router_id 10
+    unicast_src_ip 10.66.59.131
+    unicast_peer {
+        10.66.59.129
+    }
+
+    authentication {
+        auth_type PASS
+        auth_pass EVKD
+    }
+    track_script {
+        VC_1_VI_1_peer_check
+        VC_1_VI_1_remote_check
+      }      
+      
+    track_file {
+        VC_1_VI_1_track_file weight 1
+      }          
+}
+
+vrrp_script VC_2_VI_2_peer_check {
+    script "/usr/local/sbin/pingcheck 10.66.59.129 1 1 /tmp/vrrp_VC_2_VI_2_peer_check.log /tmp/vrrp_VC_2_VI_2.trackfile"
+    interval 2
+    timeout 5
+    rise 10
+    fall 1
+    user adminuser
+}
+
+vrrp_script VC_2_VI_2_remote_check {
+    script "/usr/local/sbin/pingcheck 10.60.75.10 1 8 /tmp/vrrp_VC_2_VI_2_remote_check.log /tmp/vrrp_VC_2_VI_2.trackfile"
+    interval 2
+    timeout 5
+    rise 10
+    fall 3
+    user adminuser
+}
+
+track_file VC_2_VI_2_track_file {
+      file /tmp/vrrp_VC_2_VI_2.trackfile
+}
+
+vrrp_instance VC_2_VI_2 {
+    interface bond0
+    state MASTER
+    priority 200
+    advert_int 1
+    nopreempt    
+
+    virtual_router_id 20
+    unicast_src_ip 10.66.59.131
+    unicast_peer {
+        10.66.59.129
+    }
+
+    authentication {
+        auth_type PASS
+        auth_pass EVKD
+    }
+    track_script {
+        VC_2_VI_2_peer_check
+        VC_2_VI_2_remote_check
+      }      
+      
+    track_file {
+        VC_2_VI_2_track_file weight 1
+      }          
+}
+    
+EOL
+
+# Citation: https://www.unixmen.com/simple-bash-script-for-pinging-hosts/
+cat > /usr/local/sbin/pingcheck << \EOL
+#!/bin/bash
+
+if [ $# -eq 0 ]; then
+    echo "No args provided! Args are: host numping timeout logfile trackfile: example 8.8.8.8 3 1 /tmp/googlepingcheck.log /tmp/vrrp_VC_2_VI_2.trackfile"
+    exit 1
+fi
+
+HOST=$1
+NUMPING=$2
+TIMEOUT=$3
+LOGFILE=$4
+VRRPRACKFILE=$5
+function pingcheck {
+    PING=$(fping -t $TIMEOUT -c $NUMPING $HOST | grep -c bytes)
+    echo "$(tail -10000 $LOGFILE)" > $LOGFILE # just not letting the log file grow to much
+    if [ $PING -ge $NUMPING ]; then 
+        
+        echo "$(date +"%Y-%m-%d_%H%M%S") - $HOST UP" | tee -a $LOGFILE
+        exit 0
+    else
+        echo "$(date +"%Y-%m-%d_%H%M%S") - $HOST DOWN" | tee -a $LOGFILE
+    exit 1
+    fi
+}
+
+if [ "$(cat $VRRPRACKFILE)" -lt "0" ]; then
+    echo "$(date +"%Y-%m-%d_%H%M%S") - VRRP trackfile weight below 0, exit 1. " | tee -a $LOGFILE
+    exit 1
+fi
+
+pingcheck
+EOL
+
+chmod 755 /usr/local/sbin/pingcheck
+
+groupadd ekvd
+usermod --group ekvd root
+usermod --group ekvd adminuser
+
+
+touch /tmp/vrrp_VC_1_VI_1_peer_check.log
+touch /tmp/vrrp_VC_1_VI_1_remote_check.log
+touch /tmp/vrrp_VC_2_VI_2_peer_check.log
+touch /tmp/vrrp_VC_2_VI_2_remote_check.log
+chown adminuser /tmp/vrrp_VC_1_VI_1_peer_check.log
+chown adminuser /tmp/vrrp_VC_1_VI_1_remote_check.log
+chown adminuser /tmp/vrrp_VC_2_VI_2_peer_check.log
+chown adminuser /tmp/vrrp_VC_2_VI_2_remote_check.log
+chmod 0770 /tmp/vrrp_VC_VI_1_peer_check.log
+chmod 0770 /tmp/vrrp_VC_1_VI_1_remote_check.log
+chmod 0770 /tmp/vrrp_VC_2_VI_2_peer_check.log
+chmod 0770 /tmp/vrrp_VC_2_VI_2_remote_check.log
+
+# Guarentee we come up in faulted state
+echo -500 > /tmp/vrrp_VC_1_VI_1.trackfile
+echo -500 > /tmp/vrrp_VC_2_VI_2.trackfile
+chmod 0775 /tmp/vrrp_VC_1_VI_1.trackfile
+chmod 0775 /tmp/vrrp_VC_2_VI_2.trackfile
+chown adminuser:ekvd /tmp/vrrp_VC_1_VI_1.trackfile
+chown adminuser:ekvd /tmp/vrrp_VC_2_VI_2.trackfile
+
+mkdir -p /usr/local/etc/default
+cat > /usr/local/etc/default/keepalived << \EOL
+DAEMON_ARGS=" --log-detail --dump-conf --vrrp --snmp"
+EOL
+
+systemctl daemon-reload
+service keepalived start

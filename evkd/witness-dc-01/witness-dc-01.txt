@@ -1,0 +1,31 @@
+### witness-dc-01
+### This is pure documentation, not a script
+
+
+public: $$$
+mgmt: $$$ # Shouldnt be necessary for witness-dc-01 
+VLAN 2084: 10.60.75.10
+VLAN 1529: 172.16.25.10
+
+ip link add link bond0 name bond0.2084 type vlan id 2084
+ip addr add 10.60.75.10/24 dev bond0.2084
+ip link set dev bond0.2084 up
+
+# https://kindlund.wordpress.com/2007/11/19/configuring-multiple-default-routes-in-linux/
+echo "2084 VLAN2084" >> /etc/iproute2/rt_tables
+ip route add 10.10.70.0/24 dev bond0.2084 src 10.60.75.10 table VLAN2084
+ip rule add from 10.60.75.10/32 table VLAN2084
+ip rule add to 10.60.75.10/32 table VLAN2084
+sysctl -w net.ipv4.conf.bond0/2084.rp_filter=1
+
+ip link add link bond0 name bond0.1529 type vlan id 1529
+ip addr add 172.16.25.10/24 dev bond0.1529
+ip link set dev bond0.1529 up
+
+echo "1529 VLAN1529" >> /etc/iproute2/rt_tables
+ip route add 172.16.25.0/24 dev bond0.1529 src 172.16.25.10 table VLAN1529
+ip rule add from 172.16.25.10/32 table VLAN1529
+ip rule add to 172.16.25.10/32 table VLAN1529
+sysctl -w net.ipv4.conf.bond0/1529.rp_filter=1
+
+ufw allow from 172.16.0.0/12 
