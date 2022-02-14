@@ -4,7 +4,7 @@ This folder is a documention dump of a Proof of Concept to use `keepalived` as a
 
 In short, two VRRP instances watch down different paths of the same connection. In the event of a failure on the primary path, fail the whole thing over to the up virtual circuit.
 
-When *MASTER* faults, *BACKUP* will become master, orchestrate the failover, then *BACKUP* will also self-fault.
+When *MASTER* faults, *BACKUP* will become master, orchestrate the failover, then *BACKUP* will also self-fault. Faulted VRRP instances should not recover on their own, minimizing exposure to split-brain or false-positive.
 
 Total observed failover time, the discovery of which this was the primary purpose of the project, is **around ~20 seconds**, the majority of that time is spent making API calls for failover:
 
