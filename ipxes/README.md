@@ -17,3 +17,4 @@ This is a quick checklist of the easy to forget "shoulds" of an OS install via i
     * install to smallest disks
     * linux disk ordering?
     * ignore nvme (for s3.xlarge.x86)
+    * software RAID boot disks if reasonably possible
