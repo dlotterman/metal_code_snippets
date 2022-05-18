@@ -33,6 +33,7 @@ packages:
  - git
  - dnsutils
  - jq
+ - rsync
 
 groups:
  - cloud-users

@@ -1,0 +1,9 @@
+#!ipxe
+dhcp
+imgfree
+kernel http://ipxe.dlott.casa/util/debian/xepa/vmlinuz-5.10.0-13-amd64 boot=live fetch=http://ipxe.dlott.casa/util/debian/xepa/filesystem.squashfs initrd=initrd.magic intel_iommu=on iommu=pt pci=realloc console=ttyS1,115200n8 ip=dhcp
+
+initrd http://ipxe.dlott.casa/util/debian/xepa/initrd.img-5.10.0-13-amd64
+
+boot
+

@@ -19,7 +19,7 @@ The instructions in the cloud-init file will:
   * Allow Password based authentication (normally disabled on Metal instances by default)
   * Chroot SFTP traffic to a specific, generic directory
   * Only match users in the `sftp_users` group
-* Leverage `rc.local` to restart both `ufw` and the `iperf3` servers after reboot
+* Leverage `rc.local` to restart the `iperf3` servers after reboot
 * Update packages including system packages every night
 * Restart OpenSSH every night in order to pickup any package updates, as it is the main vector into the instance.
 * Watch the `iperf3` servers every 5 minutes via cron and a lightweight script that looks for a stall'ed server (when a client disapppears during a timed test) and restarts that server.

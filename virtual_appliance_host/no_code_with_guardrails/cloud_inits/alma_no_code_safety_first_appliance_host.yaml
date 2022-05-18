@@ -51,6 +51,8 @@ packages:
   - virt-manager
   - bridge-utils
   - libguestfs
+  - net-tools
+  - wget
   - cockpit
   - cockpit-machines
   - cockpit-storaged
@@ -58,7 +60,6 @@ packages:
   - cockpit-system
   - cockpit-bridge
   - cockpit-pcp
-#  - cockpit-networkmanager
   - cockpit-packagekit
 
 groups:
