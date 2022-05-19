@@ -9,6 +9,7 @@ This is a quick checklist of the easy to forget "shoulds" of an OS install via i
 * networking
     * DNS
     * private 10.0.0.0/8 routing
+    * IPv6
 * serial output to com2 / ttsyS1
 * cloud-init
     * userdata
