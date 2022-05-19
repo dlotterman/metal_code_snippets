@@ -1,0 +1,12 @@
+#!ipxe
+dhcp
+
+set base http://ipxe.dlott.casa/util
+set rhelbase ${base}/rhel/86
+
+kernel ${rhelbase}/images/pxeboot/vmlinuz initrd=initrd.img inst.text inst.repo=${rhelbase}/ inst.addrepo=baseos,${rhelbase}/BaseOS/ inst.nompath ip=dhcp console=tty0 console=ttyS1,115200n8 inst.waitfornet=45 inst.ks=${base}/rhel/ks/ks_metal_86.cfg
+
+
+initrd ${rhelbase}/images/pxeboot/initrd.img
+
+boot || read void
