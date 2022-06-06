@@ -1,4 +1,4 @@
-# Operators Guide to Equinix Metal' BGP feature
+# Operators Guide to Equinix Metal's BGP feature
 
 *Operating Equinix Metal's BGP feature with FRR as an example*
 
@@ -7,28 +7,28 @@
 One of the novel features of the Equinix Metal network is its customer facing BGP endpoints and integrations, allowing operators to tap into some valuable and powerful network control and announcement toolsets.
 
 Some excellent documentation here:
-[Equinix Metal BGP Documentation](https://metal.equinix.com/developers/docs/bgp/bgp-on-equinix-metal/)
-[Equinix Metal Local BGP Documnetation](https://metal.equinix.com/developers/docs/bgp/local-bgp/)
-[Equinix Metal Global BGP Documentation](https://metal.equinix.com/developers/docs/bgp/global-bgp/)
-[Equinix Metal Terraform BGP Resource](https://registry.terraform.io/providers/equinix/metal/latest/docs/resources/bgp_session)
-[Load Balancing on Equinix Metal with BGP](https://metal.equinix.com/developers/guides/load-balancing-ha/)
-[Metal Partner Page for IPXO](https://metal.equinix.com/ecosystem/partners/ipxo-on-equinix-metal/)
-[Youtube guide on using IPXO leased blocks with Equinix Metal](https://www.youtube.com/watch?v=xeqkrJLWZFQ)
-[Equinix Metal + MetalLB for k8s](https://metallb.universe.tf/installation/clouds/#metallb-on-equinix-metal)
+- [Equinix Metal BGP Documentation](https://metal.equinix.com/developers/docs/bgp/bgp-on-equinix-metal/)
+- [Equinix Metal Local BGP Documnetation](https://metal.equinix.com/developers/docs/bgp/local-bgp/)
+- [Equinix Metal Global BGP Documentation](https://metal.equinix.com/developers/docs/bgp/global-bgp/)
+- [Equinix Metal Terraform BGP Resource](https://registry.terraform.io/providers/equinix/metal/latest/docs/resources/bgp_session)
+- [Load Balancing on Equinix Metal with BGP](https://metal.equinix.com/developers/guides/load-balancing-ha/)
+- [Metal Partner Page for IPXO](https://metal.equinix.com/ecosystem/partners/ipxo-on-equinix-metal/)
+- [Youtube guide on using IPXO leased blocks with Equinix Metal](https://www.youtube.com/watch?v=xeqkrJLWZFQ)
+- [Equinix Metal + MetalLB for k8s](https://metallb.universe.tf/installation/clouds/#metallb-on-equinix-metal)
 
 ## Setup context:
 
 This document aims to provide a more generalized context from existing documentation about the feature, and specifically, how to drive it as an operator. While linux is used as the lingua franca, it should apply to any network-intelligent OS or appliance.
 
-When discussing operating the [Equinix Metal network](https://metal.equinix.com/developers/docs/networking/), I always like to clarify if we are operating in it's Layer-3 OR/AND Layer-2 network namespaces, as being specific helps eliminate a lot of subject domain overlap and confusion. In this post, *everything* I am referring to is in the Equinix Metal [Layer-3 namespace](https://metal.equinix.com/developers/docs/networking/ip-addresses/). All BGP functionality with the Equinix Metal network happens over its native, un-VLAN'ed Layer-3 network. Any documentation that references BGP and VLANs is likely referring to an Interconnection (Metal <-> AWS for example) solution design, which is explicitly not in any way relevant to peering with Equinix Metal directly as is being discussed here.
+When discussing operating the [Equinix Metal network](https://metal.equinix.com/developers/docs/networking/), I always like to clarify if we are operating in it's Layer-3 OR/AND [Layer-2](https://metal.equinix.com/developers/docs/layer2-networking/overview/) network namespaces, as being specific helps eliminate a lot of subject domain overlap and confusion. In this post, *everything* I am referring to is in the Equinix Metal [Layer-3 namespace](https://metal.equinix.com/developers/docs/networking/ip-addresses/). All BGP functionality with the Equinix Metal network happens over its native, un-VLAN'ed Layer-3 network. Any documentation that references BGP and VLANs is likely referring to an Interconnection (Metal <-> AWS for example) solution design, which is explicitly not in any way relevant to peering with Equinix Metal directly as is being discussed here.
 
 It's also important to note that as of the time of this writing, the customer facing BGP interfaces do not allow for the management of Equinix Metal's [Anycast IP](https://metal.equinix.com/developers/docs/networking/global-anycast-ips/) functionality. That functionality, which is a sort of multi-tenant "Global Anycast As A Service" feature, is self contained and is implemented at a part of the stack not currently integrated with the downstream customer BGP mesh. Simply put, you cannot BGP control Metal owned Anycast IPs (but confusingly enough you can use BGP to BYO Anycast network with your own BYOIP space).
 
-The Equinix Metal Layer-3 network is a [routed BGP mesh](https://metal.equinix.com/blog/how-equinix-metal-is-bringing-cloud-networking-to-bare-metal-servers/), where an operators Metal instances get IP blocks allocated to their instance that are directly routed in that mesh, that is to say no NAT or anything like that. When your Equinix Metal instance is assigned `145.40.76.240/31`, that `/31` is part of a fully routed block where the distribution of blocks and routes is orchestrated by the Equinix Metal platform and internally controlled via BGP (and other safeguards).
+The Equinix Metal Layer-3 network is a [routed mesh](https://metal.equinix.com/blog/how-equinix-metal-is-bringing-cloud-networking-to-bare-metal-servers/), where an operators Metal instances get IP blocks allocated to their instance that are directly routed in that mesh, that is to say no NAT or anything like that. When your Equinix Metal instance is assigned `145.40.76.240/31`, that `/31` is part of a fully routed block where the distribution of blocks and routes is orchestrated by the Equinix Metal platform and internally controlled via BGP.
 
-## What it is:
+## What the feature is:
 
-What the Equinix Metal BGP feature does is expose a direct BGP interface into the customers network, allowing a BGP speaker on customer compute instances to inform the live network about its own routing ideas and state. That BGP interface is hosted via the magic of Top of Rack orchestration, where every [BGP enabled instance](https://metal.equinix.com/developers/docs/bgp/local-bgp/#creating-local-bgp-sessions) is presented with a local network BGP neighbor hosted by that instance's Top of Rack switch. When an instance is enabled for BGP, that BGP endpoint is enabled on that instance ToR, and the ToR will distribute any valid and safe BGP routing advertisements to the rest of the mesh around it.
+What the Equinix Metal BGP feature does is expose a direct BGP interface into the customers network, allowing a BGP speaker on customer's compute instances to inform the network around it about its own routing ideas and state. That BGP interface is hosted via the magic of Top of Rack orchestration, where every [BGP enabled instance](https://metal.equinix.com/developers/docs/bgp/local-bgp/#creating-local-bgp-sessions) is presented with a local network BGP neighbor hosted by that instance's Top of Rack switch. When an instance is enabled for BGP, that BGP endpoint is enabled on that instance ToR, and the ToR will distribute any valid and safe BGP routing advertisements to the rest of the network around it.
 
 ## Uses:
 
@@ -36,7 +36,7 @@ This BGP feature functionality enables a couple of key use cases:
 
 ### Realtime management of ElasticIPs:
 
-Equinix Metal provides "table stakes" [ElasticIP](https://metal.equinix.com/developers/docs/networking/elastic-ips/) functionality, where specific IP's of specific blocks can be assigned to instance's for all the cloudy reasons an operator would normally do so. ElasticIP's can be managed through the usual routes, API or GUI, but in Metal, they can also be managed via BGP, allowing Metal instances acting as BGP speakers to dynamically moved ElasticIPs around in near real time, without having to wait for API calls and host re-configuration. There are great reasons to do this. 
+Equinix Metal provides "table stakes" [ElasticIP](https://metal.equinix.com/developers/docs/networking/elastic-ips/) functionality, where specific IPs of specific blocks can be assigned to instance's for all the cloudy reasons an operator would normally do so. ElasticIPs can be managed through the usual interfaces, API or GUI, but in Metal, they can also be managed via BGP, allowing Metal instances acting as BGP speakers to dynamically move ElasticIPs around in near real time, without having to wait for API calls and host re-configuration. There are great reasons to do this. 
 - One of my personal favorites, is using Metal Private IP's as ElasticIPs for internal control plane management.
 
 This functionality falls within the scope of the ["Local BGP"](https://metal.equinix.com/developers/docs/bgp/local-bgp/) sub-feature of BGP, where an operators intent is to control the  Metal Layer-3 network within the local scope of a [Metro](https://metal.equinix.com/developers/docs/locations/metros/).
@@ -45,16 +45,11 @@ This functionality falls within the scope of the ["Local BGP"](https://metal.equ
 
 Equinix Metal allows customers to bring their own IP's via its BGP functionality. Through the ["Global BGP"](https://metal.equinix.com/developers/docs/bgp/global-bgp/) sub-feature, customers can announce their own fully route-able public IP space (/24 or larger for IPv4). When a public block is announced from an Equinix Metal instance to its BGP neighbor ToR, the ToR will distribute that announcement up to the Metal Layer-3 mesh, and then on to its various upstream providers and the IX, thus propagating the announcement to the broader public Internet.
 
-Some cool things this enables:
-- BGP enabled DDoS protection services, this is pretty special in the automated hosting space
-- BYO Global Anycast 
-- Uniq
-
 ### Legacy vs Current clarifications:
 
-Prior to its acquisition by [Equinix in 2020](https://www.equinix.com/newsroom/press-releases/2020/03/equinix-completes-acquisition-of-bare-metal-leader-packet), the platform currently known as Metal was developed and operated by a startup called ["Packet"](https://www.crunchbase.com/organization/packet-host). The BGP feature was initially released and documented prior to the acquisition, where after the acquisition Metal made some substantive advancements in its physical network infrastructure altered the BGP featureset in some discrete ways. 
+Prior to its acquisition by [Equinix in 2020](https://www.equinix.com/newsroom/press-releases/2020/03/equinix-completes-acquisition-of-bare-metal-leader-packet), the platform currently known as Metal was developed and operated by a startup called ["Packet"](https://www.crunchbase.com/organization/packet-host). The BGP feature was initially released and documented prior to the acquisition, where after the acquisition some substantive advancements in its network infrastructure altered the BGP featureset in some discrete ways. 
 
-The effect of this is that at the time of this writing on the BGP feature:
+The effect of this is that at the time of this writing:
 
 - There are two different kinds of Equinix Metal sites, [Legacy](https://metal.equinix.com/developers/docs/locations/facilities/#legacy-facility-sites) and IBX (IBX being Equinix's naming convention for its data centers), where there are some subtle technical implementation differences in the BGP feature depending on weather it's in the scope of a Legacy facility vs IBX facility.
     - The key differentiator between the two is that in Legacy sites, the IP of the instance's BGP neighbor is the Metal Private network Gateway for the instance. In an IBX facility, the IP of servers BGP neighbor will always be a pair of pre-defined [peer_ips](https://metal.equinix.com/developers/docs/bgp/bgp-on-equinix-metal/#bgp-metadata) (`169.254.255.1/32`,`169.254.255.2/32`).
@@ -69,12 +64,12 @@ Those peering IP's expect to be reached via the [Metal Private network](https://
 
 On a default Metal Linux instance, this would look like:
 
-`ip route add 169.254.255.1/32 via 10.70.114.145`
-`ip route add 169.254.255.2/32 via 10.70.114.145`
+- `ip route add 169.254.255.1/32 via 10.70.114.145`
+- `ip route add 169.254.255.2/32 via 10.70.114.145`
 
 Where `10.70.114.145` is the gateway IP for the instance's Metal [Private Network](https://metal.equinix.com/developers/docs/networking/ip-addresses/#private-ipv4-management-subnets).
 
-The easiest way to configure a Linux instance to announce an [ElasticIP](https://metal.equinix.com/developers/docs/networking/elastic-ips/) address or block is to mount the IP block on the loopback interface, and then use your BGP speaker's equivalent of ["redistribute connected"](https://docs.frrouting.org/en/latest/bgp.html#redistribution) to have the BGP speaker announce all of the IP's and networks assigned to Linux interfaces (including loopback). For example to have the Linux instance announce a registered ElasticIP block of `145.40.76.241/28`:
+The easiest way to configure a Linux instance to announce an [ElasticIP](https://metal.equinix.com/developers/docs/networking/elastic-ips/) address or BYO-IP block is to mount the IP block on the loopback interface, and then use your BGP speaker's equivalent of ["redistribute connected"](https://docs.frrouting.org/en/stable-7.5/bgp.html#redistribution) to have the BGP speaker announce all of the IP's and networks assigned to Linux interfaces (including loopback). For example to have the Linux instance announce a registered ElasticIP block of `145.40.76.241/28`:
 
 `ip addr add 145.40.76.241/28 dev lo:0`
 
@@ -90,8 +85,13 @@ Quick reminders from official documentation:
 ### Example FRR configuration for reference:
 
 ```
- frr defaults traditional
+# default to using syslog. /etc/rsyslog.d/45-frr.conf places the log
+# in /var/log/frr/frr.log
+log syslog informational
+frr defaults traditional
 service integrated-vtysh-config
+!
+ip router-id 10.70.114.146
 !
 router bgp 65000
  bgp log-neighbor-changes
@@ -101,7 +101,7 @@ router bgp 65000
  neighbor MetalBGP peer-group
  neighbor MetalBGP remote-as 65530
  neighbor MetalBGP ebgp-multihop 5
- neighbor MetalBGP password EXAMPLE_PASSWORD
+ neighbor MetalBGP password Equinixmetal05
  neighbor 169.254.255.1 peer-group MetalBGP
  neighbor 169.254.255.1 remote-as 65530
  neighbor 169.254.255.2 peer-group MetalBGP
@@ -127,6 +127,8 @@ end
 ```
 
 Some quick notes: 
+- This example config has a wide open route-map. This should not be used in production as it can easily have FRR do things an operator wouldnt want, but is also by far the easiest to use to get "FRR working in the first place"
+    - Operators should go to production with a more specific route and prefix list structure. 
 - multihop should be configured for the BGP neighbors
 - Equinix Metal's community strings are [documented here](https://metal.equinix.com/developers/docs/bgp/global-communities/)
     - They are really only useful in conjunction with BYO-IP
@@ -171,3 +173,173 @@ At this point the VM should be able to reach the [Peer IPs](https://metal.equini
 
 The BGP speaker can then be configured and started, and should [bring up peering with the Metal network](https://metal.equinix.com/developers/docs/bgp/monitoring-bgp/).
 
+#### FRR Output examples
+
+```
+2# show ip route
+Codes: K - kernel route, C - connected, S - static, R - RIP,
+       O - OSPF, I - IS-IS, B - BGP, E - EIGRP, N - NHRP,
+       T - Table, v - VNC, V - VNC-Direct, A - Babel, D - SHARP,
+       F - PBR, f - OpenFabric,
+       > - selected route, * - FIB route, q - queued route, r - rejected route
+
+K>* 0.0.0.0/0 [0/0] via 147.28.143.193, enp1s0, 00:06:24
+K>* 10.0.0.0/8 [0/0] via 10.70.114.145, enp1s0, 00:06:24
+C>* 10.70.114.144/29 is directly connected, enp1s0, 00:06:24
+C>* 145.40.76.240/28 is directly connected, lo, 00:06:24
+C>* 147.28.143.192/29 is directly connected, enp1s0, 00:06:24
+K>* 169.254.255.1/32 [0/0] via 10.70.114.145, enp1s0, 00:06:24
+K>* 169.254.255.2/32 [0/0] via 10.70.114.145, enp1s0, 00:06:24
+```
+
+```
+# show bgp ipv4 
+BGP table version is 3, local router ID is 10.70.114.146, vrf id 0
+Default local pref 100, local AS 65000
+Status codes:  s suppressed, d damped, h history, * valid, > best, = multipath,
+               i internal, r RIB-failure, S Stale, R Removed
+Nexthop codes: @NNN nexthop's vrf id, < announce-nh-self
+Origin codes:  i - IGP, e - EGP, ? - incomplete
+
+   Network          Next Hop            Metric LocPrf Weight Path
+*> 10.70.114.144/29 0.0.0.0                  0         32768 ?
+*> 145.40.76.240/28 0.0.0.0                  0         32768 ?
+*> 147.28.143.192/29
+                    0.0.0.0                  0         32768 ?
+
+Displayed  3 routes and 3 total paths
+```
+
+```
+# show bgp summary 
+
+IPv4 Unicast Summary:
+BGP router identifier 10.70.114.146, local AS number 65000 vrf-id 0
+BGP table version 3
+RIB entries 5, using 920 bytes of memory
+Peers 2, using 41 KiB of memory
+Peer groups 1, using 64 bytes of memory
+
+Neighbor        V         AS MsgRcvd MsgSent   TblVer  InQ OutQ  Up/Down State/PfxRcd
+169.254.255.1   4      65530       4       6        0    0    0 00:00:24            0
+169.254.255.2   4      65530       4       6        0    0    0 00:00:24            0
+
+Total number of neighbors 2
+```
+
+```
+# show bgp neighbors 
+BGP neighbor is 169.254.255.1, remote AS 65530, local AS 65000, external link
+ Member of peer-group MetalBGP for session parameters
+  BGP version 4, remote router ID 145.40.76.80, local router ID 10.70.114.146
+  BGP state = Established, up for 00:01:57
+  Last read 00:00:19, Last write 00:00:57
+  Hold time is 180, keepalive interval is 60 seconds
+  Neighbor capabilities:
+    4 Byte AS: advertised and received
+    AddPath:
+      IPv4 Unicast: RX advertised IPv4 Unicast and received
+    Route refresh: advertised and received(new)
+    Address Family IPv4 Unicast: advertised and received
+    Hostname Capability: advertised (name: ubuntu02,domain name: n/a) not received
+    Graceful Restart Capabilty: advertised and received
+      Remote Restart timer is 300 seconds
+      Address families by peer:
+        none
+  Graceful restart information:
+    End-of-RIB send: IPv4 Unicast
+    End-of-RIB received: IPv4 Unicast
+  Message statistics:
+    Inq depth is 0
+    Outq depth is 0
+                         Sent       Rcvd
+    Opens:                  1          1
+    Notifications:          0          0
+    Updates:                3          1
+    Keepalives:             2          4
+    Route Refresh:          1          0
+    Capability:             0          0
+    Total:                  7          6
+  Minimum time between advertisement runs is 0 seconds
+
+ For address family: IPv4 Unicast
+  MetalBGP peer-group member
+  Update group 1, subgroup 1
+  Packet Queue length 0
+  Community attribute sent to this neighbor(large)
+  Inbound path policy configured
+  Outbound path policy configured
+  Route map for incoming advertisements is *ALLOW-ALL
+  Route map for outgoing advertisements is *ALLOW-ALL
+  0 accepted prefixes
+
+  Connections established 1; dropped 0
+  Last reset 00:01:58,   Waiting for NHT
+  External BGP neighbor may be up to 5 hops away.
+Local host: 10.70.114.146, Local port: 48592
+Foreign host: 169.254.255.1, Foreign port: 179
+Nexthop: 10.70.114.146
+Nexthop global: fe80::5054:ff:fe1b:9c65
+Nexthop local: fe80::5054:ff:fe1b:9c65
+BGP connection: non shared network
+BGP Connect Retry Timer in Seconds: 120
+Peer Authentication Enabled
+Read thread: on  Write thread: on  FD used: 23
+
+BGP neighbor is 169.254.255.2, remote AS 65530, local AS 65000, external link
+ Member of peer-group MetalBGP for session parameters
+  BGP version 4, remote router ID 145.40.76.81, local router ID 10.70.114.146
+  BGP state = Established, up for 00:01:57
+  Last read 00:00:10, Last write 00:00:57
+  Hold time is 180, keepalive interval is 60 seconds
+  Neighbor capabilities:
+    4 Byte AS: advertised and received
+    AddPath:
+      IPv4 Unicast: RX advertised IPv4 Unicast and received
+    Route refresh: advertised and received(new)
+    Address Family IPv4 Unicast: advertised and received
+    Hostname Capability: advertised (name: ubuntu02,domain name: n/a) not received
+    Graceful Restart Capabilty: advertised and received
+      Remote Restart timer is 300 seconds
+      Address families by peer:
+        none
+  Graceful restart information:
+    End-of-RIB send: IPv4 Unicast
+    End-of-RIB received: IPv4 Unicast
+  Message statistics:
+    Inq depth is 0
+    Outq depth is 0
+                         Sent       Rcvd
+    Opens:                  1          1
+    Notifications:          0          0
+    Updates:                3          1
+    Keepalives:             2          4
+    Route Refresh:          1          0
+    Capability:             0          0
+    Total:                  7          6
+  Minimum time between advertisement runs is 0 seconds
+
+ For address family: IPv4 Unicast
+  MetalBGP peer-group member
+  Update group 1, subgroup 1
+  Packet Queue length 0
+  Community attribute sent to this neighbor(large)
+  Inbound path policy configured
+  Outbound path policy configured
+  Route map for incoming advertisements is *ALLOW-ALL
+  Route map for outgoing advertisements is *ALLOW-ALL
+  0 accepted prefixes
+
+  Connections established 1; dropped 0
+  Last reset 00:01:58,   Waiting for NHT
+  External BGP neighbor may be up to 5 hops away.
+Local host: 10.70.114.146, Local port: 37034
+Foreign host: 169.254.255.2, Foreign port: 179
+Nexthop: 10.70.114.146
+Nexthop global: fe80::5054:ff:fe1b:9c65
+Nexthop local: fe80::5054:ff:fe1b:9c65
+BGP connection: non shared network
+BGP Connect Retry Timer in Seconds: 120
+Peer Authentication Enabled
+Read thread: on  Write thread: on  FD used: 24
+```
