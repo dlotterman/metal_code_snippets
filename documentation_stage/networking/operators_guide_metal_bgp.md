@@ -155,7 +155,7 @@ The pseudo steps to launching an Equinix Metal instance and configuring it to ho
 - [Launch and Equinix Metal instance](https://metal.equinix.com/developers/docs/deploy/on-demand/)
 - [Enable BGP on that instance](https://metal.equinix.com/developers/docs/bgp/local-bgp/#creating-local-bgp-sessions)
 - Remove the [Metal Private IP](https://metal.equinix.com/developers/docs/networking/ip-addresses/#private-ipv4-management-subnets) from the bonded interface of the host
-- For ESXi this would be removing the VMKernel IP
+    - For ESXi this would be removing the VMKernel IP
 - Create a VM with a port directly attached to `bond0`
     - For ESXi this would be assigned a port from the `vSwitch0` interface 
 - Add the Metal Private IP and route to the VM's interface
