@@ -162,7 +162,7 @@ This configures the IP information for the `br0` default device we created in th
 - path: "/etc/sysctl.conf"
   permissions: "0644"
   owner: "root:root"
-  write_files:
+  append: true
   permissions: "0644"
   content: |
     net.ipv4.ip_forward = 1
