@@ -101,14 +101,14 @@ This is [generally where the bulk](https://cloudinit.readthedocs.io/en/latest/to
 
 In the case of this `#cloud-config`, these steps will:
 
-    * `- [ modprobe, 8021q ]` load the VLAN kernel module
-    * `- [ sysctl, -p ]` load the `sysctl` settings defined in the `sysctl` config file, which we appended a line of configuration to in the `write_files` section below.
-    * `- [ systemctl, enable, NetworkManager.service ]`, `- [ systemctl, restart, NetworkManager.service ]` start and set boot-time start of the Linux NetworkManage service
-    * `- [ systemctl, enable, libvirtd ]`, `- [ systemctl, restart, libvirtd ]` start and set boot-time start of the Linux KVM orchestration daemon.
-    * `- [ virsh, net-destroy, default ]`, `- [ virsh, net-undefine, default ]` Destroy the default network configuration that comes with KVM via the `virsh` management command
-    * `- [ virsh, net-define, /opt/metal_ddve/metal_bridge.xml ]` load a new network definition from the specified file. That file is create below in the `write_files` section.
-    * `- [ virsh, net-autostart, br0 ]` configure KVM networking to `autostart` the `br0` bridge, which was defined in `/opt/metal_ddve/metal_bridge.xml`, when the `libvrtd` service starts
-    * `- [ /opt/metal_ddve/raid6_largest_drives.sh ]` run the `/opt/metal_ddve/raid6_largest_drives.sh` script, which will take all of the high capacity drives (ignoring NVMe) visible on a server and place them into a RAID6 linux software raid. This script is written to disk ahead of time in below in the `write_files` section
+- `- [ modprobe, 8021q ]` load the VLAN kernel module
+- `- [ sysctl, -p ]` load the `sysctl` settings defined in the `sysctl` config file, which we appended a line of configuration to in the `write_files` section below.
+- `- [ systemctl, enable, NetworkManager.service ]`, `- [ systemctl, restart, NetworkManager.service ]` start and set boot-time start of the Linux NetworkManage service
+- `- [ systemctl, enable, libvirtd ]`, `- [ systemctl, restart, libvirtd ]` start and set boot-time start of the Linux KVM orchestration daemon.
+- `- [ virsh, net-destroy, default ]`, `- [ virsh, net-undefine, default ]` Destroy the default network configuration that comes with KVM via the `virsh` management command
+- `- [ virsh, net-define, /opt/metal_ddve/metal_bridge.xml ]` load a new network definition from the specified file. That file is create below in the `write_files` section.
+- `- [ virsh, net-autostart, br0 ]` configure KVM networking to `autostart` the `br0` bridge, which was defined in `/opt/metal_ddve/metal_bridge.xml`, when the `libvrtd` service starts
+- `- [ /opt/metal_ddve/raid6_largest_drives.sh ]` run the `/opt/metal_ddve/raid6_largest_drives.sh` script, which will take all of the high capacity drives (ignoring NVMe) visible on a server and place them into a RAID6 linux software raid. This script is written to disk ahead of time in below in the `write_files` section
 
 
 #### `write_files`
