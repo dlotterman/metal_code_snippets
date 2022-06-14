@@ -141,7 +141,7 @@ This will will write the configuration needed to add the VLAN 1000 to the bonded
 `NM_CONTROLLER` is set to `no` because KVM / `libvirtd` will manage the turnup of `br0`, which will then manage the turnup of the `bond0.1001` VLAN interface.
 
 
-``
+```
 - path: "/etc/sysconfig/network-scripts/ifcfg-br0"
   permissions: "0644"
   owner: "root:root"
@@ -203,15 +203,15 @@ This is the xml file definition for the `br0` device we create in the `runcmd` s
 ```
 
 This is a script that is written to disk, where the script:
-    * Gets a list of all drives with their byte sizes listed
-      * Removes NVMe drives from that list
-      * Finds the largest drive by byte size
-    * Gets a list of all drives with their byte sizes listed
-      * Looks for drives that have the largest, earlier found size, puts them in a list with the right string so `sdj` becomes `/dev/sdj` in the script's list
-    * Finds the number of drives in the list of the largest drives
-    * Goes through the list of drives (`/dev/sde, /dev/sdf` etc), and wipes any pre-existing RAID superblocks from them
-    * Create a software RAID6 device where the drives come from the list of our largest, non-NVMe drives and the number of RAID devices is the number of drives we found in that list
-    * Writes the RAID configuration to `/etc/mdadm.conf` so it's persistant across reboots.
+- Gets a list of all drives with their byte sizes listed
+  - Removes NVMe drives from that list
+  - Finds the largest drive by byte size
+- Gets a list of all drives with their byte sizes listed
+  - Looks for drives that have the largest, earlier found size, puts them in a list with the right string so `sdj` becomes `/dev/sdj` in the script's list
+- Finds the number of drives in the list of the largest drives
+- Goes through the list of drives (`/dev/sde, /dev/sdf` etc), and wipes any pre-existing RAID superblocks from them
+- Create a software RAID6 device where the drives come from the list of our largest, non-NVMe drives and the number of RAID devices is the number of drives we found in that list
+- Writes the RAID configuration to `/etc/mdadm.conf` so it's persistant across reboots.
 
 ```
 - path: "/etc/fstab"
