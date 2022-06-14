@@ -1,3 +1,5 @@
+### Cloud-init walkthrough
+
 This document will break down an example `#cloud-config` line by line, with the hope that it provides some context and understanding for new users of Cloud-init with Equinix Metal.
 
 
@@ -6,6 +8,7 @@ This document will break down an example `#cloud-config` line by line, with the 
 ```
 #cloud-config
 ```
+You always want to begin a Cloud-init `#cloud-config` file with this string.
 
 While appearing to be just a doc string, this line is actually critical for both the Metal Platform and an instance's Cloud-init package to correctly identify the `user_data` text as a configuration for cloud-init. While Cloud-init `#cloud-config`'s are just YAML files, it should be noted that you do want to be safe with your doc strings as they can easily get misinterpreted by Cloud-init or the Metal Platform.
 
@@ -16,7 +19,7 @@ package_upgrade: true
 package_reboot_if_required: true
 ```
 
-When an instance is launched, that instance likely comes with an OS from a Equinix Metal image, or through our Custom iPXE functionality. It's likely that the OS or it's packages are likely out of date, as install media and pre-built images tend to be static and drift over time as patches and fixes get published through upstream repositories.
+When an instance is launched, that instance [likely comes with an OS from a Equinix Metal image](https://metal.equinix.com/developers/docs/operating-systems/), or through our Custom iPXE functionality. It's likely that the OS or it's packages are likely out of date, as install media and pre-built images tend to be static and drift over time as patches and fixes get published through upstream repositories.
 
 These two lines will instruct Cloud-init to [update all of the packages installed](https://cloudinit.readthedocs.io/en/latest/topics/modules.html?highlight=package_upgrade#package-update-upgrade-install) on the instance, and if one of those packages requires a reboot (say kernel update) to take effect, to reboot the server at the very end of it's Cloud-init stage so that when the instance returns to the operator, it will have those changes live.
 
@@ -33,7 +36,7 @@ bootcmd:
 
 [`bootcmd`](https://cloudinit.readthedocs.io/en/latest/topics/modules.html?highlight=bootcmd#bootcmd) is a place to list "commands", where those "commands" are interpreted by the Cloud-init's default shell (likely `bash` or `sh`) and run by cloud-init to configure the system. 
 
-`bootcmd` is very similar to `runcmd`, just that it is run much earlier in the provisioning process, meaning it can be useful for ordering dependencies. If you need commands run before you can say install packages, you can put those in `bootcmd` so that the downstream packages section act without modification.
+`bootcmd` is very similar to [`runcmd`](https://github.com/dlotterman/metal_code_snippets/blob/main/documentation_stage/cloud_init/example_cloud_init_walkthrough.md#runcmd), just that it is run much earlier in the provisioning process, meaning it can be useful for ordering dependencies. If you need commands run before you can say install packages, you can put those in `bootcmd` so that the downstream packages section act without modification.
 
 The commands are "comma space" seperated in order to minimize the problems of shell command string parsing and the headaches that come with.
 
@@ -71,6 +74,7 @@ This will instruct Cloud-init to [install these packages by name](https://cloudi
 
 
 #### `runcmd`
+```
 runcmd:
   - [ modprobe, 8021q ]
   - [ sysctl, -p ]
@@ -87,6 +91,7 @@ runcmd:
   - [ mkfs.ext4, -F, /dev/md0 ]
   - [ mount, /dev/md0, /mnt/md0 ]
   - [ systemctl, restart, NetworkManager.service ]
+```
 
 These are [commands that will be exectued](https://cloudinit.readthedocs.io/en/latest/topics/modules.html?highlight=bootcmd#runcmd) by the default shell (likely `bash` or `sh`), with "comma space" seperation to minimize common shell command + string parsing problems. 
 
