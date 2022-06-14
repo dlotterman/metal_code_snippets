@@ -1,0 +1,1878 @@
+[root@da-c3-small-x86-01 ~]# subscription-manager repos --list
++----------------------------------------------------------+
+    Available Repositories in /etc/yum.repos.d/redhat.repo
++----------------------------------------------------------+
+Repo ID:   rhoar-nodejs-10-for-rhel-8-x86_64-debug-rpms
+Repo Name: Red Hat OpenShift Application Runtimes Node.js v10 for RHEL 8 x86_64 (Debug RPMs)
+Repo URL:  https://cdn.redhat.com/content/dist/layered/rhel8/x86_64/rhoar-nodejs/10/debug
+Enabled:   0
+
+Repo ID:   rhel-8-for-x86_64-sap-netweaver-e4s-debug-rpms
+Repo Name: Red Hat Enterprise Linux 8 for x86_64 - SAP NetWeaver - Update Services for SAP Solutions (Debug RPMs)
+Repo URL:  https://cdn.redhat.com/content/e4s/rhel8/$releasever/x86_64/sap/debug
+Enabled:   0
+
+Repo ID:   satellite-tools-6.9-for-rhel-8-x86_64-e4s-rpms
+Repo Name: Red Hat Satellite Tools 6.9 for RHEL 8 x86_64 - Update Services SAP Solutions (RPMs)
+Repo URL:  https://cdn.redhat.com/content/e4s/rhel8/$releasever/x86_64/sat-tools/6.9/os
+Enabled:   0
+
+Repo ID:   ansible-2.8-for-rhel-8-x86_64-rpms
+Repo Name: Red Hat Ansible Engine 2.8 for RHEL 8 x86_64 (RPMs)
+Repo URL:  https://cdn.redhat.com/content/dist/layered/rhel8/x86_64/ansible/2.8/os
+Enabled:   0
+
+Repo ID:   satellite-tools-6.8-for-rhel-8-x86_64-source-rpms
+Repo Name: Red Hat Satellite Tools 6.8 for RHEL 8 x86_64 (Source RPMs)
+Repo URL:  https://cdn.redhat.com/content/dist/layered/rhel8/x86_64/sat-tools/6.8/source/SRPMS
+Enabled:   0
+
+Repo ID:   satellite-tools-6.5-for-rhel-8-x86_64-source-rpms
+Repo Name: Red Hat Satellite Tools 6.5 for RHEL 8 x86_64 (Source RPMs)
+Repo URL:  https://cdn.redhat.com/content/dist/layered/rhel8/x86_64/sat-tools/6.5/source/SRPMS
+Enabled:   0
+
+Repo ID:   ansible-automation-platform-2.0-early-access-for-rhel-8-x86_64-debug-rpms
+Repo Name: Red Hat Ansible Automation Platform 2.0 Early Access for RHEL 8 x86_64 (Debug RPMs)
+Repo URL:  https://cdn.redhat.com/content/dist/layered/rhel8/x86_64/ansible-automation-platform/2.0/debug
+Enabled:   0
+
+Repo ID:   satellite-tools-6-beta-for-rhel-8-x86_64-source-rpms
+Repo Name: Red Hat Satellite Tools 6 Beta for RHEL 8 x86_64 (Source RPMs)
+Repo URL:  https://cdn.redhat.com/content/beta/layered/rhel8/x86_64/sat-tools/6/source/SRPMS
+Enabled:   0
+
+Repo ID:   rhel-8-for-x86_64-highavailability-source-rpms
+Repo Name: Red Hat Enterprise Linux 8 for x86_64 - High Availability (Source RPMs)
+Repo URL:  https://cdn.redhat.com/content/dist/rhel8/$releasever/x86_64/highavailability/source/SRPMS
+Enabled:   0
+
+Repo ID:   rhel-7-server-3scale-amp-2-for-power-le-source-rpms
+Repo Name: Red Hat 3scale API Management Platform 2 for Power(Source RPMs)
+Repo URL:  https://cdn.redhat.com/content/dist/rhel/power-le/7/7Server/$basearch/3scale-amp/2/source/SRPMS
+Enabled:   0
+
+Repo ID:   fast-datapath-beta-for-rhel-8-x86_64-rpms
+Repo Name: Fast Datapath Beta for RHEL 8 x86_64 (RPMs)
+Repo URL:  https://cdn.redhat.com/content/beta/layered/rhel8/x86_64/fast-datapath/os
+Enabled:   0
+
+Repo ID:   rhel-8-for-x86_64-baseos-debug-rpms
+Repo Name: Red Hat Enterprise Linux 8 for x86_64 - BaseOS (Debug RPMs)
+Repo URL:  https://cdn.redhat.com/content/dist/rhel8/$releasever/x86_64/baseos/debug
+Enabled:   0
+
+Repo ID:   rhel-8-for-x86_64-sap-netweaver-eus-debug-rpms
+Repo Name: Red Hat Enterprise Linux 8 for x86_64 - SAP NetWeaver - Extended Update Support (Debug RPMs)
+Repo URL:  https://cdn.redhat.com/content/eus/rhel8/$releasever/x86_64/sap/debug
+Enabled:   0
+
+Repo ID:   rhel-atomic-7-cdk-3.0-debug-rpms
+Repo Name: Red Hat Container Development Kit 3.0 /(Debug RPMs)
+Repo URL:  https://cdn.redhat.com/content/dist/rhel/atomic/7/7Server/$basearch/cdk/3.0/debug
+Enabled:   0
+
+Repo ID:   fast-datapath-beta-for-rhel-8-x86_64-debug-rpms
+Repo Name: Fast Datapath Beta for RHEL 8 x86_64 (Debug RPMs)
+Repo URL:  https://cdn.redhat.com/content/beta/layered/rhel8/x86_64/fast-datapath/debug
+Enabled:   0
+
+Repo ID:   satellite-tools-6.6-for-rhel-8-x86_64-eus-debug-rpms
+Repo Name: Red Hat Satellite Tools 6.6 for RHEL 8 x86_64 - Extended Update Support (Debug RPMs)
+Repo URL:  https://cdn.redhat.com/content/eus/rhel8/$releasever/x86_64/sat-tools/6.6/debug
+Enabled:   0
+
+Repo ID:   rhel-atomic-7-cdk-3.12-rpms
+Repo Name: Red Hat Container Development Kit 3.12 /(RPMs)
+Repo URL:  https://cdn.redhat.com/content/dist/rhel/atomic/7/7Server/$basearch/cdk/3.12/os
+Enabled:   0
+
+Repo ID:   rhel-8-for-x86_64-baseos-eus-debug-rpms
+Repo Name: Red Hat Enterprise Linux 8 for x86_64 - BaseOS - Extended Update Support (Debug RPMs)
+Repo URL:  https://cdn.redhat.com/content/eus/rhel8/$releasever/x86_64/baseos/debug
+Enabled:   0
+
+Repo ID:   fast-datapath-beta-for-rhel-8-ppc64le-debug-rpms
+Repo Name: Fast Datapath Beta for RHEL 8 Power, little endian (Debug RPMs)
+Repo URL:  https://cdn.redhat.com/content/beta/layered/rhel8/ppc64le/fast-datapath/debug
+Enabled:   0
+
+Repo ID:   rhoar-nodejs-12-for-rhel-8-x86_64-debug-rpms
+Repo Name: Red Hat OpenShift Application Runtimes Node.js v12 for RHEL 8 x86_64 (Debug RPMs)
+Repo URL:  https://cdn.redhat.com/content/dist/layered/rhel8/x86_64/rhoar-nodejs/12/debug
+Enabled:   0
+
+Repo ID:   rhel-atomic-7-cdk-3.9-rpms
+Repo Name: Red Hat Container Development Kit 3.9 /(RPMs)
+Repo URL:  https://cdn.redhat.com/content/dist/rhel/atomic/7/7Server/$basearch/cdk/3.9/os
+Enabled:   0
+
+Repo ID:   rhel-8-for-x86_64-sap-solutions-e4s-source-rpms
+Repo Name: Red Hat Enterprise Linux 8 for x86_64 - SAP Solutions - Update Services for SAP Solutions (Source RPMs)
+Repo URL:  https://cdn.redhat.com/content/e4s/rhel8/$releasever/x86_64/sap-solutions/source/SRPMS
+Enabled:   0
+
+Repo ID:   satellite-tools-6.9-for-rhel-8-x86_64-source-rpms
+Repo Name: Red Hat Satellite Tools 6.9 for RHEL 8 x86_64 (Source RPMs)
+Repo URL:  https://cdn.redhat.com/content/dist/layered/rhel8/x86_64/sat-tools/6.9/source/SRPMS
+Enabled:   0
+
+Repo ID:   rhocp-4.6-for-rhel-8-x86_64-debug-rpms
+Repo Name: Red Hat OpenShift Container Platform 4.6 for RHEL 8 x86_64 (Debug RPMs)
+Repo URL:  https://cdn.redhat.com/content/dist/layered/rhel8/x86_64/rhocp/4.6/debug
+Enabled:   0
+
+Repo ID:   rhel-8-for-x86_64-sap-netweaver-debug-rpms
+Repo Name: Red Hat Enterprise Linux 8 for x86_64 - SAP NetWeaver (Debug RPMs)
+Repo URL:  https://cdn.redhat.com/content/dist/rhel8/$releasever/x86_64/sap/debug
+Enabled:   0
+
+Repo ID:   jb-eap-7.4-for-rhel-8-x86_64-debug-rpms
+Repo Name: JBoss Enterprise Application Platform 7.4 (RHEL 8) (Debug RPMs)
+Repo URL:  https://cdn.redhat.com/content/dist/layered/rhel8/x86_64/jbeap/7.4/debug
+Enabled:   0
+
+Repo ID:   jb-coreservices-1-for-rhel-8-x86_64-rhui-rpms
+Repo Name: JBoss Core Services (RHEL 8) (RPMs) from RHUI
+Repo URL:  https://cdn.redhat.com/content/dist/layered/rhui/rhel8/x86_64/jbcs/1/os
+Enabled:   0
+
+Repo ID:   rhel-8-for-x86_64-sap-netweaver-e4s-rpms
+Repo Name: Red Hat Enterprise Linux 8 for x86_64 - SAP NetWeaver - Update Services for SAP Solutions (RPMs)
+Repo URL:  https://cdn.redhat.com/content/e4s/rhel8/$releasever/x86_64/sap/os
+Enabled:   0
+
+Repo ID:   automation-services-catalog-1-beta-for-rhel-8-x86_64-rpms
+Repo Name: Red Hat Automation Services Catalog 1 Beta for RHEL 8 x86_64 (RPMs)
+Repo URL:  https://cdn.redhat.com/content/beta/layered/rhel8/x86_64/automation-services-catalog/1/os
+Enabled:   0
+
+Repo ID:   jb-datagrid-7.3-for-rhel-8-x86_64-source-rpms
+Repo Name: Red Hat JBoss Data Grid 7.3 (RHEL 8) (Source RPMs)
+Repo URL:  https://cdn.redhat.com/content/dist/layered/rhel8/x86_64/jdg/7.3/source/SRPMS
+Enabled:   0
+
+Repo ID:   amq-clients-2.9-for-rhel-8-x86_64-debug-rpms
+Repo Name: Red Hat AMQ Clients 2.9 for RHEL 8 x86_64 (Debug RPMs)
+Repo URL:  https://cdn.redhat.com/content/dist/layered/rhel8/x86_64/amq/2.9/debug
+Enabled:   0
+
+Repo ID:   amq-interconnect-textonly-1-for-middleware-rpms
+Repo Name: Red Hat AMQ Interconnect Text-Only Advisories
+Repo URL:  https://cdn.redhat.com/content/dist/middleware/amq-interconnect/1.0/$basearch/os
+Enabled:   0
+
+Repo ID:   rh-gluster-3-client-for-rhel-8-x86_64-source-rpms
+Repo Name: Red Hat Storage Native Client for RHEL 8 (Source RPMs)
+Repo URL:  https://cdn.redhat.com/content/dist/layered/rhel8/x86_64/rhgs-client/3.5/source/SRPMS
+Enabled:   0
+
+Repo ID:   rhocp-4.4-for-rhel-8-x86_64-rpms
+Repo Name: Red Hat OpenShift Container Platform 4.4 for RHEL 8 x86_64 (RPMs)
+Repo URL:  https://cdn.redhat.com/content/dist/layered/rhel8/x86_64/rhocp/4.4/os
+Enabled:   0
+
+Repo ID:   rhel-atomic-7-cdk-2.3-rpms
+Repo Name: Red Hat Container Development Kit 2.3 /(RPMs)
+Repo URL:  https://cdn.redhat.com/content/dist/rhel/atomic/7/7Server/$basearch/cdk/2.3/os
+Enabled:   0
+
+Repo ID:   rhel-atomic-7-cdk-3.1-rpms
+Repo Name: Red Hat Container Development Kit 3.1 /(RPMs)
+Repo URL:  https://cdn.redhat.com/content/dist/rhel/atomic/7/7Server/$basearch/cdk/3.1/os
+Enabled:   0
+
+Repo ID:   rhocp-4.5-for-rhel-8-x86_64-source-rpms
+Repo Name: Red Hat OpenShift Container Platform 4.5 for RHEL 8 x86_64 (Source RPMs)
+Repo URL:  https://cdn.redhat.com/content/dist/layered/rhel8/x86_64/rhocp/4.5/source/SRPMS
+Enabled:   0
+
+Repo ID:   rhel-8-for-x86_64-resilientstorage-eus-source-rpms
+Repo Name: Red Hat Enterprise Linux 8 for x86_64 - Resilient Storage - Extended Update Support (Source RPMs)
+Repo URL:  https://cdn.redhat.com/content/eus/rhel8/$releasever/x86_64/resilientstorage/source/SRPMS
+Enabled:   0
+
+Repo ID:   rhel-8-for-x86_64-baseos-e4s-rpms
+Repo Name: Red Hat Enterprise Linux 8 for x86_64 - BaseOS - Update Services for SAP Solutions (RPMs)
+Repo URL:  https://cdn.redhat.com/content/e4s/rhel8/$releasever/x86_64/baseos/os
+Enabled:   0
+
+Repo ID:   advanced-virt-beta-for-rhel-8-s390x-rpms
+Repo Name: Advanced Virtualization Beta for RHEL 8 IBM z Systems (RPMs)
+Repo URL:  https://cdn.redhat.com/content/beta/layered/rhel8/s390x/advanced-virt/os
+Enabled:   0
+
+Repo ID:   rhel-atomic-7-cdk-3.6-source-rpms
+Repo Name: Red Hat Container Development Kit 3.6 /(Source RPMs)
+Repo URL:  https://cdn.redhat.com/content/dist/rhel/atomic/7/7Server/$basearch/cdk/3.6/source/SRPMS
+Enabled:   0
+
+Repo ID:   satellite-tools-6.5-for-rhel-8-x86_64-debug-rpms
+Repo Name: Red Hat Satellite Tools 6.5 for RHEL 8 x86_64 (Debug RPMs)
+Repo URL:  https://cdn.redhat.com/content/dist/layered/rhel8/x86_64/sat-tools/6.5/debug
+Enabled:   0
+
+Repo ID:   ansible-automation-platform-2.1-for-rhel-8-x86_64-source-rpms
+Repo Name: Red Hat Ansible Automation Platform 2.1 for RHEL 8 x86_64 (Source RPMs)
+Repo URL:  https://cdn.redhat.com/content/dist/layered/rhel8/x86_64/ansible-automation-platform/2.1/source/SRPMS
+Enabled:   0
+
+Repo ID:   satellite-tools-6.5-for-rhel-8-x86_64-eus-debug-rpms
+Repo Name: Red Hat Satellite Tools 6.5 for RHEL 8 x86_64 - Extended Update Support (Debug RPMs)
+Repo URL:  https://cdn.redhat.com/content/eus/rhel8/$releasever/x86_64/sat-tools/6.5/debug
+Enabled:   0
+
+Repo ID:   satellite-tools-6.5-for-rhel-8-x86_64-e4s-debug-rpms
+Repo Name: Red Hat Satellite Tools 6.5 for RHEL 8 x86_64 - Update Services SAP Solutions (Debug RPMs)
+Repo URL:  https://cdn.redhat.com/content/e4s/rhel8/$releasever/x86_64/sat-tools/6.5/debug
+Enabled:   0
+
+Repo ID:   rhceph-4-tools-for-rhel-8-x86_64-rpms
+Repo Name: Red Hat Ceph Storage Tools 4 for RHEL 8 x86_64 (RPMs)
+Repo URL:  https://cdn.redhat.com/content/dist/layered/rhel8/x86_64/rhceph-tools/4/os
+Enabled:   0
+
+Repo ID:   rhv-4-tools-beta-for-rhel-8-x86_64-rpms
+Repo Name: Red Hat Virtualization 4 Tools Beta for RHEL 8 x86_64 (RPMs)
+Repo URL:  https://cdn.redhat.com/content/beta/layered/rhel8/x86_64/rhv-tools/4/os
+Enabled:   0
+
+Repo ID:   rhocp-4.7-for-rhel-8-x86_64-debug-rpms
+Repo Name: Red Hat OpenShift Container Platform 4.7 for RHEL 8 x86_64 (Debug RPMs)
+Repo URL:  https://cdn.redhat.com/content/dist/layered/rhel8/x86_64/rhocp/4.7/debug
+Enabled:   0
+
+Repo ID:   rhocp-4.2-for-rhel-8-x86_64-source-rpms
+Repo Name: Red Hat OpenShift Container Platform 4.2 for RHEL 8 x86_64 (Source RPMs)
+Repo URL:  https://cdn.redhat.com/content/dist/layered/rhel8/x86_64/rhocp/4.2/source/SRPMS
+Enabled:   0
+
+Repo ID:   amq-interconnect-1-for-rhel-8-x86_64-source-rpms
+Repo Name: JBoss AMQ Interconnect 1 for RHEL 8 x86_64 (Source RPMs)
+Repo URL:  https://cdn.redhat.com/content/dist/layered/rhel8/x86_64/amq-interconnect/1/source/SRPMS
+Enabled:   0
+
+Repo ID:   satellite-tools-6.7-for-rhel-8-x86_64-e4s-source-rpms
+Repo Name: Red Hat Satellite Tools 6.7 for RHEL 8 x86_64 - Update Services SAP Solutions (Source RPMs)
+Repo URL:  https://cdn.redhat.com/content/e4s/rhel8/$releasever/x86_64/sat-tools/6.7/source/SRPMS
+Enabled:   0
+
+Repo ID:   rhoar-nodejs-12-for-rhel-8-x86_64-rpms
+Repo Name: Red Hat OpenShift Application Runtimes Node.js v12 for RHEL 8 x86_64 (RPMs)
+Repo URL:  https://cdn.redhat.com/content/dist/layered/rhel8/x86_64/rhoar-nodejs/12/os
+Enabled:   0
+
+Repo ID:   rhel-8-for-x86_64-sap-netweaver-eus-source-rpms
+Repo Name: Red Hat Enterprise Linux 8 for x86_64 - SAP NetWeaver - Extended Update Support (Source RPMs)
+Repo URL:  https://cdn.redhat.com/content/eus/rhel8/$releasever/x86_64/sap/source/SRPMS
+Enabled:   0
+
+Repo ID:   jb-coreservices-textonly-1-for-middleware-rhui-rpms
+Repo Name: Red Hat JBoss Core Services Text-Only Advisories from RHUI
+Repo URL:  https://cdn.redhat.com/content/dist/middleware/rhui/jbcs/1.0/$basearch/os
+Enabled:   0
+
+Repo ID:   satellite-utils-6.11-for-rhel-8-x86_64-debug-rpms
+Repo Name: Red Hat Satellite Utils 6.11 for RHEL 8 x86_64 (Debug RPMs)
+Repo URL:  https://cdn.redhat.com/content/dist/layered/rhel8/x86_64/sat-utils/6.11/debug
+Enabled:   0
+
+Repo ID:   satellite-tools-6.7-for-rhel-8-x86_64-debug-rpms
+Repo Name: Red Hat Satellite Tools 6.7 for RHEL 8 x86_64 (Debug RPMs)
+Repo URL:  https://cdn.redhat.com/content/dist/layered/rhel8/x86_64/sat-tools/6.7/debug
+Enabled:   0
+
+Repo ID:   codeready-builder-for-rhel-8-x86_64-eus-rpms
+Repo Name: Red Hat CodeReady Linux Builder for RHEL 8 x86_64 - Extended Update Support (RPMs)
+Repo URL:  https://cdn.redhat.com/content/eus/rhel8/$releasever/x86_64/codeready-builder/os
+Enabled:   0
+
+Repo ID:   rhocp-4.4-for-rhel-8-x86_64-debug-rpms
+Repo Name: Red Hat OpenShift Container Platform 4.4 for RHEL 8 x86_64 (Debug RPMs)
+Repo URL:  https://cdn.redhat.com/content/dist/layered/rhel8/x86_64/rhocp/4.4/debug
+Enabled:   0
+
+Repo ID:   satellite-tools-6.7-for-rhel-8-x86_64-eus-debug-rpms
+Repo Name: Red Hat Satellite Tools 6.7 for RHEL 8 x86_64 - Extended Update Support (Debug RPMs)
+Repo URL:  https://cdn.redhat.com/content/eus/rhel8/$releasever/x86_64/sat-tools/6.7/debug
+Enabled:   0
+
+Repo ID:   rhel-atomic-7-cdk-3.4-rpms
+Repo Name: Red Hat Container Development Kit 3.4 /(RPMs)
+Repo URL:  https://cdn.redhat.com/content/dist/rhel/atomic/7/7Server/$basearch/cdk/3.4/os
+Enabled:   0
+
+Repo ID:   jb-eap-7.3-for-rhel-8-x86_64-rpms
+Repo Name: JBoss Enterprise Application Platform 7.3 (RHEL 8) (RPMs)
+Repo URL:  https://cdn.redhat.com/content/dist/layered/rhel8/x86_64/jbeap/7.3/os
+Enabled:   0
+
+Repo ID:   rhel-atomic-7-cdk-3.11-rpms
+Repo Name: Red Hat Container Development Kit 3.11 /(RPMs)
+Repo URL:  https://cdn.redhat.com/content/dist/rhel/atomic/7/7Server/$basearch/cdk/3.11/os
+Enabled:   0
+
+Repo ID:   rhocp-4.2-for-rhel-8-x86_64-rpms
+Repo Name: Red Hat OpenShift Container Platform 4.2 for RHEL 8 x86_64 (RPMs)
+Repo URL:  https://cdn.redhat.com/content/dist/layered/rhel8/x86_64/rhocp/4.2/os
+Enabled:   0
+
+Repo ID:   rhel-8-for-x86_64-rt-rpms
+Repo Name: Red Hat Enterprise Linux 8 for x86_64 - Real Time (RPMs)
+Repo URL:  https://cdn.redhat.com/content/dist/rhel8/$releasever/x86_64/rt/os
+Enabled:   0
+
+Repo ID:   rhocp-4.1-for-rhel-8-x86_64-debug-rpms
+Repo Name: Red Hat OpenShift Container Platform 4.1 for RHEL 8 x86_64 (Debug RPMs)
+Repo URL:  https://cdn.redhat.com/content/dist/layered/rhel8/x86_64/rhocp/4.1/debug
+Enabled:   0
+
+Repo ID:   jb-coreservices-1-for-rhel-8-x86_64-rhui-debug-rpms
+Repo Name: JBoss Core Services (RHEL 8) (Debug RPMs) from RHUI
+Repo URL:  https://cdn.redhat.com/content/dist/layered/rhui/rhel8/x86_64/jbcs/1/debug
+Enabled:   0
+
+Repo ID:   3scale-amp-2-for-rhel-8-ppc64le-debug-rpms
+Repo Name: Red Hat 3scale API Management Platform 2 for RHEL 8 for Power (Debug RPMs)
+Repo URL:  https://cdn.redhat.com/content/dist/layered/rhel8/ppc64le/3scale-amp/2/debug
+Enabled:   0
+
+Repo ID:   rhel-8-for-x86_64-sap-solutions-eus-source-rpms
+Repo Name: Red Hat Enterprise Linux 8 for x86_64 - SAP Solutions - Extended Update Support (Source RPMs)
+Repo URL:  https://cdn.redhat.com/content/eus/rhel8/$releasever/x86_64/sap-solutions/source/SRPMS
+Enabled:   0
+
+Repo ID:   automation-hub-4-beta-for-rhel-8-x86_64-rpms
+Repo Name: Red Hat Automation Hub 4 Beta for RHEL 8 x86_64 (RPMs)
+Repo URL:  https://cdn.redhat.com/content/beta/layered/rhel8/x86_64/automation-hub/4/os
+Enabled:   0
+
+Repo ID:   satellite-tools-6.9-for-rhel-8-x86_64-eus-rpms
+Repo Name: Red Hat Satellite Tools 6.9 for RHEL 8 x86_64 - Extended Update Support (RPMs)
+Repo URL:  https://cdn.redhat.com/content/eus/rhel8/$releasever/x86_64/sat-tools/6.9/os
+Enabled:   0
+
+Repo ID:   rhv-4-tools-for-rhel-8-x86_64-rpms
+Repo Name: Red Hat Virtualization 4 Tools for RHEL 8 x86_64 (RPMs)
+Repo URL:  https://cdn.redhat.com/content/dist/layered/rhel8/x86_64/rhv-tools/4/os
+Enabled:   0
+
+Repo ID:   rhmtc-for-rhel-8-x86_64-debug-rpms
+Repo Name: Red Hat Migration Toolkit for Containers for RHEL 8 x86_64 (Debug RPMs)
+Repo URL:  https://cdn.redhat.com/content/dist/layered/rhel8/x86_64/rhmtc/1/debug
+Enabled:   0
+
+Repo ID:   rhocp-4.5-for-rhel-8-x86_64-debug-rpms
+Repo Name: Red Hat OpenShift Container Platform 4.5 for RHEL 8 x86_64 (Debug RPMs)
+Repo URL:  https://cdn.redhat.com/content/dist/layered/rhel8/x86_64/rhocp/4.5/debug
+Enabled:   0
+
+Repo ID:   automation-services-catalog-1-tech-preview-for-rhel-8-x86_64-source-rpms
+Repo Name: Red Hat Automation Services Catalog 1 Tech Preview for RHEL 8 x86_64 (Source RPMs)
+Repo URL:  https://cdn.redhat.com/content/dist/layered/rhel8/x86_64/automation-services-catalog-tech-preview/1/source/SRPMS
+Enabled:   0
+
+Repo ID:   automation-hub-4-beta-for-rhel-8-x86_64-debug-rpms
+Repo Name: Red Hat Automation Hub 4 Beta for RHEL 8 x86_64 (Debug RPMs)
+Repo URL:  https://cdn.redhat.com/content/beta/layered/rhel8/x86_64/automation-hub/4/debug
+Enabled:   0
+
+Repo ID:   rhocp-4.8-for-rhel-8-x86_64-rpms
+Repo Name: Red Hat OpenShift Container Platform 4.8 for RHEL 8 x86_64 (RPMs)
+Repo URL:  https://cdn.redhat.com/content/dist/layered/rhel8/x86_64/rhocp/4.8/os
+Enabled:   0
+
+Repo ID:   rhel-atomic-7-cdk-3.5-source-rpms
+Repo Name: Red Hat Container Development Kit 3.5 /(Source RPMs)
+Repo URL:  https://cdn.redhat.com/content/dist/rhel/atomic/7/7Server/$basearch/cdk/3.5/source/SRPMS
+Enabled:   0
+
+Repo ID:   rhocp-4.6-for-rhel-8-x86_64-rpms
+Repo Name: Red Hat OpenShift Container Platform 4.6 for RHEL 8 x86_64 (RPMs)
+Repo URL:  https://cdn.redhat.com/content/dist/layered/rhel8/x86_64/rhocp/4.6/os
+Enabled:   0
+
+Repo ID:   satellite-tools-6.5-for-rhel-8-x86_64-eus-source-rpms
+Repo Name: Red Hat Satellite Tools 6.5 for RHEL 8 x86_64 - Extended Update Support (Source RPMs)
+Repo URL:  https://cdn.redhat.com/content/eus/rhel8/$releasever/x86_64/sat-tools/6.5/source/SRPMS
+Enabled:   0
+
+Repo ID:   rhel-8-for-x86_64-appstream-eus-rpms
+Repo Name: Red Hat Enterprise Linux 8 for x86_64 - AppStream - Extended Update Support (RPMs)
+Repo URL:  https://cdn.redhat.com/content/eus/rhel8/$releasever/x86_64/appstream/os
+Enabled:   0
+
+Repo ID:   rhel-8-for-x86_64-appstream-e4s-source-rpms
+Repo Name: Red Hat Enterprise Linux 8 for x86_64 - AppStream - Update Services for SAP Solutions (Source RPMs)
+Repo URL:  https://cdn.redhat.com/content/e4s/rhel8/$releasever/x86_64/appstream/source/SRPMS
+Enabled:   0
+
+Repo ID:   satellite-tools-6.6-for-rhel-8-x86_64-debug-rpms
+Repo Name: Red Hat Satellite Tools 6.6 for RHEL 8 x86_64 (Debug RPMs)
+Repo URL:  https://cdn.redhat.com/content/dist/layered/rhel8/x86_64/sat-tools/6.6/debug
+Enabled:   0
+
+Repo ID:   rhel-atomic-7-cdk-3.0-source-rpms
+Repo Name: Red Hat Container Development Kit 3.0 /(Source RPMs)
+Repo URL:  https://cdn.redhat.com/content/dist/rhel/atomic/7/7Server/$basearch/cdk/3.0/source/SRPMS
+Enabled:   0
+
+Repo ID:   rhel-8-for-x86_64-sap-netweaver-e4s-source-rpms
+Repo Name: Red Hat Enterprise Linux 8 for x86_64 - SAP NetWeaver - Update Services for SAP Solutions (Source RPMs)
+Repo URL:  https://cdn.redhat.com/content/e4s/rhel8/$releasever/x86_64/sap/source/SRPMS
+Enabled:   0
+
+Repo ID:   rhel-8-for-x86_64-highavailability-e4s-source-rpms
+Repo Name: Red Hat Enterprise Linux 8 for x86_64 - High Availability - Update Services for SAP Solutions (Source RPMs)
+Repo URL:  https://cdn.redhat.com/content/e4s/rhel8/$releasever/x86_64/highavailability/source/SRPMS
+Enabled:   0
+
+Repo ID:   rhel-atomic-7-cdk-3.10-rpms
+Repo Name: Red Hat Container Development Kit 3.10 /(RPMs)
+Repo URL:  https://cdn.redhat.com/content/dist/rhel/atomic/7/7Server/$basearch/cdk/3.10/os
+Enabled:   0
+
+Repo ID:   3scale-amp-2-for-rhel-8-ppc64le-rpms
+Repo Name: Red Hat 3scale API Management Platform 2 for RHEL 8 for Power (RPMs)
+Repo URL:  https://cdn.redhat.com/content/dist/layered/rhel8/ppc64le/3scale-amp/2/os
+Enabled:   0
+
+Repo ID:   codeready-builder-for-rhel-8-x86_64-eus-source-rpms
+Repo Name: Red Hat CodeReady Linux Builder for RHEL 8 x86_64 - Extended Update Support (Source RPMs)
+Repo URL:  https://cdn.redhat.com/content/eus/rhel8/$releasever/x86_64/codeready-builder/source/SRPMS
+Enabled:   0
+
+Repo ID:   rhel-atomic-7-cdk-3.4-source-rpms
+Repo Name: Red Hat Container Development Kit 3.4 /(Source RPMs)
+Repo URL:  https://cdn.redhat.com/content/dist/rhel/atomic/7/7Server/$basearch/cdk/3.4/source/SRPMS
+Enabled:   0
+
+Repo ID:   satellite-tools-6.9-for-rhel-8-x86_64-debug-rpms
+Repo Name: Red Hat Satellite Tools 6.9 for RHEL 8 x86_64 (Debug RPMs)
+Repo URL:  https://cdn.redhat.com/content/dist/layered/rhel8/x86_64/sat-tools/6.9/debug
+Enabled:   0
+
+Repo ID:   rhel-8-for-x86_64-highavailability-eus-rpms
+Repo Name: Red Hat Enterprise Linux 8 for x86_64 - High Availability - Extended Update Support (RPMs)
+Repo URL:  https://cdn.redhat.com/content/eus/rhel8/$releasever/x86_64/highavailability/os
+Enabled:   0
+
+Repo ID:   rhel-atomic-7-cdk-3.5-debug-rpms
+Repo Name: Red Hat Container Development Kit 3.5 /(Debug RPMs)
+Repo URL:  https://cdn.redhat.com/content/dist/rhel/atomic/7/7Server/$basearch/cdk/3.5/debug
+Enabled:   0
+
+Repo ID:   codeready-builder-for-rhel-8-x86_64-debug-rpms
+Repo Name: Red Hat CodeReady Linux Builder for RHEL 8 x86_64 (Debug RPMs)
+Repo URL:  https://cdn.redhat.com/content/dist/rhel8/$releasever/x86_64/codeready-builder/debug
+Enabled:   0
+
+Repo ID:   3scale-amp-2-for-rhel-8-ppc64le-source-rpms
+Repo Name: Red Hat 3scale API Management Platform 2 for RHEL 8 for Power(Source RPMs)
+Repo URL:  https://cdn.redhat.com/content/dist/layered/rhel8/ppc64le/3scale-amp/2/source/SRPMS
+Enabled:   0
+
+Repo ID:   satellite-tools-6.8-for-rhel-8-x86_64-e4s-debug-rpms
+Repo Name: Red Hat Satellite Tools 6.8 for RHEL 8 x86_64 - Update Services SAP Solutions (Debug RPMs)
+Repo URL:  https://cdn.redhat.com/content/e4s/rhel8/$releasever/x86_64/sat-tools/6.8/debug
+Enabled:   0
+
+Repo ID:   ansible-automation-platform-2.2-for-rhel-8-x86_64-rpms
+Repo Name: Red Hat Ansible Automation Platform 2.2 for RHEL 8 x86_64 (RPMs)
+Repo URL:  https://cdn.redhat.com/content/dist/layered/rhel8/x86_64/ansible-automation-platform/2.2/os
+Enabled:   0
+
+Repo ID:   rhmt-1.2-for-rhel-8-x86_64-debug-rpms
+Repo Name: Red Hat Migration Toolkit 1.2 for RHEL 8 x86_64 (Debug RPMs)
+Repo URL:  https://cdn.redhat.com/content/dist/layered/rhel8/x86_64/rhmt/1.2/debug
+Enabled:   0
+
+Repo ID:   satellite-tools-6.7-for-rhel-8-x86_64-source-rpms
+Repo Name: Red Hat Satellite Tools 6.7 for RHEL 8 x86_64 (Source RPMs)
+Repo URL:  https://cdn.redhat.com/content/dist/layered/rhel8/x86_64/sat-tools/6.7/source/SRPMS
+Enabled:   0
+
+Repo ID:   quarkus-2-for-rhel-8-x86_64-debug-rpms
+Repo Name: Red Hat build of Quarkus 2 (RHEL 8) (Debug RPMs)
+Repo URL:  https://cdn.redhat.com/content/dist/layered/rhel8/x86_64/quarkus/2/debug
+Enabled:   0
+
+Repo ID:   satellite-tools-6.6-for-rhel-8-x86_64-eus-source-rpms
+Repo Name: Red Hat Satellite Tools 6.6 for RHEL 8 x86_64 - Extended Update Support (Source RPMs)
+Repo URL:  https://cdn.redhat.com/content/eus/rhel8/$releasever/x86_64/sat-tools/6.6/source/SRPMS
+Enabled:   0
+
+Repo ID:   rhel-atomic-7-cdk-3.3-debug-rpms
+Repo Name: Red Hat Container Development Kit 3.3 /(Debug RPMs)
+Repo URL:  https://cdn.redhat.com/content/dist/rhel/atomic/7/7Server/$basearch/cdk/3.3/debug
+Enabled:   0
+
+Repo ID:   devworkspace-0.10-for-rhel-8-x86_64-source-rpms
+Repo Name: Red Hat Devworkspace 0.10 for RHEL 8 x86_64 (Source RPMs)
+Repo URL:  https://cdn.redhat.com/content/dist/layered/rhel8/x86_64/devworkspace/0.10/source/SRPMS
+Enabled:   0
+
+Repo ID:   rhel-8-for-x86_64-appstream-source-rpms
+Repo Name: Red Hat Enterprise Linux 8 for x86_64 - AppStream (Source RPMs)
+Repo URL:  https://cdn.redhat.com/content/dist/rhel8/$releasever/x86_64/appstream/source/SRPMS
+Enabled:   0
+
+Repo ID:   rhel-8-for-x86_64-resilientstorage-debug-rpms
+Repo Name: Red Hat Enterprise Linux 8 for x86_64 - Resilient Storage (Debug RPMs)
+Repo URL:  https://cdn.redhat.com/content/dist/rhel8/$releasever/x86_64/resilientstorage/debug
+Enabled:   0
+
+Repo ID:   rhmt-1.1-for-rhel-8-x86_64-debug-rpms
+Repo Name: Red Hat Migration Toolkit 1.1 for RHEL 8 x86_64 (Debug RPMs)
+Repo URL:  https://cdn.redhat.com/content/dist/layered/rhel8/x86_64/rhmt/1.1/debug
+Enabled:   0
+
+Repo ID:   satellite-tools-6.5-for-rhel-8-x86_64-rpms
+Repo Name: Red Hat Satellite Tools 6.5 for RHEL 8 x86_64 (RPMs)
+Repo URL:  https://cdn.redhat.com/content/dist/layered/rhel8/x86_64/sat-tools/6.5/os
+Enabled:   0
+
+Repo ID:   soa-textonly-1-for-middleware-rpms
+Repo Name: Red Hat JBoss SOA Text-Only Advisories
+Repo URL:  https://cdn.redhat.com/content/dist/middleware/soa/1.0/$basearch/os
+Enabled:   0
+
+Repo ID:   amq-clients-2.9-for-rhel-8-x86_64-rpms
+Repo Name: Red Hat AMQ Clients 2.9 for RHEL 8 x86_64 (RPMs)
+Repo URL:  https://cdn.redhat.com/content/dist/layered/rhel8/x86_64/amq/2.9/os
+Enabled:   0
+
+Repo ID:   rhel-8-for-x86_64-highavailability-eus-source-rpms
+Repo Name: Red Hat Enterprise Linux 8 for x86_64 - High Availability - Extended Update Support (Source RPMs)
+Repo URL:  https://cdn.redhat.com/content/eus/rhel8/$releasever/x86_64/highavailability/source/SRPMS
+Enabled:   0
+
+Repo ID:   rhocp-4.6-for-rhel-8-x86_64-source-rpms
+Repo Name: Red Hat OpenShift Container Platform 4.6 for RHEL 8 x86_64 (Source RPMs)
+Repo URL:  https://cdn.redhat.com/content/dist/layered/rhel8/x86_64/rhocp/4.6/source/SRPMS
+Enabled:   0
+
+Repo ID:   rhel-8-for-x86_64-baseos-eus-rpms
+Repo Name: Red Hat Enterprise Linux 8 for x86_64 - BaseOS - Extended Update Support (RPMs)
+Repo URL:  https://cdn.redhat.com/content/eus/rhel8/$releasever/x86_64/baseos/os
+Enabled:   0
+
+Repo ID:   jb-eap-7.3-for-rhel-8-x86_64-debug-rpms
+Repo Name: JBoss Enterprise Application Platform 7.3 (RHEL 8) (Debug RPMs)
+Repo URL:  https://cdn.redhat.com/content/dist/layered/rhel8/x86_64/jbeap/7.3/debug
+Enabled:   0
+
+Repo ID:   rhoar-nodejs-10-for-rhel-8-ppc64le-source-rpms
+Repo Name: Red Hat OpenShift Application Runtimes Node.js v10 for RHEL 8 for Power, little endian (Source RPMs)
+Repo URL:  https://cdn.redhat.com/content/dist/layered/rhel8/ppc64le/rhoar-nodejs/10/source/SRPMS
+Enabled:   0
+
+Repo ID:   rhel-atomic-7-cdk-3.13-rpms
+Repo Name: Red Hat Container Development Kit 3.13 /(RPMs)
+Repo URL:  https://cdn.redhat.com/content/dist/rhel/atomic/7/7Server/$basearch/cdk/3.13/os
+Enabled:   0
+
+Repo ID:   openliberty-textonly-1-for-middleware-rpms
+Repo Name: Open Liberty Text-Only Advisories
+Repo URL:  https://cdn.redhat.com/content/dist/middleware/openliberty/1.0/$basearch/os
+Enabled:   0
+
+Repo ID:   satellite-tools-6.6-for-rhel-8-x86_64-eus-rpms
+Repo Name: Red Hat Satellite Tools 6.6 for RHEL 8 x86_64 - Extended Update Support (RPMs)
+Repo URL:  https://cdn.redhat.com/content/eus/rhel8/$releasever/x86_64/sat-tools/6.6/os
+Enabled:   0
+
+Repo ID:   rhv-4-tools-beta-for-rhel-8-x86_64-debug-rpms
+Repo Name: Red Hat Virtualization 4 Tools Beta for RHEL 8 x86_64 (Debug RPMs)
+Repo URL:  https://cdn.redhat.com/content/beta/layered/rhel8/x86_64/rhv-tools/4/debug
+Enabled:   0
+
+Repo ID:   quarkus-2-for-rhel-8-x86_64-source-rpms
+Repo Name: Red Hat build of Quarkus 2 (RHEL 8) (Source RPMs)
+Repo URL:  https://cdn.redhat.com/content/dist/layered/rhel8/x86_64/quarkus/2/source/SRPMS
+Enabled:   0
+
+Repo ID:   rhel-atomic-7-cdk-2.4-debug-rpms
+Repo Name: Red Hat Container Development Kit 2.4 /(Debug RPMs)
+Repo URL:  https://cdn.redhat.com/content/dist/rhel/atomic/7/7Server/$basearch/cdk/2.4/debug
+Enabled:   0
+
+Repo ID:   rhocp-4.3-for-rhel-8-x86_64-source-rpms
+Repo Name: Red Hat OpenShift Container Platform 4.3 for RHEL 8 x86_64 (Source RPMs)
+Repo URL:  https://cdn.redhat.com/content/dist/layered/rhel8/x86_64/rhocp/4.3/source/SRPMS
+Enabled:   0
+
+Repo ID:   ansible-2.9-for-rhel-8-x86_64-source-rpms
+Repo Name: Red Hat Ansible Engine 2.9 for RHEL 8 x86_64 (Source RPMs)
+Repo URL:  https://cdn.redhat.com/content/dist/layered/rhel8/x86_64/ansible/2.9/source/SRPMS
+Enabled:   0
+
+Repo ID:   rhel-atomic-7-cdk-3.0-rpms
+Repo Name: Red Hat Container Development Kit 3.0 /(RPMs)
+Repo URL:  https://cdn.redhat.com/content/dist/rhel/atomic/7/7Server/$basearch/cdk/3.0/os
+Enabled:   0
+
+Repo ID:   satellite-client-6-for-rhel-8-x86_64-eus-debug-rpms
+Repo Name: Red Hat Satellite Client 6 for RHEL 8 x86_64 - Extended Update Support (Debug RPMs)
+Repo URL:  https://cdn.redhat.com/content/eus/rhel8/$releasever/x86_64/sat-client/6/debug
+Enabled:   0
+
+Repo ID:   amq-clients-2.9-for-rhel-8-x86_64-source-rpms
+Repo Name: Red Hat AMQ Clients 2.9 for RHEL 8 x86_64 (Source RPMs)
+Repo URL:  https://cdn.redhat.com/content/dist/layered/rhel8/x86_64/amq/2.9/source/SRPMS
+Enabled:   0
+
+Repo ID:   satellite-tools-6.9-for-rhel-8-x86_64-e4s-debug-rpms
+Repo Name: Red Hat Satellite Tools 6.9 for RHEL 8 x86_64 - Update Services SAP Solutions (Debug RPMs)
+Repo URL:  https://cdn.redhat.com/content/e4s/rhel8/$releasever/x86_64/sat-tools/6.9/debug
+Enabled:   0
+
+Repo ID:   rhmtc-for-rhel-8-x86_64-rpms
+Repo Name: Red Hat Migration Toolkit for Containers for RHEL 8 x86_64 (RPMs)
+Repo URL:  https://cdn.redhat.com/content/dist/layered/rhel8/x86_64/rhmtc/1/os
+Enabled:   0
+
+Repo ID:   satellite-tools-6.7-for-rhel-8-x86_64-eus-source-rpms
+Repo Name: Red Hat Satellite Tools 6.7 for RHEL 8 x86_64 - Extended Update Support (Source RPMs)
+Repo URL:  https://cdn.redhat.com/content/eus/rhel8/$releasever/x86_64/sat-tools/6.7/source/SRPMS
+Enabled:   0
+
+Repo ID:   rhel-8-for-x86_64-sap-solutions-eus-debug-rpms
+Repo Name: Red Hat Enterprise Linux 8 for x86_64 - SAP Solutions - Extended Update Support (Debug RPMs)
+Repo URL:  https://cdn.redhat.com/content/eus/rhel8/$releasever/x86_64/sap-solutions/debug
+Enabled:   0
+
+Repo ID:   interconnect-2-for-rhel-8-x86_64-source-rpms
+Repo Name: JBoss Interconnect 2 for RHEL 8 x86_64 (Source RPMs)
+Repo URL:  https://cdn.redhat.com/content/dist/layered/rhel8/x86_64/interconnect/2/source/SRPMS
+Enabled:   0
+
+Repo ID:   satellite-tools-6.8-for-rhel-8-x86_64-e4s-source-rpms
+Repo Name: Red Hat Satellite Tools 6.8 for RHEL 8 x86_64 - Update Services SAP Solutions (Source RPMs)
+Repo URL:  https://cdn.redhat.com/content/e4s/rhel8/$releasever/x86_64/sat-tools/6.8/source/SRPMS
+Enabled:   0
+
+Repo ID:   rhel-8-for-x86_64-highavailability-eus-debug-rpms
+Repo Name: Red Hat Enterprise Linux 8 for x86_64 - High Availability - Extended Update Support (Debug RPMs)
+Repo URL:  https://cdn.redhat.com/content/eus/rhel8/$releasever/x86_64/highavailability/debug
+Enabled:   0
+
+Repo ID:   rhel-8-for-x86_64-appstream-eus-source-rpms
+Repo Name: Red Hat Enterprise Linux 8 for x86_64 - AppStream - Extended Update Support (Source RPMs)
+Repo URL:  https://cdn.redhat.com/content/eus/rhel8/$releasever/x86_64/appstream/source/SRPMS
+Enabled:   0
+
+Repo ID:   rhel-atomic-7-cdk-3.7-rpms
+Repo Name: Red Hat Container Development Kit 3.7 /(RPMs)
+Repo URL:  https://cdn.redhat.com/content/dist/rhel/atomic/7/7Server/$basearch/cdk/3.7/os
+Enabled:   0
+
+Repo ID:   node-obsv-optr-0.1-for-rhel-8-x86_64-debug-rpms
+Repo Name: Node Observability Operator for RHEL 8 x86_64 (Debug RPMs)
+Repo URL:  https://cdn.redhat.com/content/dist/layered/rhel8/x86_64/noo/0.1/debug
+Enabled:   0
+
+Repo ID:   satellite-utils-6.11-for-rhel-8-x86_64-rpms
+Repo Name: Red Hat Satellite Utils 6.11 for RHEL 8 x86_64 (RPMs)
+Repo URL:  https://cdn.redhat.com/content/dist/layered/rhel8/x86_64/sat-utils/6.11/os
+Enabled:   0
+
+Repo ID:   rhocp-4.9-for-rhel-8-x86_64-rpms
+Repo Name: Red Hat OpenShift Container Platform 4.9 for RHEL 8 x86_64 (RPMs)
+Repo URL:  https://cdn.redhat.com/content/dist/layered/rhel8/x86_64/rhocp/4.9/os
+Enabled:   0
+
+Repo ID:   rhel-8-for-x86_64-baseos-source-rpms
+Repo Name: Red Hat Enterprise Linux 8 for x86_64 - BaseOS (Source RPMs)
+Repo URL:  https://cdn.redhat.com/content/dist/rhel8/$releasever/x86_64/baseos/source/SRPMS
+Enabled:   0
+
+Repo ID:   satellite-tools-6.6-for-rhel-8-x86_64-e4s-rpms
+Repo Name: Red Hat Satellite Tools 6.6 for RHEL 8 x86_64 - Update Services SAP Solutions (RPMs)
+Repo URL:  https://cdn.redhat.com/content/e4s/rhel8/$releasever/x86_64/sat-tools/6.6/os
+Enabled:   0
+
+Repo ID:   rhel-7-server-3scale-amp-2-for-power-le-debug-rpms
+Repo Name: Red Hat 3scale API Management Platform 2 for Power (Debug RPMs)
+Repo URL:  https://cdn.redhat.com/content/dist/rhel/power-le/7/7Server/$basearch/3scale-amp/2/debug
+Enabled:   0
+
+Repo ID:   satellite-maintenance-6.11-for-rhel-8-x86_64-debug-rpms
+Repo Name: Red Hat Satellite Maintenance 6.11 for RHEL 8 x86_64 (Debug RPMs)
+Repo URL:  https://cdn.redhat.com/content/dist/layered/rhel8/x86_64/sat-maintenance/6.11/debug
+Enabled:   0
+
+Repo ID:   rhel-atomic-7-cdk-3.16-rpms
+Repo Name: Red Hat Container Development Kit 3.16 /(RPMs)
+Repo URL:  https://cdn.redhat.com/content/dist/rhel/atomic/7/7Server/$basearch/cdk/3.16/os
+Enabled:   0
+
+Repo ID:   rhoar-nodejs-12-for-rhel-8-x86_64-source-rpms
+Repo Name: Red Hat OpenShift Application Runtimes Node.js v12 for RHEL 8 x86_64 (Source RPMs)
+Repo URL:  https://cdn.redhat.com/content/dist/layered/rhel8/x86_64/rhoar-nodejs/12/source/SRPMS
+Enabled:   0
+
+Repo ID:   rhocp-4.7-for-rhel-8-x86_64-rpms
+Repo Name: Red Hat OpenShift Container Platform 4.7 for RHEL 8 x86_64 (RPMs)
+Repo URL:  https://cdn.redhat.com/content/dist/layered/rhel8/x86_64/rhocp/4.7/os
+Enabled:   0
+
+Repo ID:   rhel-8-for-x86_64-supplementary-rpms
+Repo Name: Red Hat Enterprise Linux 8 for x86_64 - Supplementary (RPMs)
+Repo URL:  https://cdn.redhat.com/content/dist/rhel8/$releasever/x86_64/supplementary/os
+Enabled:   0
+
+Repo ID:   rhel-atomic-7-cdk-3.0-beta-debug-rpms
+Repo Name: Red Hat Container Development Kit 3.0 Beta /(Debug RPMs)
+Repo URL:  https://cdn.redhat.com/content/beta/rhel/atomic/7/$basearch/cdk/3.0/debug
+Enabled:   0
+
+Repo ID:   rhel-atomic-7-cdk-3.1-source-rpms
+Repo Name: Red Hat Container Development Kit 3.1 /(Source RPMs)
+Repo URL:  https://cdn.redhat.com/content/dist/rhel/atomic/7/7Server/$basearch/cdk/3.1/source/SRPMS
+Enabled:   0
+
+Repo ID:   satellite-tools-6.5-for-rhel-8-x86_64-e4s-source-rpms
+Repo Name: Red Hat Satellite Tools 6.5 for RHEL 8 x86_64 - Update Services SAP Solutions (Source RPMs)
+Repo URL:  https://cdn.redhat.com/content/e4s/rhel8/$releasever/x86_64/sat-tools/6.5/source/SRPMS
+Enabled:   0
+
+Repo ID:   rhel-atomic-7-cdk-2.3-source-rpms
+Repo Name: Red Hat Container Development Kit 2.3 /(Source RPMs)
+Repo URL:  https://cdn.redhat.com/content/dist/rhel/atomic/7/7Server/$basearch/cdk/2.3/source/SRPMS
+Enabled:   0
+
+Repo ID:   rh-gluster-3-client-for-rhel-8-x86_64-rpms
+Repo Name: Red Hat Storage Native Client for RHEL 8 (RPMs)
+Repo URL:  https://cdn.redhat.com/content/dist/layered/rhel8/x86_64/rhgs-client/3.5/os
+Enabled:   0
+
+Repo ID:   wfk-textonly-1-for-middleware-rpms
+Repo Name: Red Hat JBoss Web Framework Kit Text-Only Advisories
+Repo URL:  https://cdn.redhat.com/content/dist/middleware/wfk/1.0/$basearch/os
+Enabled:   0
+
+Repo ID:   rhocp-4.11-for-rhel-8-x86_64-source-rpms
+Repo Name: Red Hat OpenShift Container Platform 4.11 for RHEL 8 x86_64 (Source RPMs)
+Repo URL:  https://cdn.redhat.com/content/dist/layered/rhel8/x86_64/rhocp/4.11/source/SRPMS
+Enabled:   0
+
+Repo ID:   rhel-8-for-x86_64-sap-solutions-e4s-debug-rpms
+Repo Name: Red Hat Enterprise Linux 8 for x86_64 - SAP Solutions - Update Services for SAP Solutions (Debug RPMs)
+Repo URL:  https://cdn.redhat.com/content/e4s/rhel8/$releasever/x86_64/sap-solutions/debug
+Enabled:   0
+
+Repo ID:   openstack-16-tools-for-rhel-8-x86_64-source-rpms
+Repo Name: Red Hat OpenStack Platform 16 Tools for RHEL 8 x86_64 (Source RPMs)
+Repo URL:  https://cdn.redhat.com/content/dist/layered/rhel8/x86_64/openstack-tools/16/source/SRPMS
+Enabled:   0
+
+Repo ID:   satellite-tools-6.9-for-rhel-8-x86_64-eus-source-rpms
+Repo Name: Red Hat Satellite Tools 6.9 for RHEL 8 x86_64 - Extended Update Support (Source RPMs)
+Repo URL:  https://cdn.redhat.com/content/eus/rhel8/$releasever/x86_64/sat-tools/6.9/source/SRPMS
+Enabled:   0
+
+Repo ID:   satellite-client-6-for-rhel-8-x86_64-e4s-source-rpms
+Repo Name: Red Hat Satellite Client 6 for RHEL 8 x86_64 - Update Services SAP Solutions (Source RPMs)
+Repo URL:  https://cdn.redhat.com/content/e4s/rhel8/$releasever/x86_64/sat-client/6/source/SRPMS
+Enabled:   0
+
+Repo ID:   devworkspace-0.10-for-rhel-8-x86_64-rpms
+Repo Name: Red Hat Devworkspace 0.10 for RHEL 8 x86_64 (RPMs)
+Repo URL:  https://cdn.redhat.com/content/dist/layered/rhel8/x86_64/devworkspace/0.10/os
+Enabled:   0
+
+Repo ID:   rhel-8-for-x86_64-rt-debug-rpms
+Repo Name: Red Hat Enterprise Linux 8 for x86_64 - Real Time (Debug RPMs)
+Repo URL:  https://cdn.redhat.com/content/dist/rhel8/$releasever/x86_64/rt/debug
+Enabled:   0
+
+Repo ID:   rhocp-4.10-for-rhel-8-x86_64-source-rpms
+Repo Name: Red Hat OpenShift Container Platform 4.10 for RHEL 8 x86_64 (Source RPMs)
+Repo URL:  https://cdn.redhat.com/content/dist/layered/rhel8/x86_64/rhocp/4.10/source/SRPMS
+Enabled:   0
+
+Repo ID:   jb-coreservices-1-for-rhel-8-x86_64-rhui-source-rpms
+Repo Name: JBoss Core Services (RHEL 8) (Source RPMs) from RHUI
+Repo URL:  https://cdn.redhat.com/content/dist/layered/rhui/rhel8/x86_64/jbcs/1/source/SRPMS
+Enabled:   0
+
+Repo ID:   rhel-8-for-x86_64-highavailability-rpms
+Repo Name: Red Hat Enterprise Linux 8 for x86_64 - High Availability (RPMs)
+Repo URL:  https://cdn.redhat.com/content/dist/rhel8/$releasever/x86_64/highavailability/os
+Enabled:   0
+
+Repo ID:   ansible-automation-platform-2.1-for-rhel-8-x86_64-rpms
+Repo Name: Red Hat Ansible Automation Platform 2.1 for RHEL 8 x86_64 (RPMs)
+Repo URL:  https://cdn.redhat.com/content/dist/layered/rhel8/x86_64/ansible-automation-platform/2.1/os
+Enabled:   0
+
+Repo ID:   satellite-tools-6.7-for-rhel-8-x86_64-rpms
+Repo Name: Red Hat Satellite Tools 6.7 for RHEL 8 x86_64 (RPMs)
+Repo URL:  https://cdn.redhat.com/content/dist/layered/rhel8/x86_64/sat-tools/6.7/os
+Enabled:   0
+
+Repo ID:   rhel-8-for-x86_64-sap-solutions-rpms
+Repo Name: Red Hat Enterprise Linux 8 for x86_64 - SAP Solutions (RPMs)
+Repo URL:  https://cdn.redhat.com/content/dist/rhel8/$releasever/x86_64/sap-solutions/os
+Enabled:   0
+
+Repo ID:   rhoar-nodejs-12-for-rhel-8-ppc64le-source-rpms
+Repo Name: Red Hat OpenShift Application Runtimes Node.js v12 for RHEL 8 for Power, little endian (Source RPMs)
+Repo URL:  https://cdn.redhat.com/content/dist/layered/rhel8/ppc64le/rhoar-nodejs/12/source/SRPMS
+Enabled:   0
+
+Repo ID:   jb-eap-textonly-1-for-middleware-rpms
+Repo Name: Red Hat JBoss Enterprise Application Platform Text-Only Advisories
+Repo URL:  https://cdn.redhat.com/content/dist/middleware/jbeap/1.0/$basearch/os
+Enabled:   0
+
+Repo ID:   jpp-textonly-1-for-middleware-rpms
+Repo Name: Red Hat JBoss Portal Text-Only Advisories
+Repo URL:  https://cdn.redhat.com/content/dist/middleware/jpp/1.0/$basearch/os
+Enabled:   0
+
+Repo ID:   3scale-amp-2-rpms-for-rhel-8-x86_64-rpms
+Repo Name: Red Hat 3scale API Management Platform 2 for RHEL 8 x86_64 (RPMs)
+Repo URL:  https://cdn.redhat.com/content/dist/layered/rhel8/x86_64/3scale-amp/2/os
+Enabled:   0
+
+Repo ID:   satellite-tools-6.10-for-rhel-8-x86_64-e4s-source-rpms
+Repo Name: Red Hat Satellite Tools 6.10 for RHEL 8 x86_64 - Update Services SAP Solutions (Source RPMs)
+Repo URL:  https://cdn.redhat.com/content/e4s/rhel8/$releasever/x86_64/sat-tools/6.10/source/SRPMS
+Enabled:   0
+
+Repo ID:   satellite-tools-6.10-for-rhel-8-x86_64-source-rpms
+Repo Name: Red Hat Satellite Tools 6.10 for RHEL 8 x86_64 (Source RPMs)
+Repo URL:  https://cdn.redhat.com/content/dist/layered/rhel8/x86_64/sat-tools/6.10/source/SRPMS
+Enabled:   0
+
+Repo ID:   jb-eap-7.4-for-rhel-8-x86_64-rpms
+Repo Name: JBoss Enterprise Application Platform 7.4 (RHEL 8) (RPMs)
+Repo URL:  https://cdn.redhat.com/content/dist/layered/rhel8/x86_64/jbeap/7.4/os
+Enabled:   0
+
+Repo ID:   codeready-builder-for-rhel-8-x86_64-eus-debug-rpms
+Repo Name: Red Hat CodeReady Linux Builder for RHEL 8 x86_64 - Extended Update Support (Debug RPMs)
+Repo URL:  https://cdn.redhat.com/content/eus/rhel8/$releasever/x86_64/codeready-builder/debug
+Enabled:   0
+
+Repo ID:   rhel-8-for-x86_64-supplementary-eus-rpms
+Repo Name: Red Hat Enterprise Linux 8 for x86_64 - Supplementary - Extended Update Support (RPMs)
+Repo URL:  https://cdn.redhat.com/content/eus/rhel8/$releasever/x86_64/supplementary/os
+Enabled:   0
+
+Repo ID:   rhel-8-for-x86_64-baseos-e4s-debug-rpms
+Repo Name: Red Hat Enterprise Linux 8 for x86_64 - BaseOS - Update Services for SAP Solutions (Debug RPMs)
+Repo URL:  https://cdn.redhat.com/content/e4s/rhel8/$releasever/x86_64/baseos/debug
+Enabled:   0
+
+Repo ID:   satellite-tools-6.6-for-rhel-8-x86_64-rpms
+Repo Name: Red Hat Satellite Tools 6.6 for RHEL 8 x86_64 (RPMs)
+Repo URL:  https://cdn.redhat.com/content/dist/layered/rhel8/x86_64/sat-tools/6.6/os
+Enabled:   0
+
+Repo ID:   advanced-virt-crb-beta-for-rhel-8-s390x-source-rpms
+Repo Name: Advanced Virtualization CodeReady Builder Beta for RHEL 8 IBM z Systems (Source RPMs)
+Repo URL:  https://cdn.redhat.com/content/beta/layered/rhel8/s390x/advanced-virt-crb/source/SRPMS
+Enabled:   0
+
+Repo ID:   ansible-automation-platform-2.1-for-rhel-8-x86_64-debug-rpms
+Repo Name: Red Hat Ansible Automation Platform 2.1 for RHEL 8 x86_64 (Debug RPMs)
+Repo URL:  https://cdn.redhat.com/content/dist/layered/rhel8/x86_64/ansible-automation-platform/2.1/debug
+Enabled:   0
+
+Repo ID:   rhmt-1.2-for-rhel-8-x86_64-rpms
+Repo Name: Red Hat Migration Toolkit 1.2 for RHEL 8 x86_64 (RPMs)
+Repo URL:  https://cdn.redhat.com/content/dist/layered/rhel8/x86_64/rhmt/1.2/os
+Enabled:   0
+
+Repo ID:   rhel-8-for-x86_64-baseos-rpms
+Repo Name: Red Hat Enterprise Linux 8 for x86_64 - BaseOS (RPMs)
+Repo URL:  https://cdn.redhat.com/content/dist/rhel8/$releasever/x86_64/baseos/os
+Enabled:   1
+
+Repo ID:   rhel-atomic-7-cdk-3.6-debug-rpms
+Repo Name: Red Hat Container Development Kit 3.6 /(Debug RPMs)
+Repo URL:  https://cdn.redhat.com/content/dist/rhel/atomic/7/7Server/$basearch/cdk/3.6/debug
+Enabled:   0
+
+Repo ID:   rhel-atomic-7-cdk-3.2-source-rpms
+Repo Name: Red Hat Container Development Kit 3.2 /(Source RPMs)
+Repo URL:  https://cdn.redhat.com/content/dist/rhel/atomic/7/7Server/$basearch/cdk/3.2/source/SRPMS
+Enabled:   0
+
+Repo ID:   rhocp-4.10-for-rhel-8-x86_64-debug-rpms
+Repo Name: Red Hat OpenShift Container Platform 4.10 for RHEL 8 x86_64 (Debug RPMs)
+Repo URL:  https://cdn.redhat.com/content/dist/layered/rhel8/x86_64/rhocp/4.10/debug
+Enabled:   0
+
+Repo ID:   satellite-tools-6.7-for-rhel-8-x86_64-e4s-rpms
+Repo Name: Red Hat Satellite Tools 6.7 for RHEL 8 x86_64 - Update Services SAP Solutions (RPMs)
+Repo URL:  https://cdn.redhat.com/content/e4s/rhel8/$releasever/x86_64/sat-tools/6.7/os
+Enabled:   0
+
+Repo ID:   rhel-8-for-x86_64-highavailability-e4s-rpms
+Repo Name: Red Hat Enterprise Linux 8 for x86_64 - High Availability - Update Services for SAP Solutions (RPMs)
+Repo URL:  https://cdn.redhat.com/content/e4s/rhel8/$releasever/x86_64/highavailability/os
+Enabled:   0
+
+Repo ID:   rhel-atomic-7-cdk-3.14-rpms
+Repo Name: Red Hat Container Development Kit 3.14 /(RPMs)
+Repo URL:  https://cdn.redhat.com/content/dist/rhel/atomic/7/7Server/$basearch/cdk/3.14/os
+Enabled:   0
+
+Repo ID:   satellite-tools-6.8-for-rhel-8-x86_64-debug-rpms
+Repo Name: Red Hat Satellite Tools 6.8 for RHEL 8 x86_64 (Debug RPMs)
+Repo URL:  https://cdn.redhat.com/content/dist/layered/rhel8/x86_64/sat-tools/6.8/debug
+Enabled:   0
+
+Repo ID:   rhocp-4.8-for-rhel-8-x86_64-source-rpms
+Repo Name: Red Hat OpenShift Container Platform 4.8 for RHEL 8 x86_64 (Source RPMs)
+Repo URL:  https://cdn.redhat.com/content/dist/layered/rhel8/x86_64/rhocp/4.8/source/SRPMS
+Enabled:   0
+
+Repo ID:   rhceph-5-tools-for-rhel-8-x86_64-debug-rpms
+Repo Name: Red Hat Ceph Storage Tools 5 for RHEL 8 x86_64 (Debug RPMs)
+Repo URL:  https://cdn.redhat.com/content/dist/layered/rhel8/x86_64/rhceph-tools/5/debug
+Enabled:   0
+
+Repo ID:   automation-services-catalog-1-beta-for-rhel-8-x86_64-source-rpms
+Repo Name: Red Hat Automation Services Catalog 1 Beta for RHEL 8 x86_64 (Source RPMs)
+Repo URL:  https://cdn.redhat.com/content/beta/layered/rhel8/x86_64/automation-services-catalog/1/source/SRPMS
+Enabled:   0
+
+Repo ID:   satellite-tools-6.8-for-rhel-8-x86_64-eus-rpms
+Repo Name: Red Hat Satellite Tools 6.8 for RHEL 8 x86_64 - Extended Update Support (RPMs)
+Repo URL:  https://cdn.redhat.com/content/eus/rhel8/$releasever/x86_64/sat-tools/6.8/os
+Enabled:   0
+
+Repo ID:   jdv-textonly-1-for-middleware-rpms
+Repo Name: Red Hat JBoss Data Virtualization Text-Only Advisories
+Repo URL:  https://cdn.redhat.com/content/dist/middleware/jdv/1.0/$basearch/os
+Enabled:   0
+
+Repo ID:   ansible-2-for-rhel-8-x86_64-source-rpms
+Repo Name: Red Hat Ansible Engine 2 for RHEL 8 x86_64 (Source RPMs)
+Repo URL:  https://cdn.redhat.com/content/dist/layered/rhel8/x86_64/ansible/2/source/SRPMS
+Enabled:   0
+
+Repo ID:   satellite-maintenance-6.11-for-rhel-8-x86_64-rpms
+Repo Name: Red Hat Satellite Maintenance 6.11 for RHEL 8 x86_64 (RPMs)
+Repo URL:  https://cdn.redhat.com/content/dist/layered/rhel8/x86_64/sat-maintenance/6.11/os
+Enabled:   0
+
+Repo ID:   rhel-atomic-7-cdk-3.15-rpms
+Repo Name: Red Hat Container Development Kit 3.15 /(RPMs)
+Repo URL:  https://cdn.redhat.com/content/dist/rhel/atomic/7/7Server/$basearch/cdk/3.15/os
+Enabled:   0
+
+Repo ID:   satellite-tools-6.8-for-rhel-8-x86_64-rpms
+Repo Name: Red Hat Satellite Tools 6.8 for RHEL 8 x86_64 (RPMs)
+Repo URL:  https://cdn.redhat.com/content/dist/layered/rhel8/x86_64/sat-tools/6.8/os
+Enabled:   0
+
+Repo ID:   automation-hub-4.2-for-rhel-8-x86_64-rpms
+Repo Name: Red Hat Automation Hub 4.2 for RHEL 8 x86_64 (RPMs)
+Repo URL:  https://cdn.redhat.com/content/dist/layered/rhel8/x86_64/automation-hub/4.2/os
+Enabled:   0
+
+Repo ID:   rhv-4-tools-beta-for-rhel-8-x86_64-source-rpms
+Repo Name: Red Hat Virtualization 4 Tools Beta for RHEL 8 x86_64 (Source RPMs)
+Repo URL:  https://cdn.redhat.com/content/beta/layered/rhel8/x86_64/rhv-tools/4/source/SRPMS
+Enabled:   0
+
+Repo ID:   devworkspace-1.0-for-rhel-8-x86_64-debug-rpms
+Repo Name: Red Hat Devworkspace 1.0 for RHEL 8 x86_64 (Debug RPMs)
+Repo URL:  https://cdn.redhat.com/content/dist/layered/rhel8/x86_64/devworkspace/1.0/debug
+Enabled:   0
+
+Repo ID:   rhel-atomic-7-cdk-3.3-rpms
+Repo Name: Red Hat Container Development Kit 3.3 /(RPMs)
+Repo URL:  https://cdn.redhat.com/content/dist/rhel/atomic/7/7Server/$basearch/cdk/3.3/os
+Enabled:   0
+
+Repo ID:   automation-hub-4.2-for-rhel-8-x86_64-debug-rpms
+Repo Name: Red Hat Automation Hub 4.2 for RHEL 8 x86_64 (Debug RPMs)
+Repo URL:  https://cdn.redhat.com/content/dist/layered/rhel8/x86_64/automation-hub/4.2/debug
+Enabled:   0
+
+Repo ID:   rh-gluster-3-client-for-rhel-8-x86_64-debug-rpms
+Repo Name: Red Hat Storage Native Client for RHEL 8 (Debug RPMs)
+Repo URL:  https://cdn.redhat.com/content/dist/layered/rhel8/x86_64/rhgs-client/3.5/debug
+Enabled:   0
+
+Repo ID:   rhel-atomic-7-cdk-3.2-rpms
+Repo Name: Red Hat Container Development Kit 3.2 /(RPMs)
+Repo URL:  https://cdn.redhat.com/content/dist/rhel/atomic/7/7Server/$basearch/cdk/3.2/os
+Enabled:   0
+
+Repo ID:   rhel-8-for-x86_64-appstream-eus-debug-rpms
+Repo Name: Red Hat Enterprise Linux 8 for x86_64 - AppStream - Extended Update Support (Debug RPMs)
+Repo URL:  https://cdn.redhat.com/content/eus/rhel8/$releasever/x86_64/appstream/debug
+Enabled:   0
+
+Repo ID:   rhceph-4-tools-for-rhel-8-x86_64-source-rpms
+Repo Name: Red Hat Ceph Storage Tools 4 for RHEL 8 x86_64 (Source RPMs)
+Repo URL:  https://cdn.redhat.com/content/dist/layered/rhel8/x86_64/rhceph-tools/4/source/SRPMS
+Enabled:   0
+
+Repo ID:   rhel-atomic-7-cdk-2.3-debug-rpms
+Repo Name: Red Hat Container Development Kit 2.3 /(Debug RPMs)
+Repo URL:  https://cdn.redhat.com/content/dist/rhel/atomic/7/7Server/$basearch/cdk/2.3/debug
+Enabled:   0
+
+Repo ID:   ansible-2.8-for-rhel-8-x86_64-debug-rpms
+Repo Name: Red Hat Ansible Engine 2.8 for RHEL 8 x86_64 (Debug RPMs)
+Repo URL:  https://cdn.redhat.com/content/dist/layered/rhel8/x86_64/ansible/2.8/debug
+Enabled:   0
+
+Repo ID:   rhv-4-tools-for-rhel-8-x86_64-source-rpms
+Repo Name: Red Hat Virtualization 4 Tools for RHEL 8 x86_64 (Source RPMs)
+Repo URL:  https://cdn.redhat.com/content/dist/layered/rhel8/x86_64/rhv-tools/4/source/SRPMS
+Enabled:   0
+
+Repo ID:   satellite-client-6-for-rhel-8-x86_64-debug-rpms
+Repo Name: Red Hat Satellite Client 6 for RHEL 8 x86_64 (Debug RPMs)
+Repo URL:  https://cdn.redhat.com/content/dist/layered/rhel8/x86_64/sat-client/6/debug
+Enabled:   0
+
+Repo ID:   rhocp-ironic-4.11-for-rhel-8-x86_64-rpms
+Repo Name: Red Hat OpenShift Container Platform 4.11 for RHEL 8 x86_64 (RPMs)
+Repo URL:  https://cdn.redhat.com/content/dist/layered/rhel8/x86_64/rhocp-ironic/4.11/os
+Enabled:   0
+
+Repo ID:   ansible-2.9-for-rhel-8-x86_64-rpms
+Repo Name: Red Hat Ansible Engine 2.9 for RHEL 8 x86_64 (RPMs)
+Repo URL:  https://cdn.redhat.com/content/dist/layered/rhel8/x86_64/ansible/2.9/os
+Enabled:   0
+
+Repo ID:   rhoar-nodejs-10-for-rhel-8-x86_64-rpms
+Repo Name: Red Hat OpenShift Application Runtimes Node.js v10 for RHEL 8 x86_64 (RPMs)
+Repo URL:  https://cdn.redhat.com/content/dist/layered/rhel8/x86_64/rhoar-nodejs/10/os
+Enabled:   0
+
+Repo ID:   openstack-16-tools-for-rhel-8-x86_64-rpms
+Repo Name: Red Hat OpenStack Platform 16 Tools for RHEL 8 x86_64 (RPMs)
+Repo URL:  https://cdn.redhat.com/content/dist/layered/rhel8/x86_64/openstack-tools/16/os
+Enabled:   0
+
+Repo ID:   rhel-8-for-x86_64-supplementary-eus-source-rpms
+Repo Name: Red Hat Enterprise Linux 8 for x86_64 - Supplementary - Extended Update Support (Source RPMs)
+Repo URL:  https://cdn.redhat.com/content/eus/rhel8/$releasever/x86_64/supplementary/source/SRPMS
+Enabled:   0
+
+Repo ID:   amq-interconnect-1-for-rhel-8-x86_64-debug-rpms
+Repo Name: JBoss AMQ Interconnect 1 for RHEL 8 x86_64 (Debug RPMs)
+Repo URL:  https://cdn.redhat.com/content/dist/layered/rhel8/x86_64/amq-interconnect/1/debug
+Enabled:   0
+
+Repo ID:   advanced-virt-crb-beta-for-rhel-8-s390x-debug-rpms
+Repo Name: Advanced Virtualization CodeReady Builder Beta for RHEL 8 IBM z Systems (Debug RPMs)
+Repo URL:  https://cdn.redhat.com/content/beta/layered/rhel8/s390x/advanced-virt-crb/debug
+Enabled:   0
+
+Repo ID:   node-obsv-optr-0.1-for-rhel-8-x86_64-rpms
+Repo Name: Node Observability Operator 0.1 for RHEL 8 x86_64 (RPMs)
+Repo URL:  https://cdn.redhat.com/content/dist/layered/rhel8/x86_64/noo/0.1/os
+Enabled:   0
+
+Repo ID:   rhel-8-for-x86_64-resilientstorage-eus-debug-rpms
+Repo Name: Red Hat Enterprise Linux 8 for x86_64 - Resilient Storage - Extended Update Support (Debug RPMs)
+Repo URL:  https://cdn.redhat.com/content/eus/rhel8/$releasever/x86_64/resilientstorage/debug
+Enabled:   0
+
+Repo ID:   rhv-4-tools-for-rhel-8-x86_64-debug-rpms
+Repo Name: Red Hat Virtualization 4 Tools for RHEL 8 x86_64 (Debug RPMs)
+Repo URL:  https://cdn.redhat.com/content/dist/layered/rhel8/x86_64/rhv-tools/4/debug
+Enabled:   0
+
+Repo ID:   rhel-atomic-7-cdk-3.4-debug-rpms
+Repo Name: Red Hat Container Development Kit 3.4 /(Debug RPMs)
+Repo URL:  https://cdn.redhat.com/content/dist/rhel/atomic/7/7Server/$basearch/cdk/3.4/debug
+Enabled:   0
+
+Repo ID:   jb-coreservices-1-for-rhel-8-x86_64-rpms
+Repo Name: JBoss Core Services (RHEL 8) (RPMs)
+Repo URL:  https://cdn.redhat.com/content/dist/layered/rhel8/x86_64/jbcs/1/os
+Enabled:   0
+
+Repo ID:   rhocp-4.1-for-rhel-8-x86_64-source-rpms
+Repo Name: Red Hat OpenShift Container Platform 4.1 for RHEL 8 x86_64 (Source RPMs)
+Repo URL:  https://cdn.redhat.com/content/dist/layered/rhel8/x86_64/rhocp/4.1/source/SRPMS
+Enabled:   0
+
+Repo ID:   rhel-8-for-x86_64-appstream-e4s-rpms
+Repo Name: Red Hat Enterprise Linux 8 for x86_64 - AppStream - Update Services for SAP Solutions (RPMs)
+Repo URL:  https://cdn.redhat.com/content/e4s/rhel8/$releasever/x86_64/appstream/os
+Enabled:   0
+
+Repo ID:   fast-datapath-beta-for-rhel-8-ppc64le-rpms
+Repo Name: Fast Datapath Beta for RHEL 8 Power, little endian (RPMs)
+Repo URL:  https://cdn.redhat.com/content/beta/layered/rhel8/ppc64le/fast-datapath/os
+Enabled:   0
+
+Repo ID:   rhmt-1.2-for-rhel-8-x86_64-source-rpms
+Repo Name: Red Hat Migration Toolkit 1.2 for RHEL 8 x86_64 (Source RPMs)
+Repo URL:  https://cdn.redhat.com/content/dist/layered/rhel8/x86_64/rhmt/1.2/source/SRPMS
+Enabled:   0
+
+Repo ID:   amq-textonly-1-for-middleware-rpms
+Repo Name: Red Hat JBoss AMQ Text-Only Advisories
+Repo URL:  https://cdn.redhat.com/content/dist/middleware/amq/1.0/$basearch/os
+Enabled:   0
+
+Repo ID:   satellite-tools-6.7-for-rhel-8-x86_64-eus-rpms
+Repo Name: Red Hat Satellite Tools 6.7 for RHEL 8 x86_64 - Extended Update Support (RPMs)
+Repo URL:  https://cdn.redhat.com/content/eus/rhel8/$releasever/x86_64/sat-tools/6.7/os
+Enabled:   0
+
+Repo ID:   rhel-atomic-7-cdk-3.6-rpms
+Repo Name: Red Hat Container Development Kit 3.6 /(RPMs)
+Repo URL:  https://cdn.redhat.com/content/dist/rhel/atomic/7/7Server/$basearch/cdk/3.6/os
+Enabled:   0
+
+Repo ID:   rhocp-4.9-for-rhel-8-x86_64-source-rpms
+Repo Name: Red Hat OpenShift Container Platform 4.9 for RHEL 8 x86_64 (Source RPMs)
+Repo URL:  https://cdn.redhat.com/content/dist/layered/rhel8/x86_64/rhocp/4.9/source/SRPMS
+Enabled:   0
+
+Repo ID:   rhocp-4.5-for-rhel-8-x86_64-rpms
+Repo Name: Red Hat OpenShift Container Platform 4.5 for RHEL 8 x86_64 (RPMs)
+Repo URL:  https://cdn.redhat.com/content/dist/layered/rhel8/x86_64/rhocp/4.5/os
+Enabled:   0
+
+Repo ID:   jb-datagrid-textonly-1-for-middleware-rpms
+Repo Name: Red Hat JBoss Data Grid Text-Only Advisories
+Repo URL:  https://cdn.redhat.com/content/dist/middleware/jb-datagrid/1.0/$basearch/os
+Enabled:   0
+
+Repo ID:   rhel-8-for-x86_64-sap-solutions-e4s-rpms
+Repo Name: Red Hat Enterprise Linux 8 for x86_64 - SAP Solutions - Update Services for SAP Solutions (RPMs)
+Repo URL:  https://cdn.redhat.com/content/e4s/rhel8/$releasever/x86_64/sap-solutions/os
+Enabled:   0
+
+Repo ID:   satellite-tools-6.10-for-rhel-8-x86_64-eus-rpms
+Repo Name: Red Hat Satellite Tools 6.10 for RHEL 8 x86_64 - Extended Update Support (RPMs)
+Repo URL:  https://cdn.redhat.com/content/eus/rhel8/$releasever/x86_64/sat-tools/6.10/os
+Enabled:   0
+
+Repo ID:   jon-textonly-1-for-middleware-rpms
+Repo Name: Red Hat JBoss Operations Network Text-Only Advisories
+Repo URL:  https://cdn.redhat.com/content/dist/middleware/jon/1.0/$basearch/os
+Enabled:   0
+
+Repo ID:   satellite-tools-6.8-for-rhel-8-x86_64-e4s-rpms
+Repo Name: Red Hat Satellite Tools 6.8 for RHEL 8 x86_64 - Update Services SAP Solutions (RPMs)
+Repo URL:  https://cdn.redhat.com/content/e4s/rhel8/$releasever/x86_64/sat-tools/6.8/os
+Enabled:   0
+
+Repo ID:   rhel-8-for-x86_64-appstream-e4s-debug-rpms
+Repo Name: Red Hat Enterprise Linux 8 for x86_64 - AppStream - Update Services for SAP Solutions (Debug RPMs)
+Repo URL:  https://cdn.redhat.com/content/e4s/rhel8/$releasever/x86_64/appstream/debug
+Enabled:   0
+
+Repo ID:   rhel-atomic-7-cdk-3.1-debug-rpms
+Repo Name: Red Hat Container Development Kit 3.1 /(Debug RPMs)
+Repo URL:  https://cdn.redhat.com/content/dist/rhel/atomic/7/7Server/$basearch/cdk/3.1/debug
+Enabled:   0
+
+Repo ID:   jb-datagrid-8.1-for-rhel-8-x86_64-debug-rpms
+Repo Name: Red Hat JBoss Data Grid 8.1 (RHEL 8) (Debug RPMs)
+Repo URL:  https://cdn.redhat.com/content/dist/layered/rhel8/x86_64/jdg/8.1/debug
+Enabled:   0
+
+Repo ID:   devworkspace-0.10-for-rhel-8-x86_64-debug-rpms
+Repo Name: Red Hat Devworkspace 0.10 for RHEL 8 x86_64 (Debug RPMs)
+Repo URL:  https://cdn.redhat.com/content/dist/layered/rhel8/x86_64/devworkspace/0.10/debug
+Enabled:   0
+
+Repo ID:   satellite-tools-6.6-for-rhel-8-x86_64-e4s-source-rpms
+Repo Name: Red Hat Satellite Tools 6.6 for RHEL 8 x86_64 - Update Services SAP Solutions (Source RPMs)
+Repo URL:  https://cdn.redhat.com/content/e4s/rhel8/$releasever/x86_64/sat-tools/6.6/source/SRPMS
+Enabled:   0
+
+Repo ID:   satellite-tools-6.9-for-rhel-8-x86_64-e4s-source-rpms
+Repo Name: Red Hat Satellite Tools 6.9 for RHEL 8 x86_64 - Update Services SAP Solutions (Source RPMs)
+Repo URL:  https://cdn.redhat.com/content/e4s/rhel8/$releasever/x86_64/sat-tools/6.9/source/SRPMS
+Enabled:   0
+
+Repo ID:   rhosds-textonly-3-for-middleware-rpms
+Repo Name: Red Hat OpenShift Dev Spaces 3 Container Advisories
+Repo URL:  https://cdn.redhat.com/content/dist/middleware/rhosds/3.0/x86_64/os
+Enabled:   0
+
+Repo ID:   quarkus-2.2-for-rhel-8-x86_64-source-rpms
+Repo Name: Red Hat build of Quarkus 2.2 (RHEL 8) (Source RPMs)
+Repo URL:  https://cdn.redhat.com/content/dist/layered/rhel8/x86_64/quarkus/2.2/source/SRPMS
+Enabled:   0
+
+Repo ID:   rhocp-4.2-for-rhel-8-x86_64-debug-rpms
+Repo Name: Red Hat OpenShift Container Platform 4.2 for RHEL 8 x86_64 (Debug RPMs)
+Repo URL:  https://cdn.redhat.com/content/dist/layered/rhel8/x86_64/rhocp/4.2/debug
+Enabled:   0
+
+Repo ID:   rhocp-4.1-for-rhel-8-x86_64-rpms
+Repo Name: Red Hat OpenShift Container Platform 4.1 for RHEL 8 x86_64 (RPMs)
+Repo URL:  https://cdn.redhat.com/content/dist/layered/rhel8/x86_64/rhocp/4.1/os
+Enabled:   0
+
+Repo ID:   rhel-atomic-7-cdk-3.2-debug-rpms
+Repo Name: Red Hat Container Development Kit 3.2 /(Debug RPMs)
+Repo URL:  https://cdn.redhat.com/content/dist/rhel/atomic/7/7Server/$basearch/cdk/3.2/debug
+Enabled:   0
+
+Repo ID:   rhoar-nodejs-10-for-rhel-8-ppc64le-rpms
+Repo Name: Red Hat OpenShift Application Runtimes Node.js v10 for RHEL 8 for Power, little endian (RPMs)
+Repo URL:  https://cdn.redhat.com/content/dist/layered/rhel8/ppc64le/rhoar-nodejs/10/os
+Enabled:   0
+
+Repo ID:   ansible-automation-platform-2.0-early-access-for-rhel-8-x86_64-source-rpms
+Repo Name: Red Hat Ansible Automation Platform 2.0 Early Access for RHEL 8 x86_64 (Source RPMs)
+Repo URL:  https://cdn.redhat.com/content/dist/layered/rhel8/x86_64/ansible-automation-platform/2.0/source/SRPMS
+Enabled:   0
+
+Repo ID:   fsw-textonly-1-for-middleware-rpms
+Repo Name: Red Hat JBoss Fuse Service Works Text-Only Advisories
+Repo URL:  https://cdn.redhat.com/content/dist/middleware/fsw/1.0/$basearch/os
+Enabled:   0
+
+Repo ID:   satellite-tools-6.10-for-rhel-8-x86_64-e4s-rpms
+Repo Name: Red Hat Satellite Tools 6.10 for RHEL 8 x86_64 - Update Services SAP Solutions (RPMs)
+Repo URL:  https://cdn.redhat.com/content/e4s/rhel8/$releasever/x86_64/sat-tools/6.10/os
+Enabled:   0
+
+Repo ID:   fast-datapath-beta-for-rhel-8-ppc64le-source-rpms
+Repo Name: Fast Datapath Beta for RHEL 8 Power, little endian (Source RPMs)
+Repo URL:  https://cdn.redhat.com/content/beta/layered/rhel8/ppc64le/fast-datapath/source/SRPMS
+Enabled:   0
+
+Repo ID:   rhmt-1.1-for-rhel-8-x86_64-source-rpms
+Repo Name: Red Hat Migration Toolkit 1.1 for RHEL 8 x86_64 (Source RPMs)
+Repo URL:  https://cdn.redhat.com/content/dist/layered/rhel8/x86_64/rhmt/1.1/source/SRPMS
+Enabled:   0
+
+Repo ID:   interconnect-2-for-rhel-8-x86_64-rpms
+Repo Name: JBoss Interconnect 2 for RHEL 8 x86_64 (RPMs)
+Repo URL:  https://cdn.redhat.com/content/dist/layered/rhel8/x86_64/interconnect/2/os
+Enabled:   0
+
+Repo ID:   rhel-8-for-x86_64-rt-source-rpms
+Repo Name: Red Hat Enterprise Linux 8 for x86_64 - Real Time (Source RPMs)
+Repo URL:  https://cdn.redhat.com/content/dist/rhel8/$releasever/x86_64/rt/source/SRPMS
+Enabled:   0
+
+Repo ID:   rhel-atomic-7-cdk-2.4-rpms
+Repo Name: Red Hat Container Development Kit 2.4 /(RPMs)
+Repo URL:  https://cdn.redhat.com/content/dist/rhel/atomic/7/7Server/$basearch/cdk/2.4/os
+Enabled:   0
+
+Repo ID:   satellite-tools-6.10-for-rhel-8-x86_64-rpms
+Repo Name: Red Hat Satellite Tools 6.10 for RHEL 8 x86_64 (RPMs)
+Repo URL:  https://cdn.redhat.com/content/dist/layered/rhel8/x86_64/sat-tools/6.10/os
+Enabled:   0
+
+Repo ID:   quarkus-2.2-for-rhel-8-x86_64-rpms
+Repo Name: Red Hat build of Quarkus 2.2 (RHEL 8) (RPMs)
+Repo URL:  https://cdn.redhat.com/content/dist/layered/rhel8/x86_64/quarkus/2.2/os
+Enabled:   0
+
+Repo ID:   jb-datagrid-8.1-for-rhel-8-x86_64-rpms
+Repo Name: Red Hat JBoss Data Grid 8.1 (RHEL 8) (RPMs)
+Repo URL:  https://cdn.redhat.com/content/dist/layered/rhel8/x86_64/jdg/8.1/os
+Enabled:   0
+
+Repo ID:   jb-eap-7.2-for-rhel-8-x86_64-rpms
+Repo Name: JBoss Enterprise Application Platform 7.2 (RHEL 8) (RPMs)
+Repo URL:  https://cdn.redhat.com/content/dist/layered/rhel8/x86_64/jbeap/7.2/os
+Enabled:   0
+
+Repo ID:   rhel-8-for-x86_64-sap-solutions-debug-rpms
+Repo Name: Red Hat Enterprise Linux 8 for x86_64 - SAP Solutions (Debug RPMs)
+Repo URL:  https://cdn.redhat.com/content/dist/rhel8/$releasever/x86_64/sap-solutions/debug
+Enabled:   0
+
+Repo ID:   rhel-8-for-x86_64-highavailability-debug-rpms
+Repo Name: Red Hat Enterprise Linux 8 for x86_64 - High Availability (Debug RPMs)
+Repo URL:  https://cdn.redhat.com/content/dist/rhel8/$releasever/x86_64/highavailability/debug
+Enabled:   0
+
+Repo ID:   satellite-tools-6.8-for-rhel-8-x86_64-eus-source-rpms
+Repo Name: Red Hat Satellite Tools 6.8 for RHEL 8 x86_64 - Extended Update Support (Source RPMs)
+Repo URL:  https://cdn.redhat.com/content/eus/rhel8/$releasever/x86_64/sat-tools/6.8/source/SRPMS
+Enabled:   0
+
+Repo ID:   rhel-8-for-x86_64-supplementary-source-rpms
+Repo Name: Red Hat Enterprise Linux 8 for x86_64 - Supplementary (Source RPMs)
+Repo URL:  https://cdn.redhat.com/content/dist/rhel8/$releasever/x86_64/supplementary/source/SRPMS
+Enabled:   0
+
+Repo ID:   fast-datapath-beta-for-rhel-8-x86_64-source-rpms
+Repo Name: Fast Datapath Beta for RHEL 8 x86_64 (Source RPMs)
+Repo URL:  https://cdn.redhat.com/content/beta/layered/rhel8/x86_64/fast-datapath/source/SRPMS
+Enabled:   0
+
+Repo ID:   jb-datagrid-7.3-for-rhel-8-x86_64-debug-rpms
+Repo Name: Red Hat JBoss Data Grid 7.3 (RHEL 8) (Debug RPMs)
+Repo URL:  https://cdn.redhat.com/content/dist/layered/rhel8/x86_64/jdg/7.3/debug
+Enabled:   0
+
+Repo ID:   automation-hub-4-beta-for-rhel-8-x86_64-source-rpms
+Repo Name: Red Hat Automation Hub 4 Beta for RHEL 8 x86_64 (Source RPMs)
+Repo URL:  https://cdn.redhat.com/content/beta/layered/rhel8/x86_64/automation-hub/4/source/SRPMS
+Enabled:   0
+
+Repo ID:   rhel-8-for-x86_64-sap-solutions-source-rpms
+Repo Name: Red Hat Enterprise Linux 8 for x86_64 - SAP Solutions (Source RPMs)
+Repo URL:  https://cdn.redhat.com/content/dist/rhel8/$releasever/x86_64/sap-solutions/source/SRPMS
+Enabled:   0
+
+Repo ID:   ansible-automation-platform-2.0-early-access-for-rhel-8-x86_64-rpms
+Repo Name: Red Hat Ansible Automation Platform 2.0 Early Access for RHEL 8 x86_64 (RPMs)
+Repo URL:  https://cdn.redhat.com/content/dist/layered/rhel8/x86_64/ansible-automation-platform/2.0/os
+Enabled:   0
+
+Repo ID:   codeready-builder-for-rhel-8-x86_64-source-rpms
+Repo Name: Red Hat CodeReady Linux Builder for RHEL 8 x86_64 (Source RPMs)
+Repo URL:  https://cdn.redhat.com/content/dist/rhel8/$releasever/x86_64/codeready-builder/source/SRPMS
+Enabled:   0
+
+Repo ID:   satellite-tools-6.10-for-rhel-8-x86_64-eus-source-rpms
+Repo Name: Red Hat Satellite Tools 6.10 for RHEL 8 x86_64 - Extended Update Support (Source RPMs)
+Repo URL:  https://cdn.redhat.com/content/eus/rhel8/$releasever/x86_64/sat-tools/6.10/source/SRPMS
+Enabled:   0
+
+Repo ID:   rhocp-4.11-for-rhel-8-x86_64-rpms
+Repo Name: Red Hat OpenShift Container Platform 4.11 for RHEL 8 x86_64 (RPMs)
+Repo URL:  https://cdn.redhat.com/content/dist/layered/rhel8/x86_64/rhocp/4.11/os
+Enabled:   0
+
+Repo ID:   rhoar-nodejs-12-for-rhel-8-ppc64le-debug-rpms
+Repo Name: Red Hat OpenShift Application Runtimes Node.js v12 for RHEL 8 for Power, little endian (Debug RPMs)
+Repo URL:  https://cdn.redhat.com/content/dist/layered/rhel8/ppc64le/rhoar-nodejs/12/debug
+Enabled:   0
+
+Repo ID:   rhel-8-for-x86_64-resilientstorage-rpms
+Repo Name: Red Hat Enterprise Linux 8 for x86_64 - Resilient Storage (RPMs)
+Repo URL:  https://cdn.redhat.com/content/dist/rhel8/$releasever/x86_64/resilientstorage/os
+Enabled:   0
+
+Repo ID:   satellite-client-6-for-rhel-8-x86_64-e4s-rpms
+Repo Name: Red Hat Satellite Client 6 for RHEL 8 x86_64 - Update Services SAP Solutions (RPMs)
+Repo URL:  https://cdn.redhat.com/content/e4s/rhel8/$releasever/x86_64/sat-client/6/os
+Enabled:   0
+
+Repo ID:   satellite-maintenance-6.11-for-rhel-8-x86_64-source-rpms
+Repo Name: Red Hat Satellite Maintenance 6.11 for RHEL 8 x86_64 (Source RPMs)
+Repo URL:  https://cdn.redhat.com/content/dist/layered/rhel8/x86_64/sat-maintenance/6.11/source/SRPMS
+Enabled:   0
+
+Repo ID:   ansible-automation-platform-2.2-for-rhel-8-x86_64-source-rpms
+Repo Name: Red Hat Ansible Automation Platform 2.2 for RHEL 8 x86_64 (Source RPMs)
+Repo URL:  https://cdn.redhat.com/content/dist/layered/rhel8/x86_64/ansible-automation-platform/2.2/source/SRPMS
+Enabled:   0
+
+Repo ID:   jb-eap-7.4-for-rhel-8-x86_64-source-rpms
+Repo Name: JBoss Enterprise Application Platform 7.4 (RHEL 8) (Source RPMs)
+Repo URL:  https://cdn.redhat.com/content/dist/layered/rhel8/x86_64/jbeap/7.4/source/SRPMS
+Enabled:   0
+
+Repo ID:   openjdk-textonly-1-for-middleware-rpms
+Repo Name: OpenJDK Text-Only Advisories
+Repo URL:  https://cdn.redhat.com/content/dist/middleware/openjdk/1.0/x86_64/os
+Enabled:   0
+
+Repo ID:   ansible-2-for-rhel-8-x86_64-debug-rpms
+Repo Name: Red Hat Ansible Engine 2 for RHEL 8 x86_64 (Debug RPMs)
+Repo URL:  https://cdn.redhat.com/content/dist/layered/rhel8/x86_64/ansible/2/debug
+Enabled:   0
+
+Repo ID:   satellite-client-6-for-rhel-8-x86_64-eus-source-rpms
+Repo Name: Red Hat Satellite Client 6 for RHEL 8 x86_64 - Extended Update Support (Source RPMs)
+Repo URL:  https://cdn.redhat.com/content/eus/rhel8/$releasever/x86_64/sat-client/6/source/SRPMS
+Enabled:   0
+
+Repo ID:   3scale-amp-2-rpms-for-rhel-8-x86_64-debug-rpms
+Repo Name: Red Hat 3scale API Management Platform 2 for RHEL 8 x86_64 (Debug RPMs)
+Repo URL:  https://cdn.redhat.com/content/dist/layered/rhel8/x86_64/3scale-amp/2/debug
+Enabled:   0
+
+Repo ID:   devworkspace-1.0-for-rhel-8-x86_64-rpms
+Repo Name: Red Hat Devworkspace 1.0 for RHEL 8 x86_64 (RPMs)
+Repo URL:  https://cdn.redhat.com/content/dist/layered/rhel8/x86_64/devworkspace/1.0/os
+Enabled:   0
+
+Repo ID:   quarkus-1-for-rhel-8-x86_64-source-rpms
+Repo Name: Red Hat build of Quarkus 1 (RHEL 8) (Source RPMs)
+Repo URL:  https://cdn.redhat.com/content/dist/layered/rhel8/x86_64/quarkus/1/source/SRPMS
+Enabled:   0
+
+Repo ID:   satellite-tools-6.9-for-rhel-8-x86_64-eus-debug-rpms
+Repo Name: Red Hat Satellite Tools 6.9 for RHEL 8 x86_64 - Extended Update Support (Debug RPMs)
+Repo URL:  https://cdn.redhat.com/content/eus/rhel8/$releasever/x86_64/sat-tools/6.9/debug
+Enabled:   0
+
+Repo ID:   rhceph-5-tools-for-rhel-8-x86_64-rpms
+Repo Name: Red Hat Ceph Storage Tools 5 for RHEL 8 x86_64 (RPMs)
+Repo URL:  https://cdn.redhat.com/content/dist/layered/rhel8/x86_64/rhceph-tools/5/os
+Enabled:   0
+
+Repo ID:   jb-datagrid-8.1-for-rhel-8-x86_64-source-rpms
+Repo Name: Red Hat JBoss Data Grid 8.1 (RHEL 8) (Source RPMs)
+Repo URL:  https://cdn.redhat.com/content/dist/layered/rhel8/x86_64/jdg/8.1/source/SRPMS
+Enabled:   0
+
+Repo ID:   codeready-builder-for-rhel-8-x86_64-rpms
+Repo Name: Red Hat CodeReady Linux Builder for RHEL 8 x86_64 (RPMs)
+Repo URL:  https://cdn.redhat.com/content/dist/rhel8/$releasever/x86_64/codeready-builder/os
+Enabled:   0
+
+Repo ID:   jb-coreservices-1-for-rhel-8-x86_64-source-rpms
+Repo Name: JBoss Core Services (RHEL 8) (Source RPMs)
+Repo URL:  https://cdn.redhat.com/content/dist/layered/rhel8/x86_64/jbcs/1/source/SRPMS
+Enabled:   0
+
+Repo ID:   rhel-8-for-x86_64-sap-netweaver-source-rpms
+Repo Name: Red Hat Enterprise Linux 8 for x86_64 - SAP NetWeaver (Source RPMs)
+Repo URL:  https://cdn.redhat.com/content/dist/rhel8/$releasever/x86_64/sap/source/SRPMS
+Enabled:   0
+
+Repo ID:   rhoar-nodejs-10-for-rhel-8-x86_64-source-rpms
+Repo Name: Red Hat OpenShift Application Runtimes Node.js v10 for RHEL 8 x86_64 (Source RPMs)
+Repo URL:  https://cdn.redhat.com/content/dist/layered/rhel8/x86_64/rhoar-nodejs/10/source/SRPMS
+Enabled:   0
+
+Repo ID:   quarkus-1-for-rhel-8-x86_64-rpms
+Repo Name: Red Hat build of Quarkus 1 (RHEL 8) (RPMs)
+Repo URL:  https://cdn.redhat.com/content/dist/layered/rhel8/x86_64/quarkus/1/os
+Enabled:   0
+
+Repo ID:   satellite-tools-6.10-for-rhel-8-x86_64-eus-debug-rpms
+Repo Name: Red Hat Satellite Tools 6.10 for RHEL 8 x86_64 - Extended Update Support (Debug RPMs)
+Repo URL:  https://cdn.redhat.com/content/eus/rhel8/$releasever/x86_64/sat-tools/6.10/debug
+Enabled:   0
+
+Repo ID:   interconnect-2-for-rhel-8-x86_64-debug-rpms
+Repo Name: JBoss Interconnect 2 for RHEL 8 x86_64 (Debug RPMs)
+Repo URL:  https://cdn.redhat.com/content/dist/layered/rhel8/x86_64/interconnect/2/debug
+Enabled:   0
+
+Repo ID:   satellite-tools-6.9-for-rhel-8-x86_64-rpms
+Repo Name: Red Hat Satellite Tools 6.9 for RHEL 8 x86_64 (RPMs)
+Repo URL:  https://cdn.redhat.com/content/dist/layered/rhel8/x86_64/sat-tools/6.9/os
+Enabled:   0
+
+Repo ID:   satellite-client-6-for-rhel-8-x86_64-e4s-debug-rpms
+Repo Name: Red Hat Satellite Client 6 for RHEL 8 x86_64 - Update Services SAP Solutions (Debug RPMs)
+Repo URL:  https://cdn.redhat.com/content/e4s/rhel8/$releasever/x86_64/sat-client/6/debug
+Enabled:   0
+
+Repo ID:   amq-interconnect-1-for-rhel-8-x86_64-rpms
+Repo Name: JBoss AMQ Interconnect 1 for RHEL 8 x86_64 (RPMs)
+Repo URL:  https://cdn.redhat.com/content/dist/layered/rhel8/x86_64/amq-interconnect/1/os
+Enabled:   0
+
+Repo ID:   quarkus-2-for-rhel-8-x86_64-rpms
+Repo Name: Red Hat build of Quarkus 2 (RHEL 8) (RPMs)
+Repo URL:  https://cdn.redhat.com/content/dist/layered/rhel8/x86_64/quarkus/2/os
+Enabled:   0
+
+Repo ID:   rhel-atomic-7-cdk-2.4-source-rpms
+Repo Name: Red Hat Container Development Kit 2.4 /(Source RPMs)
+Repo URL:  https://cdn.redhat.com/content/dist/rhel/atomic/7/7Server/$basearch/cdk/2.4/source/SRPMS
+Enabled:   0
+
+Repo ID:   rhocp-4.10-for-rhel-8-x86_64-rpms
+Repo Name: Red Hat OpenShift Container Platform 4.10 for RHEL 8 x86_64 (RPMs)
+Repo URL:  https://cdn.redhat.com/content/dist/layered/rhel8/x86_64/rhocp/4.10/os
+Enabled:   0
+
+Repo ID:   rhocp-4.8-for-rhel-8-x86_64-debug-rpms
+Repo Name: Red Hat OpenShift Container Platform 4.8 for RHEL 8 x86_64 (Debug RPMs)
+Repo URL:  https://cdn.redhat.com/content/dist/layered/rhel8/x86_64/rhocp/4.8/debug
+Enabled:   0
+
+Repo ID:   jb-eap-7.3-for-rhel-8-x86_64-source-rpms
+Repo Name: JBoss Enterprise Application Platform 7.3 (RHEL 8) (Source RPMs)
+Repo URL:  https://cdn.redhat.com/content/dist/layered/rhel8/x86_64/jbeap/7.3/source/SRPMS
+Enabled:   0
+
+Repo ID:   node-obsv-optr-0.1-for-rhel-8-x86_64-source-rpms
+Repo Name: Node Observability Operator for RHEL 8 x86_64 (Source RPMs)
+Repo URL:  https://cdn.redhat.com/content/dist/layered/rhel8/x86_64/noo/0.1/source/SRPMS
+Enabled:   0
+
+Repo ID:   satellite-tools-6.8-for-rhel-8-x86_64-eus-debug-rpms
+Repo Name: Red Hat Satellite Tools 6.8 for RHEL 8 x86_64 - Extended Update Support (Debug RPMs)
+Repo URL:  https://cdn.redhat.com/content/eus/rhel8/$releasever/x86_64/sat-tools/6.8/debug
+Enabled:   0
+
+Repo ID:   openstack-16-tools-for-rhel-8-x86_64-debug-rpms
+Repo Name: Red Hat OpenStack Platform 16 Tools for RHEL 8 x86_64 (Debug RPMs)
+Repo URL:  https://cdn.redhat.com/content/dist/layered/rhel8/x86_64/openstack-tools/16/debug
+Enabled:   0
+
+Repo ID:   satellite-client-6-for-rhel-8-x86_64-source-rpms
+Repo Name: Red Hat Satellite Client 6 for RHEL 8 x86_64 (Source RPMs)
+Repo URL:  https://cdn.redhat.com/content/dist/layered/rhel8/x86_64/sat-client/6/source/SRPMS
+Enabled:   0
+
+Repo ID:   satellite-tools-6.10-for-rhel-8-x86_64-e4s-debug-rpms
+Repo Name: Red Hat Satellite Tools 6.10 for RHEL 8 x86_64 - Update Services SAP Solutions (Debug RPMs)
+Repo URL:  https://cdn.redhat.com/content/e4s/rhel8/$releasever/x86_64/sat-tools/6.10/debug
+Enabled:   0
+
+Repo ID:   jb-eap-7.2-for-rhel-8-x86_64-debug-rpms
+Repo Name: JBoss Enterprise Application Platform 7.2 (RHEL 8) (Debug RPMs)
+Repo URL:  https://cdn.redhat.com/content/dist/layered/rhel8/x86_64/jbeap/7.2/debug
+Enabled:   0
+
+Repo ID:   rhel-8-for-x86_64-sap-solutions-eus-rpms
+Repo Name: Red Hat Enterprise Linux 8 for x86_64 - SAP Solutions - Extended Update Support (RPMs)
+Repo URL:  https://cdn.redhat.com/content/eus/rhel8/$releasever/x86_64/sap-solutions/os
+Enabled:   0
+
+Repo ID:   quarkus-2.2-for-rhel-8-x86_64-debug-rpms
+Repo Name: Red Hat build of Quarkus 2.2 (RHEL 8) (Debug RPMs)
+Repo URL:  https://cdn.redhat.com/content/dist/layered/rhel8/x86_64/quarkus/2.2/debug
+Enabled:   0
+
+Repo ID:   openstack-15-tools-for-rhel-8-x86_64-debug-rpms
+Repo Name: Red Hat OpenStack Platform 15 Tools for RHEL 8 x86_64 (Debug RPMs)
+Repo URL:  https://cdn.redhat.com/content/dist/layered/rhel8/x86_64/openstack-tools/15/debug
+Enabled:   0
+
+Repo ID:   rhel-7-server-3scale-amp-2-for-power-le-rpms
+Repo Name: Red Hat 3scale API Management Platform 2 for Power (RPMs)
+Repo URL:  https://cdn.redhat.com/content/dist/rhel/power-le/7/7Server/$basearch/3scale-amp/2/os
+Enabled:   0
+
+Repo ID:   rhel-8-for-x86_64-baseos-eus-source-rpms
+Repo Name: Red Hat Enterprise Linux 8 for x86_64 - BaseOS - Extended Update Support (Source RPMs)
+Repo URL:  https://cdn.redhat.com/content/eus/rhel8/$releasever/x86_64/baseos/source/SRPMS
+Enabled:   0
+
+Repo ID:   satellite-client-6-for-rhel-8-x86_64-eus-rpms
+Repo Name: Red Hat Satellite Client 6 for RHEL 8 x86_64 - Extended Update Support (RPMs)
+Repo URL:  https://cdn.redhat.com/content/eus/rhel8/$releasever/x86_64/sat-client/6/os
+Enabled:   0
+
+Repo ID:   rhel-atomic-7-cdk-3.17-rpms
+Repo Name: Red Hat Container Development Kit 3.17 /(RPMs)
+Repo URL:  https://cdn.redhat.com/content/dist/rhel/atomic/7/7Server/$basearch/cdk/3.17/os
+Enabled:   0
+
+Repo ID:   rhocp-4.7-for-rhel-8-x86_64-source-rpms
+Repo Name: Red Hat OpenShift Container Platform 4.7 for RHEL 8 x86_64 (Source RPMs)
+Repo URL:  https://cdn.redhat.com/content/dist/layered/rhel8/x86_64/rhocp/4.7/source/SRPMS
+Enabled:   0
+
+Repo ID:   rhocp-4.4-for-rhel-8-x86_64-source-rpms
+Repo Name: Red Hat OpenShift Container Platform 4.4 for RHEL 8 x86_64 (Source RPMs)
+Repo URL:  https://cdn.redhat.com/content/dist/layered/rhel8/x86_64/rhocp/4.4/source/SRPMS
+Enabled:   0
+
+Repo ID:   satellite-client-6-for-rhel-8-x86_64-rpms
+Repo Name: Red Hat Satellite Client 6 for RHEL 8 x86_64 (RPMs)
+Repo URL:  https://cdn.redhat.com/content/dist/layered/rhel8/x86_64/sat-client/6/os
+Enabled:   0
+
+Repo ID:   rhel-8-for-x86_64-sap-netweaver-eus-rpms
+Repo Name: Red Hat Enterprise Linux 8 for x86_64 - SAP NetWeaver - Extended Update Support (RPMs)
+Repo URL:  https://cdn.redhat.com/content/eus/rhel8/$releasever/x86_64/sap/os
+Enabled:   0
+
+Repo ID:   rhmt-1.0-for-rhel-8-x86_64-source-rpms
+Repo Name: Red Hat Migration Toolkit 1.0 for RHEL 8 x86_64 (Source RPMs)
+Repo URL:  https://cdn.redhat.com/content/dist/layered/rhel8/x86_64/rhmt/1.0/source/SRPMS
+Enabled:   0
+
+Repo ID:   rhocp-4.9-for-rhel-8-x86_64-debug-rpms
+Repo Name: Red Hat OpenShift Container Platform 4.9 for RHEL 8 x86_64 (Debug RPMs)
+Repo URL:  https://cdn.redhat.com/content/dist/layered/rhel8/x86_64/rhocp/4.9/debug
+Enabled:   0
+
+Repo ID:   jb-coreservices-textonly-1-for-middleware-rpms
+Repo Name: Red Hat JBoss Core Services Text-Only Advisories
+Repo URL:  https://cdn.redhat.com/content/dist/middleware/jbcs/1.0/$basearch/os
+Enabled:   0
+
+Repo ID:   amq-clients-2-for-rhel-8-x86_64-source-rpms
+Repo Name: Red Hat AMQ Clients 2 for RHEL 8 x86_64 (Source RPMs)
+Repo URL:  https://cdn.redhat.com/content/dist/layered/rhel8/x86_64/amq/2/source/SRPMS
+Enabled:   0
+
+Repo ID:   rhceph-5-tools-for-rhel-8-x86_64-source-rpms
+Repo Name: Red Hat Ceph Storage Tools 5 for RHEL 8 x86_64 (Source RPMs)
+Repo URL:  https://cdn.redhat.com/content/dist/layered/rhel8/x86_64/rhceph-tools/5/source/SRPMS
+Enabled:   0
+
+Repo ID:   advanced-virt-beta-for-rhel-8-s390x-debug-rpms
+Repo Name: Advanced Virtualization Beta for RHEL 8 IBM z Systems (Debug RPMs)
+Repo URL:  https://cdn.redhat.com/content/beta/layered/rhel8/s390x/advanced-virt/debug
+Enabled:   0
+
+Repo ID:   ansible-2.8-for-rhel-8-x86_64-source-rpms
+Repo Name: Red Hat Ansible Engine 2.8 for RHEL 8 x86_64 (Source RPMs)
+Repo URL:  https://cdn.redhat.com/content/dist/layered/rhel8/x86_64/ansible/2.8/source/SRPMS
+Enabled:   0
+
+Repo ID:   rhel-atomic-7-cdk-3.5-rpms
+Repo Name: Red Hat Container Development Kit 3.5 /(RPMs)
+Repo URL:  https://cdn.redhat.com/content/dist/rhel/atomic/7/7Server/$basearch/cdk/3.5/os
+Enabled:   0
+
+Repo ID:   ansible-automation-platform-2.2-for-rhel-8-x86_64-debug-rpms
+Repo Name: Red Hat Ansible Automation Platform 2.2 for RHEL 8 x86_64 (Debug RPMs)
+Repo URL:  https://cdn.redhat.com/content/dist/layered/rhel8/x86_64/ansible-automation-platform/2.2/debug
+Enabled:   0
+
+Repo ID:   rhel-8-for-x86_64-appstream-rpms
+Repo Name: Red Hat Enterprise Linux 8 for x86_64 - AppStream (RPMs)
+Repo URL:  https://cdn.redhat.com/content/dist/rhel8/$releasever/x86_64/appstream/os
+Enabled:   1
+
+Repo ID:   rhel-atomic-7-cdk-3.0-beta-source-rpms
+Repo Name: Red Hat Container Development Kit 3.0 Beta /(Source RPMs)
+Repo URL:  https://cdn.redhat.com/content/beta/rhel/atomic/7/$basearch/cdk/3.0/source/SRPMS
+Enabled:   0
+
+Repo ID:   rhel-8-for-x86_64-highavailability-e4s-debug-rpms
+Repo Name: Red Hat Enterprise Linux 8 for x86_64 - High Availability - Update Services for SAP Solutions (Debug RPMs)
+Repo URL:  https://cdn.redhat.com/content/e4s/rhel8/$releasever/x86_64/highavailability/debug
+Enabled:   0
+
+Repo ID:   advanced-virt-beta-for-rhel-8-s390x-source-rpms
+Repo Name: Advanced Virtualization Beta for RHEL 8 IBM z Systems (Source RPMs)
+Repo URL:  https://cdn.redhat.com/content/beta/layered/rhel8/s390x/advanced-virt/source/SRPMS
+Enabled:   0
+
+Repo ID:   rhocp-4.3-for-rhel-8-x86_64-debug-rpms
+Repo Name: Red Hat OpenShift Container Platform 4.3 for RHEL 8 x86_64 (Debug RPMs)
+Repo URL:  https://cdn.redhat.com/content/dist/layered/rhel8/x86_64/rhocp/4.3/debug
+Enabled:   0
+
+Repo ID:   rhmt-1.0-for-rhel-8-x86_64-rpms
+Repo Name: Red Hat Migration Toolkit 1.0 for RHEL 8 x86_64 (RPMs)
+Repo URL:  https://cdn.redhat.com/content/dist/layered/rhel8/x86_64/rhmt/1.0/os
+Enabled:   0
+
+Repo ID:   amq-clients-2-for-rhel-8-x86_64-rpms
+Repo Name: Red Hat AMQ Clients 2 for RHEL 8 x86_64 (RPMs)
+Repo URL:  https://cdn.redhat.com/content/dist/layered/rhel8/x86_64/amq/2/os
+Enabled:   0
+
+Repo ID:   advanced-virt-crb-beta-for-rhel-8-s390x-rpms
+Repo Name: Advanced Virtualization CodeReady Builder Beta for RHEL 8 IBM z Systems (RPMs)
+Repo URL:  https://cdn.redhat.com/content/beta/layered/rhel8/s390x/advanced-virt-crb/os
+Enabled:   0
+
+Repo ID:   satellite-tools-6.10-for-rhel-8-x86_64-debug-rpms
+Repo Name: Red Hat Satellite Tools 6.10 for RHEL 8 x86_64 (Debug RPMs)
+Repo URL:  https://cdn.redhat.com/content/dist/layered/rhel8/x86_64/sat-tools/6.10/debug
+Enabled:   0
+
+Repo ID:   rhmt-1.0-for-rhel-8-x86_64-debug-rpms
+Repo Name: Red Hat Migration Toolkit 1.0 for RHEL 8 x86_64 (Debug RPMs)
+Repo URL:  https://cdn.redhat.com/content/dist/layered/rhel8/x86_64/rhmt/1.0/debug
+Enabled:   0
+
+Repo ID:   jb-coreservices-1-for-rhel-8-x86_64-debug-rpms
+Repo Name: JBoss Core Services (RHEL 8) (Debug RPMs)
+Repo URL:  https://cdn.redhat.com/content/dist/layered/rhel8/x86_64/jbcs/1/debug
+Enabled:   0
+
+Repo ID:   rhceph-4-tools-for-rhel-8-x86_64-debug-rpms
+Repo Name: Red Hat Ceph Storage Tools 4 for RHEL 8 x86_64 (Debug RPMs)
+Repo URL:  https://cdn.redhat.com/content/dist/layered/rhel8/x86_64/rhceph-tools/4/debug
+Enabled:   0
+
+Repo ID:   automation-services-catalog-1-beta-for-rhel-8-x86_64-debug-rpms
+Repo Name: Red Hat Automation Services Catalog 1 Beta for RHEL 8 x86_64 (Debug RPMs)
+Repo URL:  https://cdn.redhat.com/content/beta/layered/rhel8/x86_64/automation-services-catalog/1/debug
+Enabled:   0
+
+Repo ID:   automation-hub-4.2-for-rhel-8-x86_64-source-rpms
+Repo Name: Red Hat Automation Hub 4.2 for RHEL 8 x86_64 (Source RPMs)
+Repo URL:  https://cdn.redhat.com/content/dist/layered/rhel8/x86_64/automation-hub/4.2/source/SRPMS
+Enabled:   0
+
+Repo ID:   openstack-15-tools-for-rhel-8-x86_64-source-rpms
+Repo Name: Red Hat OpenStack Platform 15 Tools for RHEL 8 x86_64 (Source RPMs)
+Repo URL:  https://cdn.redhat.com/content/dist/layered/rhel8/x86_64/openstack-tools/15/source/SRPMS
+Enabled:   0
+
+Repo ID:   satellite-tools-6-beta-for-rhel-8-x86_64-debug-rpms
+Repo Name: Red Hat Satellite Tools 6 Beta for RHEL 8 x86_64 (Debug RPMs)
+Repo URL:  https://cdn.redhat.com/content/beta/layered/rhel8/x86_64/sat-tools/6/debug
+Enabled:   0
+
+Repo ID:   satellite-tools-6-beta-for-rhel-8-x86_64-rpms
+Repo Name: Red Hat Satellite Tools 6 Beta for RHEL 8 x86_64 (RPMs)
+Repo URL:  https://cdn.redhat.com/content/beta/layered/rhel8/x86_64/sat-tools/6/os
+Enabled:   0
+
+Repo ID:   automation-services-catalog-1-tech-preview-for-rhel-8-x86_64-debug-rpms
+Repo Name: Red Hat Automation Services Catalog 1 Tech Preview for RHEL 8 x86_64 (Debug RPMs)
+Repo URL:  https://cdn.redhat.com/content/dist/layered/rhel8/x86_64/automation-services-catalog-tech-preview/1/debug
+Enabled:   0
+
+Repo ID:   rhel-atomic-7-cdk-3.3-source-rpms
+Repo Name: Red Hat Container Development Kit 3.3 /(Source RPMs)
+Repo URL:  https://cdn.redhat.com/content/dist/rhel/atomic/7/7Server/$basearch/cdk/3.3/source/SRPMS
+Enabled:   0
+
+Repo ID:   rhel-8-for-x86_64-resilientstorage-eus-rpms
+Repo Name: Red Hat Enterprise Linux 8 for x86_64 - Resilient Storage - Extended Update Support (RPMs)
+Repo URL:  https://cdn.redhat.com/content/eus/rhel8/$releasever/x86_64/resilientstorage/os
+Enabled:   0
+
+Repo ID:   ansible-2.9-for-rhel-8-x86_64-debug-rpms
+Repo Name: Red Hat Ansible Engine 2.9 for RHEL 8 x86_64 (Debug RPMs)
+Repo URL:  https://cdn.redhat.com/content/dist/layered/rhel8/x86_64/ansible/2.9/debug
+Enabled:   0
+
+Repo ID:   rhel-8-for-x86_64-resilientstorage-source-rpms
+Repo Name: Red Hat Enterprise Linux 8 for x86_64 - Resilient Storage (Source RPMs)
+Repo URL:  https://cdn.redhat.com/content/dist/rhel8/$releasever/x86_64/resilientstorage/source/SRPMS
+Enabled:   0
+
+Repo ID:   rhel-8-for-x86_64-sap-netweaver-rpms
+Repo Name: Red Hat Enterprise Linux 8 for x86_64 - SAP NetWeaver (RPMs)
+Repo URL:  https://cdn.redhat.com/content/dist/rhel8/$releasever/x86_64/sap/os
+Enabled:   0
+
+Repo ID:   amq-clients-2-for-rhel-8-x86_64-debug-rpms
+Repo Name: Red Hat AMQ Clients 2 for RHEL 8 x86_64 (Debug RPMs)
+Repo URL:  https://cdn.redhat.com/content/dist/layered/rhel8/x86_64/amq/2/debug
+Enabled:   0
+
+Repo ID:   satellite-tools-6.6-for-rhel-8-x86_64-e4s-debug-rpms
+Repo Name: Red Hat Satellite Tools 6.6 for RHEL 8 x86_64 - Update Services SAP Solutions (Debug RPMs)
+Repo URL:  https://cdn.redhat.com/content/e4s/rhel8/$releasever/x86_64/sat-tools/6.6/debug
+Enabled:   0
+
+Repo ID:   automation-services-catalog-1-tech-preview-for-rhel-8-x86_64-rpms
+Repo Name: Red Hat Automation Services Catalog 1 Tech Preview for RHEL 8 x86_64 (RPMs)
+Repo URL:  https://cdn.redhat.com/content/dist/layered/rhel8/x86_64/automation-services-catalog-tech-preview/1/os
+Enabled:   0
+
+Repo ID:   jb-datagrid-7.3-for-rhel-8-x86_64-rpms
+Repo Name: Red Hat JBoss Data Grid 7.3 (RHEL 8) (RPMs)
+Repo URL:  https://cdn.redhat.com/content/dist/layered/rhel8/x86_64/jdg/7.3/os
+Enabled:   0
+
+Repo ID:   rhel-8-for-x86_64-supplementary-debug-rpms
+Repo Name: Red Hat Enterprise Linux 8 for x86_64 - Supplementary (Debug RPMs)
+Repo URL:  https://cdn.redhat.com/content/dist/rhel8/$releasever/x86_64/supplementary/debug
+Enabled:   0
+
+Repo ID:   satellite-tools-6.5-for-rhel-8-x86_64-e4s-rpms
+Repo Name: Red Hat Satellite Tools 6.5 for RHEL 8 x86_64 - Update Services SAP Solutions (RPMs)
+Repo URL:  https://cdn.redhat.com/content/e4s/rhel8/$releasever/x86_64/sat-tools/6.5/os
+Enabled:   0
+
+Repo ID:   rhel-8-for-x86_64-appstream-debug-rpms
+Repo Name: Red Hat Enterprise Linux 8 for x86_64 - AppStream (Debug RPMs)
+Repo URL:  https://cdn.redhat.com/content/dist/rhel8/$releasever/x86_64/appstream/debug
+Enabled:   0
+
+Repo ID:   3scale-amp-2-rpms-for-rhel-8-x86_64-source-rpms
+Repo Name: Red Hat 3scale API Management Platform 2 for RHEL 8 x86_64 (Source RPMs)
+Repo URL:  https://cdn.redhat.com/content/dist/layered/rhel8/x86_64/3scale-amp/2/source/SRPMS
+Enabled:   0
+
+Repo ID:   quarkus-1-for-rhel-8-x86_64-debug-rpms
+Repo Name: Red Hat build of Quarkus 1 (RHEL 8) (Debug RPMs)
+Repo URL:  https://cdn.redhat.com/content/dist/layered/rhel8/x86_64/quarkus/1/debug
+Enabled:   0
+
+Repo ID:   devworkspace-1.0-for-rhel-8-x86_64-source-rpms
+Repo Name: Red Hat Devworkspace 1.0 for RHEL 8 x86_64 (Source RPMs)
+Repo URL:  https://cdn.redhat.com/content/dist/layered/rhel8/x86_64/devworkspace/1.0/source/SRPMS
+Enabled:   0
+
+Repo ID:   ansible-2-for-rhel-8-x86_64-rpms
+Repo Name: Red Hat Ansible Engine 2 for RHEL 8 x86_64 (RPMs)
+Repo URL:  https://cdn.redhat.com/content/dist/layered/rhel8/x86_64/ansible/2/os
+Enabled:   0
+
+Repo ID:   rhoar-nodejs-12-for-rhel-8-ppc64le-rpms
+Repo Name: Red Hat OpenShift Application Runtimes Node.js v12 for RHEL 8 for Power, little endian (RPMs)
+Repo URL:  https://cdn.redhat.com/content/dist/layered/rhel8/ppc64le/rhoar-nodejs/12/os
+Enabled:   0
+
+Repo ID:   rhmtc-for-rhel-8-x86_64-source-rpms
+Repo Name: Red Hat Migration Toolkit for Containers for RHEL 8 x86_64 (Source RPMs)
+Repo URL:  https://cdn.redhat.com/content/dist/layered/rhel8/x86_64/rhmtc/1/source/SRPMS
+Enabled:   0
+
+Repo ID:   rhel-8-for-x86_64-supplementary-eus-debug-rpms
+Repo Name: Red Hat Enterprise Linux 8 for x86_64 - Supplementary - Extended Update Support (Debug RPMs)
+Repo URL:  https://cdn.redhat.com/content/eus/rhel8/$releasever/x86_64/supplementary/debug
+Enabled:   0
+
+Repo ID:   satellite-tools-6.5-for-rhel-8-x86_64-eus-rpms
+Repo Name: Red Hat Satellite Tools 6.5 for RHEL 8 x86_64 - Extended Update Support (RPMs)
+Repo URL:  https://cdn.redhat.com/content/eus/rhel8/$releasever/x86_64/sat-tools/6.5/os
+Enabled:   0
+
+Repo ID:   openstack-15-tools-for-rhel-8-x86_64-rpms
+Repo Name: Red Hat OpenStack Platform 15 Tools for RHEL 8 x86_64 (RPMs)
+Repo URL:  https://cdn.redhat.com/content/dist/layered/rhel8/x86_64/openstack-tools/15/os
+Enabled:   0
+
+Repo ID:   rhmt-1.1-for-rhel-8-x86_64-rpms
+Repo Name: Red Hat Migration Toolkit 1.1 for RHEL 8 x86_64 (RPMs)
+Repo URL:  https://cdn.redhat.com/content/dist/layered/rhel8/x86_64/rhmt/1.1/os
+Enabled:   0
+
+Repo ID:   rhel-8-for-x86_64-baseos-e4s-source-rpms
+Repo Name: Red Hat Enterprise Linux 8 for x86_64 - BaseOS - Update Services for SAP Solutions (Source RPMs)
+Repo URL:  https://cdn.redhat.com/content/e4s/rhel8/$releasever/x86_64/baseos/source/SRPMS
+Enabled:   0
+
+Repo ID:   satellite-tools-6.6-for-rhel-8-x86_64-source-rpms
+Repo Name: Red Hat Satellite Tools 6.6 for RHEL 8 x86_64 (Source RPMs)
+Repo URL:  https://cdn.redhat.com/content/dist/layered/rhel8/x86_64/sat-tools/6.6/source/SRPMS
+Enabled:   0
+
+Repo ID:   jb-eap-7.2-for-rhel-8-x86_64-source-rpms
+Repo Name: JBoss Enterprise Application Platform 7.2 (RHEL 8) (Source RPMs)
+Repo URL:  https://cdn.redhat.com/content/dist/layered/rhel8/x86_64/jbeap/7.2/source/SRPMS
+Enabled:   0
+
+Repo ID:   rhel-atomic-7-cdk-3.8-rpms
+Repo Name: Red Hat Container Development Kit 3.8 /(RPMs)
+Repo URL:  https://cdn.redhat.com/content/dist/rhel/atomic/7/7Server/$basearch/cdk/3.8/os
+Enabled:   0
+
+Repo ID:   rhocp-4.3-for-rhel-8-x86_64-rpms
+Repo Name: Red Hat OpenShift Container Platform 4.3 for RHEL 8 x86_64 (RPMs)
+Repo URL:  https://cdn.redhat.com/content/dist/layered/rhel8/x86_64/rhocp/4.3/os
+Enabled:   0
+
+Repo ID:   quarkus-textonly-1-for-middleware-rpms
+Repo Name: Red Hat build of Quarkus Text-Only Advisories
+Repo URL:  https://cdn.redhat.com/content/dist/middleware/quarkus/1.0/x86_64/os
+Enabled:   0
+
+Repo ID:   satellite-tools-6.7-for-rhel-8-x86_64-e4s-debug-rpms
+Repo Name: Red Hat Satellite Tools 6.7 for RHEL 8 x86_64 - Update Services SAP Solutions (Debug RPMs)
+Repo URL:  https://cdn.redhat.com/content/e4s/rhel8/$releasever/x86_64/sat-tools/6.7/debug
+Enabled:   0
+
+Repo ID:   satellite-utils-6.11-for-rhel-8-x86_64-source-rpms
+Repo Name: Red Hat Satellite Utils 6.11 for RHEL 8 x86_64 (Source RPMs)
+Repo URL:  https://cdn.redhat.com/content/dist/layered/rhel8/x86_64/sat-utils/6.11/source/SRPMS
+Enabled:   0
+
+Repo ID:   rhoar-nodejs-10-for-rhel-8-ppc64le-debug-rpms
+Repo Name: Red Hat OpenShift Application Runtimes Node.js v10 for RHEL 8 for Power, little endian (Debug RPMs)
+Repo URL:  https://cdn.redhat.com/content/dist/layered/rhel8/ppc64le/rhoar-nodejs/10/debug
+Enabled:   0
+
+Repo ID:   rhocp-4.11-for-rhel-8-x86_64-debug-rpms
+Repo Name: Red Hat OpenShift Container Platform 4.11 for RHEL 8 x86_64 (Debug RPMs)
+Repo URL:  https://cdn.redhat.com/content/dist/layered/rhel8/x86_64/rhocp/4.11/debug
+Enabled:   0

@@ -1,0 +1,123 @@
+#cloud-config
+
+package_upgrade: true
+package_reboot_if_required: true
+
+bootcmd:
+  - [ mkdir, -p, /opt/metal_ddve/ ]
+  - [ mkdir, -p, /mnt/md0 ]
+  - [ subscription-manager, register, --username, MYUSERNAME, --password, 'MYPA$$WORD' ]
+  - [ subscription-manager, repos, --enable, rhel-8-for-x86_64-baseos-rpms ]
+  - [ subscription-manager, repos, --enable, rhel-8-for-x86_64-appstream-rpms ]
+
+packages:
+  - tmux
+  - firewalld
+  - jq
+  - vim
+  - nc
+  - git
+  - dnf-automatic
+  - dnf-plugins-core
+  - unzip
+  - virt-manager
+  - libguestfs-tools
+  - qemu-kvm
+  - libvirt-daemon
+  - virt-install
+  - virt-manager
+  - network-scripts
+  - libguestfs
+  - net-tools
+  - wget
+  - virt-install
+  - mdadm
+
+runcmd:
+  - [ modprobe, 8021q ]
+  - [ sysctl, -p ]
+  - [ systemctl, enable, NetworkManager.service ]
+  - [ systemctl, restart, NetworkManager.service ]
+  - [ systemctl, enable, libvirtd ]
+  - [ systemctl, restart, libvirtd ]
+  - [ virsh, net-destroy, default ]
+  - [ virsh, net-undefine, default ]
+  - [ virsh, net-define, /opt/metal_ddve/metal_bridge.xml ]
+  - [ virsh, net-autostart, br0 ]
+  - [ virsh, net-start, br0 ]
+  - [ /opt/metal_ddve/raid6_largest_drives.sh ]
+  - [ mkfs.ext4, -F, /dev/md0 ]
+  - [ mount, /dev/md0, /mnt/md0 ]
+  - [ systemctl, restart, NetworkManager.service ]
+  
+
+write_files:
+- path: "/etc/sysconfig/network-scripts/ifcfg-bond0.1001"
+  permissions: "0644"
+  owner: "root:root"
+  content: |
+    DEVICE=bond0.1001 
+    NAME=bond0.1001 
+    ONPARENT=yes 
+    VLAN=yes 
+    BOOTPROTO=none 
+    ONBOOT=yes 
+    USERCTL=no 
+    NM_CONTROLLED=no
+    BRIDGE=br0 
+
+- path: "/etc/sysconfig/network-scripts/ifcfg-br0"
+  permissions: "0644"
+  owner: "root:root"
+  content: |
+    DEVICE=br0 
+    TYPE=Bridge 
+    IPADDR=192.168.100.10 
+    NETMASK=255.255.255.0 
+    ONBOOT=yes 
+    BOOTPROTO=none 
+    NM_CONTROLLED=no
+    DELAY=0 
+
+- path: "/etc/sysctl.conf"
+  permissions: "0644"
+  owner: "root:root"
+  append: true
+  permissions: "0644"
+  content: |
+    net.ipv4.ip_forward = 1
+
+- path: "/opt/metal_ddve/metal_bridge.xml"
+  permissions: "0644"
+  owner: "root:root"
+  content: |
+    <network> 
+      <name>br0</name> 
+      <forward mode="bridge" /> 
+      <bridge name="br0" />   
+    </network> 
+
+- path: "/opt/metal_ddve/raid6_largest_drives.sh"
+  permissions: "0744"
+  owner: "root:root"
+  content: |
+    #!/bin/bash
+    DRIVE_SIZE=$(lsblk --bytes | grep -v nvme | grep disk | awk '{print$4}' | sort -nr | head -1)
+    RAID_DRIVES=$(lsblk --bytes | grep $DRIVE_SIZE | awk '{print"/dev/"$1}' | tr '\n' ' ')
+    NUM_DRIVES=$(echo $RAID_DRIVES | wc -w)
+    for DRIVE in $RAID_DRIVES ; do
+        mdadm --zero-superblock $DRIVE > /dev/null 2>&1
+    done
+    mdadm --create --verbose --level=6 --raid-devices=$NUM_DRIVES /dev/md0 $RAID_DRIVES
+    mdadm --detail --scan >> /etc/mdadm.conf
+
+- path: "/etc/fstab"
+  permissions: "0644"
+  owner: "root:root"
+  append: true
+  content: |
+    /dev/md0 /mnt/md0 ext4 defaults,nofail,discard 0 0
+    
+datasource:
+  Ec2:
+    strict_id: false
