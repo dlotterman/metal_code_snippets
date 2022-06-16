@@ -1,0 +1,11 @@
+curl -s \
+-X GET \
+--header 'Accept: application/json' \
+--header 'X-Auth-Token: $YOUR_TOKEN' \
+'https://api.equinix.com/metal/v1//organizations/$ORG_ID/connections'
+
+curl -s \
+-X GET \
+--header 'Accept: application/json' \
+--header 'X-Auth-Token: $YOUR_TOKEN' \
+'https://api.equinix.com/metal/v1/connections/$CONNECTION_ID/ports'

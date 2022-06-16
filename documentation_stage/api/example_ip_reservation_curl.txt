@@ -1,0 +1,20 @@
+curl --request POST \
+  --url 'https://api.equinix.com/metal/v1/projects/$PROJECT_ID/ips?=' \
+  --header 'Content-Type: application/json' \
+  --header 'X-Auth-Token: $YOUR_TOKEN_HERE' \
+  --data '{
+  "type": "public_ipv4",
+  "quantity": 8,
+  "comments": "api",
+  "metro": "SV",
+  "customdata": {},
+  "tags": [
+    "testtag"
+  ],
+  "details": "testdetails",
+  "fail_on_approval_required": true
+}'
+
+
+# where quantity is the number of IP's in the block as documented here
+https://metal.equinix.com/developers/docs/networking/reserve-public-ipv4s/
