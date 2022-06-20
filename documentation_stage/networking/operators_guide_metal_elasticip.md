@@ -3,21 +3,21 @@
 
 A common design with [Equinix Metal](https://metal.equinix.com/) is to use Virtual Machines hosted on Equinix Metal instances as network functions.
 
-In order to fill that function, it's often likely that an Operator would want to assign that VM an [ElasticIP](https://metal.equinix.com/developers/docs/networking/reserve-public-ipv4s/), for a variety of good reasons.
+In order to fill that function, it's often likely that an Operator would want to assign that VM an [ElasticIP](https://metal.equinix.com/developers/docs/networking/reserve-public-ipv4s/).
 
 Due to the added levels of abstraction in virtualization and some quirks of how ElasticIPs are implemented can make this a slightly more complicated task than an operator might first assume.
 
-This guide intends to very simply describe the task at hand and walkthrough the steps and reasons for those steps associated with assigning an ElasticIP into or inside of a Virtual Machine.
+This guide intends to very simply describe the task at hand and walkthrough the steps and the reasoning associated with assigning an ElasticIP into or inside of a Virtual Machine.
 
 It is worth clarifying that this document does *not* include any of the [Metal Gateway](https://metal.equinix.com/developers/docs/networking/metal-gateway/) feature functionality in scope. 
 
 This document also assumed static ElasticIP assignment. If you are looking to manage ElasticIPs through BGP, additional documentation can be [found here](https://github.com/dlotterman/metal_code_snippets/blob/main/documentation_stage/networking/operators_guide_metal_bgp.md)
 
-### Understanding an Equinix Metal Instance's own network attributes
+### Understanding an Equinix Metal instance's own network attributes
 
 Before working with ElasticIP's, we first need to cover the fundamentals of an Instance's [network attributes](https://metal.equinix.com/developers/docs/networking/ip-addresses/) as these will have implications on the ElasticIP work later on.
 
-When an Equinix Metal instance is launched, it can be launched with a Public and Private address where that address is part of a block, and that block is assigned specifically to that instance (and only that instance), and the Metal platform takes care of all the network magic needed to assign routes and gateways to get network packets flowing to and from that instance.
+When an Equinix Metal instance is launched, it can be launched with a [Public](https://metal.equinix.com/developers/docs/networking/ip-addresses/#public-ipv4-subnet) and [Private](https://metal.equinix.com/developers/docs/networking/ip-addresses/#private-ipv4-management-subnets) address where that address is part of a block, and that block is assigned specifically to that instance (and only that instance), and the Metal platform takes care of all the network magic needed to assign routes and gateways to get network packets flowing to and from that instance.
 
 #### Public vs Private IPs
 
@@ -25,9 +25,11 @@ There is quite a bit of overlap in subject domain space between public and priva
 
 #### Minimum block size for VM hosted ElasticIP 
 
-The block size assigned to the instance by default will very as [documented here](https://metal.equinix.com/developers/docs/networking/reserve-public-ipv4s/). It's important to note, in order to work with ElasticIP's and guests, you will need a block larger than the default Linux size of a `/31`, where you would likely want a minimum of a `/29`. The reason for this will be fleshed out below.
+The block size assigned to the instance by default will very as [documented here](https://metal.equinix.com/developers/docs/networking/reserve-public-ipv4s/). 
 
-#### Understanding the Instance's network attributes
+It is important to note, in order to work with ElasticIP's inside of hosted guests, you will need a block larger than the default Linux size of a `/31`, where you would likely want a minimum of a `/29`. The reason for this will be fleshed out below.
+
+#### Understanding the instance's network attributes
 
 When an instance is launched with a block larger than a `/31` (this document will assume a `/28`), that block is configured in the following way:
 
@@ -52,7 +54,7 @@ If we wanted a guest VM to host an IP address from the host's block, it could be
 
 ElasticIP blocks are simply blocks of IPs, and that's it. The quirk of working with them is that they do **NOT** have their own gateway, there is no routing or gateway specifically for an ElasticIP block. 
 
-When a block of ElasticIP's is assigned to an Equinix Metal instance, the platform essentially instructs the network to "send any traffic for this block of IPs to the same place you send traffic for the hosts's network".
+When a block of ElasticIP's is assigned to an Equinix Metal instance, the platform essentially instructs the network to "send any traffic for this block of IPs to the same place you send traffic for the host's network".
 
 Put another way:
 
@@ -65,7 +67,7 @@ Any traffic you see for `147.28.143.192/29`, send it to the same place you have 
 
 #### Using an ElasticIP on the **HOST** 
 
-If the Metal instance with the IP `145.40.76.242` and the gateway `145.40.76.241` where `145.40.76.241` is the default gateway, then if the Operator assigns the IP `147.28.143.193` from the ElasticIP block `147.28.143.192/29`, then the network will direct all traffic for `147.28.143.192/29` to `145.40.76.240/28`, where the instance has `145.40.76.242`, so all traffic for `147.28.143.192/29` will be directed to it.
+If the Metal instance with the IP `145.40.76.242` and the gateway `145.40.76.241`, and the Operator assigns the IP `147.28.143.193` from the ElasticIP block `147.28.143.192/29`, then the network will direct all traffic for `147.28.143.192/29` to `145.40.76.240/28`, where the instance has `145.40.76.242`, so all traffic for `147.28.143.192/29` will be directed to it.
 
 Once the traffic for `147.28.143.192/29` lands at the instance's door, that traffic can be computed, and when it needs to begin it's return journey, it will simply hit the configured default gateway of `145.40.76.241` for the hosts block of `145.40.76.240/28`.
 
