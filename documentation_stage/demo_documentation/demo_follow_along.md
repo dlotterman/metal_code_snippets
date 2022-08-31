@@ -45,6 +45,7 @@ The aim is to provide additional context and resources that may be of interest a
 - [Introduction to Interconnect](https://metal.equinix.com/developers/docs/equinix-interconnect/introduction/) 
 - [Equinix Fabric Product Page](https://www.equinix.com/interconnection-services/equinix-fabric) and [Documentation](https://docs.equinix.com/en-us/Content/Interconnection/Fabric/Fabric-landing-main.htm)
 - [Equinix Network Edge Product Page](https://edgeservices.equinix.com/) and [Documentation](https://docs.equinix.com/en-us/Content/Interconnection/NE/landing-pages/NE-landing-main.htm)
+- [Designing Highly Available Metal Interconnection](https://github.com/dlotterman/metal_code_snippets/blob/main/documentation_stage/virtual_circuit_availability/equinix_metal_fabric_vcs_availability.md)
 
 ## Code from demo dashboard
 - The code from the demo is publicly  visible (if ugly) on [Github](https://github.com/dlotterman/metal_benchmark_demo)
