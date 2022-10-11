@@ -11,9 +11,9 @@
 # 6. Enables automatic updates (for security, so things like SSHD are automatically updated)
 # 7. Enables fail2ban on SSHD
 
-
-package_upgrade: true
-package_reboot_if_required: true
+# This is broken while dist-upgrade is available
+package_upgrade: false
+package_reboot_if_required: false
 
 packages:
  - screen
@@ -66,7 +66,10 @@ runcmd:
   - [ sed, -i, -e, '/^PermitRootLogin/s/^.*$/PermitRootLogin no/', /etc/ssh/sshd_config ]
   - [ sed, -i, -e, '/^#MaxAuthTries/s/^.*$/MaxAuthTries 5/', /etc/ssh/sshd_config ]
   - [ sed, -i, -e, '/^X11Forwarding/s/^.*$/X11Forwarding no/', /etc/ssh/sshd_config ]
+  - [ systemctl, disable, --now, sshd ]
+  - [ systemctl, disable, --now, ssh ]  
   - [ systemctl, enable, --now, sshd ]
+  - [ bash, /usr/lib/apt/apt.systemd.daily ]
 
 
 write_files:
