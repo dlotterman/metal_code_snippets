@@ -68,7 +68,7 @@ runcmd:
   - [ sed, -i, -e, '/^X11Forwarding/s/^.*$/X11Forwarding no/', /etc/ssh/sshd_config ]
   - [ systemctl, disable, --now, sshd ]
   - [ systemctl, disable, --now, ssh ]  
-  - [ systemctl, enable, --now, sshd ]
+  - [ systemctl, enable, --now, ssh ]
   - [ bash, /usr/lib/apt/apt.systemd.daily ]
 
 
