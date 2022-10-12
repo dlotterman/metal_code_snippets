@@ -1,0 +1,11 @@
+[Unit]
+Description=Node Exporter
+Wants=network-online.target
+After=network-online.target
+
+[Service]
+Type=simple
+ExecStart=/metal/node_exporter/node_exporter-1.4.0.linux-amd64/node_exporter
+
+[Install]
+WantedBy=multi-user.target

@@ -1,0 +1,38 @@
+#jinja2: trim_blocks:False
+---
+global:
+  scrape_interval: 15s
+
+  external_labels:
+    monitor: 'metal-monitor'
+
+rule_files:
+- "rules/prometheus_aggregation_rules.yaml"
+
+scrape_configs:
+  - job_name: 'metal-host-node-exporter'
+
+    static_configs:
+      {% for host in groups['tag_cdbharness'] %}
+      {{"- targets:"}}
+        {{"- " + hostvars[host]['ansible_facts']['bond0_0']['ipv4']['address'] + ":9100"}}
+        {{"labels:"}}
+          {{"instance: " + hostvars[host]['ansible_facts']['hostname']}}
+    {% endfor %}
+        
+  - job_name: 'cockroachdb'
+    metrics_path: '/_status/vars'
+    # Insecure mode:
+    scheme: 'http'
+    tls_config:
+      insecure_skip_verify: true
+
+    static_configs:
+      {% for host in groups['tag_cdb'] %}
+      {{"- targets:"}}
+        {{"- " + hostvars[host]['ansible_facts']['bond0_0']['ipv4']['address'] + ":8080"}}
+        {{"labels:"}}
+          {{"instance: " + hostvars[host]['ansible_facts']['hostname']}}
+          {{"cluster: 'metal_cdb'"}}
+    {% endfor %}
+

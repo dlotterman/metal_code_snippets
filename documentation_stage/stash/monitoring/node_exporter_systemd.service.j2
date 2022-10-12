@@ -1,0 +1,16 @@
+[Unit]
+Description=Node Exporter
+Wants=network-online.target
+After=network-online.target
+
+[Service]
+User=node_exporter
+Group=node_exporter
+Type=simple
+EnvironmentFile=-/etc/sysconfig/node_exporter
+ExecStart=/harness/bin/node_exporter-1.2.2.linux-amd64/node_exporter \
+    --collector.textfile.directory /harness/data/node_exporter/text_export_proms/ \
+
+
+[Install]
+WantedBy=multi-user.target

@@ -1,0 +1,14 @@
+[Unit]
+Description=Grafana instance
+Documentation=http://docs.grafana.org
+Wants=network-online.target
+After=network-online.target
+
+[Service]
+Type=notify
+ExecStart=/metal/grafana/grafana-9.2.0/bin/grafana-server              \
+                            -config /metal/grafana/grafana_conf.ini     \
+                            -pidfile /metal/grafana/grafana.pid   		\
+							-homepath /metal/grafana/grafana-9.2.0/b
+[Install]
+WantedBy=multi-user.target

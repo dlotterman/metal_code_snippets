@@ -1,0 +1,13 @@
+[Unit]
+Description=Prometheus
+Wants=network-online.target
+After=network-online.target
+
+[Service]
+Type=simple
+ExecStart=/metal/prometheus/prometheus-2.39.1.linux-amd64/prometheus \
+    --config.file /metal/prometheus/prometheus.yaml \
+        --storage.tsdb.path /metal/prometheus/data
+
+[Install]
+WantedBy=multi-user.target

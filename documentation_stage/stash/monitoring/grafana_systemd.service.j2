@@ -1,0 +1,16 @@
+[Unit]
+Description=Grafana instance
+Documentation=http://docs.grafana.org
+Wants=network-online.target
+After=network-online.target
+
+[Service]
+User=grafana
+Group=grafana
+Type=notify
+ExecStart=/harness/bin/grafana-8.1.3/bin/grafana-server                     \
+                            -config /harness/configs/grafana_conf.ini       \
+                            -pidfile /harness/run/grafana.pid         		\
+							-homepath /harness/bin/grafana-8.1.3/
+[Install]
+WantedBy=multi-user.target
