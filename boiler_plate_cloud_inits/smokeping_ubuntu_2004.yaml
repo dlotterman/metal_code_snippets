@@ -12,9 +12,10 @@
 # 7. Enables fail2ban on SSHD
 # 8. Downloads and runs the metal_smoke_instance.sh
 
-
-package_upgrade: true
-package_reboot_if_required: true
+# This is broken while dist-upgrade is available
+# and it is since 22.04
+package_upgrade: false
+package_reboot_if_required: false
 
 packages:
  - screen
@@ -56,6 +57,7 @@ bootcmd:
 
 runcmd:
   - yes | unminimize  &
+  - [ bash, /usr/lib/apt/apt.systemd.daily ]
   - systemctl enable fail2ban
   - systemctl start fail2ban
   - systemctl enable unattended-upgrades
