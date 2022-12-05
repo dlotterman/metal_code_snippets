@@ -97,6 +97,7 @@ runcmd:
   - [ mkdir, -p, /data/isos/ ]
   - [ wget, --quiet, "https://s3.wasabisys.com/packetrepo/pfSense-CE-2.5.0-RELEASE-amd64.iso", -O, /data/isos/pfsense.iso ]
   - [ systemctl, enable, --now, cockpit ]
+  - [ systemctl, enable, --now, libvirtd ]
 
 
 write_files:
