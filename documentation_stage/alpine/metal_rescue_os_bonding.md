@@ -8,7 +8,7 @@ Normally when Rescue OS boots, Alpine will identify the first NIC with connectiv
 
 Alpine often has some particular opinions, and the easiest way to get bonding going in my experience is the following:
 
-#### Via SSH:
+#### Via SSH into the host:
 - Add Alping bonding package:
 	- `apk add bonding`
 - Reset the root password to something known so that you can log into the  [SOS / OOB](https://metal.equinix.com/developers/docs/resilience-recovery/serial-over-ssh/) via local auth

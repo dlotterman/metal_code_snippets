@@ -1,0 +1,59 @@
+export METAL_PROJ_ID="$YOURPROJID" \
+export METAL_API_TOKEN="$YOURMETALTOKEN"
+
+metal virtual-network create -m da -p $METAL_PROJ_ID --vxlan 2345
+metal virtual-network create -m da -p $METAL_PROJ_ID --vxlan 3456
+METAL_VLAN_ID=$(metal virtual-network get -o json | jq -r '.virtual_networks[] | select((.vxlan==2345) and .metro_code=="da") | .id')
+
+metal device create --hostname metal-router-01.da.dlott.casa --plan n3.xlarge.x86 --metro da --operating-system ubuntu_22_04 --project-id c077ec17-c56a-4a5d-a8c8-55235e86200d -t "metal_router,metal_springald"
+metal device create --hostname metal-router-02.da.dlott.casa --plan n3.xlarge.x86 --metro da --operating-system ubuntu_22_04 --project-id c077ec17-c56a-4a5d-a8c8-55235e86200d -t "metal_router,metal_springald"
+sleep 500
+METAL_ROUTER_01_ID=$(metal device list -o json | jq  -r '.[] | select(.hostname=="metal-router-01.da.dlott.casa") | .id')
+METAL_ROUTER_01_PORT_ID=$(metal device list -o json | jq  -r '.[] | select(.hostname=="metal-router-01.da.dlott.casa") | .network_ports[] | select(.name=="bond1") | .id')
+METAL_ROUTER_02_ID=$(metal device list -o json | jq  -r '.[] | select(.hostname=="metal-router-02.da.dlott.casa") | .id')
+METAL_ROUTER_02_PORT_ID=$(metal device list -o json | jq  -r '.[] | select(.hostname=="metal-router-02.da.dlott.casa") | .network_ports[] | select(.name=="bond1") | .id')
+
+metal port vlan -i $METAL_ROUTER_01_PORT_ID -a 2345
+metal port vlan -i $METAL_ROUTER_01_PORT_ID -a 3456
+metal port vlan -i $METAL_ROUTER_02_PORT_ID -a 2345
+metal port vlan -i $METAL_ROUTER_02_PORT_ID -a 3456
+
+METAL_ROUTER_01_IP=$(metal device list -o json | jq  -r '.[] | select(.hostname=="metal-router-01.da.dlott.casa") | .ip_addresses[] | select ((.address_family==4) and .public==true) | .address')
+METAL_ROUTER_02_IP=$(metal device list -o json | jq  -r '.[] | select(.hostname=="metal-router-02.da.dlott.casa") | .ip_addresses[] | select ((.address_family==4) and .public==true) | .address')
+
+ssh root@$METAL_ROUTER_01_IP "apt update -y"
+ssh root@$METAL_ROUTER_01_IP "apt upgrade -y"
+ssh root@$METAL_ROUTER_01_IP "reboot"
+ssh root@$METAL_ROUTER_01_IP "ip link set ens6f1 nomaster"
+ssh root@$METAL_ROUTER_01_IP "ip link set ens6f3 nomaster"
+ssh root@$METAL_ROUTER_01_IP "ip link add bond1 type bond"
+ssh root@$METAL_ROUTER_01_IP "ip link set bond1 type bond miimon 100 mode 802.3ad"
+ssh root@$METAL_ROUTER_01_IP "ip link set ens6f1 master bond1"
+ssh root@$METAL_ROUTER_01_IP "ip link set ens6f3 master bond1"
+ssh root@$METAL_ROUTER_01_IP "ip link set bond1 up"
+ssh root@$METAL_ROUTER_01_IP "ip link add link bond1 name bond1.2345 type vlan id 2345"
+ssh root@$METAL_ROUTER_01_IP "ip addr add 172.16.16.1/24 dev bond1.2345"
+ssh root@$METAL_ROUTER_01_IP "ip link set dev bond1.2345 up"
+ssh root@$METAL_ROUTER_01_IP "ip link set mtu 9000 bond1"
+ssh root@$METAL_ROUTER_01_IP "ip link set mtu 9000 bond1.2345"
+ssh root@$METAL_ROUTER_01_IP "echo 1 | sudo tee -a /sys/class/net/bond1/bonding/xmit_hash_policy"
+ssh root@$METAL_ROUTER_01_IP "ip addr add 172.22.22.1/24 dev lo"
+
+
+ssh root@$METAL_ROUTER_02_IP "apt update -y"
+ssh root@$METAL_ROUTER_02_IP "apt upgrade -y"
+ssh root@$METAL_ROUTER_02_IP "reboot"
+ssh root@$METAL_ROUTER_02_IP "ip link set ens6f1 nomaster"
+ssh root@$METAL_ROUTER_02_IP "ip link set ens6f3 nomaster"
+ssh root@$METAL_ROUTER_02_IP "ip link add bond1 type bond"
+ssh root@$METAL_ROUTER_02_IP "ip link set bond1 type bond miimon 100 mode 802.3ad"
+ssh root@$METAL_ROUTER_02_IP "ip link set ens6f1 master bond1"
+ssh root@$METAL_ROUTER_02_IP "ip link set ens6f3 master bond1"
+ssh root@$METAL_ROUTER_02_IP "ip link set bond1 up"
+ssh root@$METAL_ROUTER_02_IP "ip link add link bond1 name bond1.2345 type vlan id 2345"
+ssh root@$METAL_ROUTER_02_IP "ip addr add 172.16.16.2/24 dev bond1.2345"
+ssh root@$METAL_ROUTER_02_IP "ip link set dev bond1.2345 up"
+ssh root@$METAL_ROUTER_02_IP "ip link set mtu 9000 bond1"
+ssh root@$METAL_ROUTER_02_IP "ip link set mtu 9000 bond1.2345"
+ssh root@$METAL_ROUTER_02_IP "echo 1 | sudo tee -a /sys/class/net/bond1/bonding/xmit_hash_policy"
+ssh root@$METAL_ROUTER_02_IP "ip addr add 172.22.22.2/24 dev lo"
