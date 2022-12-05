@@ -39,6 +39,10 @@ ssh root@$METAL_ROUTER_01_IP "ip link set mtu 9000 bond1.2345"
 ssh root@$METAL_ROUTER_01_IP "echo 1 | sudo tee -a /sys/class/net/bond1/bonding/xmit_hash_policy"
 ssh root@$METAL_ROUTER_01_IP "ip addr add 172.22.22.1/24 dev lo"
 
+## run locally (on router box)
+nft add chain { type nat hook postrouting priority 100 \; }
+nft add rule nat postrouting oifnamne "bond1.2345" snat to 139.178.83.121
+
 
 ssh root@$METAL_ROUTER_02_IP "apt update -y"
 ssh root@$METAL_ROUTER_02_IP "apt upgrade -y"
