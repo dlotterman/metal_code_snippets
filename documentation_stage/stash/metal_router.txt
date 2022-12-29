@@ -1,63 +1,68 @@
 export METAL_PROJ_ID="$YOURPROJID" \
-export METAL_API_TOKEN="$YOURMETALTOKEN"
+export METAL_AUTH_TOKEN="$YOURMETALTOKEN"
 
 metal virtual-network create -m da -p $METAL_PROJ_ID --vxlan 2345
-metal virtual-network create -m da -p $METAL_PROJ_ID --vxlan 3456
-METAL_VLAN_ID=$(metal virtual-network get -o json | jq -r '.virtual_networks[] | select((.vxlan==2345) and .metro_code=="da") | .id')
+metal virtual-network create -m da -p $METAL_PROJ_ID --vxlan 712
+metal virtual-network create -m da -p $METAL_PROJ_ID --vxlan 965
+metal virtual-network create -m da -p $METAL_PROJ_ID --vxlan 801
+
+METAL_VLAN_2345_ID=$(metal -p $METAL_PROJ_ID virtual-network get -o json | jq -r '.virtual_networks[] | select((.vxlan==2345) and .metro_code=="da") | .id')
 
 metal device create --hostname metal-router-01.da.dlott.casa --plan n3.xlarge.x86 --metro da --operating-system ubuntu_22_04 --project-id c077ec17-c56a-4a5d-a8c8-55235e86200d -t "metal_router,metal_springald"
-metal device create --hostname metal-router-02.da.dlott.casa --plan n3.xlarge.x86 --metro da --operating-system ubuntu_22_04 --project-id c077ec17-c56a-4a5d-a8c8-55235e86200d -t "metal_router,metal_springald"
-sleep 500
-METAL_ROUTER_01_ID=$(metal device list -o json | jq  -r '.[] | select(.hostname=="metal-router-01.da.dlott.casa") | .id')
-METAL_ROUTER_01_PORT_ID=$(metal device list -o json | jq  -r '.[] | select(.hostname=="metal-router-01.da.dlott.casa") | .network_ports[] | select(.name=="bond1") | .id')
-METAL_ROUTER_02_ID=$(metal device list -o json | jq  -r '.[] | select(.hostname=="metal-router-02.da.dlott.casa") | .id')
-METAL_ROUTER_02_PORT_ID=$(metal device list -o json | jq  -r '.[] | select(.hostname=="metal-router-02.da.dlott.casa") | .network_ports[] | select(.name=="bond1") | .id')
 
-metal port vlan -i $METAL_ROUTER_01_PORT_ID -a 2345
-metal port vlan -i $METAL_ROUTER_01_PORT_ID -a 3456
-metal port vlan -i $METAL_ROUTER_02_PORT_ID -a 2345
-metal port vlan -i $METAL_ROUTER_02_PORT_ID -a 3456
+METAL_ROUTER01_ID=$(metal -p $METAL_PROJ_ID device list -o json | jq  -r '.[] | select(.hostname=="metal-router-01.da.dlott.casa") | .id')
+METAL_ROUTER01_BOND1_PORT_ID=$(metal -p $METAL_PROJ_ID device list -o json | jq  -r '.[] | select(.hostname=="metal-router-01.da.dlott.casa") | .network_ports[] | select(.name=="bond1") | .id')
+METAL_ROUTER01_BOND0_PORT_ID=$(metal -p $METAL_PROJ_ID device list -o json | jq  -r '.[] | select(.hostname=="metal-router-01.da.dlott.casa") | .network_ports[] | select(.name=="bond0") | .id')
 
-METAL_ROUTER_01_IP=$(metal device list -o json | jq  -r '.[] | select(.hostname=="metal-router-01.da.dlott.casa") | .ip_addresses[] | select ((.address_family==4) and .public==true) | .address')
-METAL_ROUTER_02_IP=$(metal device list -o json | jq  -r '.[] | select(.hostname=="metal-router-02.da.dlott.casa") | .ip_addresses[] | select ((.address_family==4) and .public==true) | .address')
+metal port vlan -i $METAL_ROUTER01_BOND1_PORT_ID -a 2345
+metal port vlan -i $METAL_ROUTER01_BOND1_PORT_ID -a 965
+metal port vlan -i $METAL_ROUTER01_BOND0_PORT_ID -a 712
+metal port vlan -i $METAL_ROUTER01_BOND0_PORT_ID -a 801
 
-ssh root@$METAL_ROUTER_01_IP "apt update -y"
-ssh root@$METAL_ROUTER_01_IP "apt upgrade -y"
-ssh root@$METAL_ROUTER_01_IP "reboot"
-ssh root@$METAL_ROUTER_01_IP "ip link set ens6f1 nomaster"
-ssh root@$METAL_ROUTER_01_IP "ip link set ens6f3 nomaster"
-ssh root@$METAL_ROUTER_01_IP "ip link add bond1 type bond"
-ssh root@$METAL_ROUTER_01_IP "ip link set bond1 type bond miimon 100 mode 802.3ad"
-ssh root@$METAL_ROUTER_01_IP "ip link set ens6f1 master bond1"
-ssh root@$METAL_ROUTER_01_IP "ip link set ens6f3 master bond1"
-ssh root@$METAL_ROUTER_01_IP "ip link set bond1 up"
-ssh root@$METAL_ROUTER_01_IP "ip link add link bond1 name bond1.2345 type vlan id 2345"
-ssh root@$METAL_ROUTER_01_IP "ip addr add 172.16.16.1/24 dev bond1.2345"
-ssh root@$METAL_ROUTER_01_IP "ip link set dev bond1.2345 up"
-ssh root@$METAL_ROUTER_01_IP "ip link set mtu 9000 bond1"
-ssh root@$METAL_ROUTER_01_IP "ip link set mtu 9000 bond1.2345"
-ssh root@$METAL_ROUTER_01_IP "echo 1 | sudo tee -a /sys/class/net/bond1/bonding/xmit_hash_policy"
-ssh root@$METAL_ROUTER_01_IP "ip addr add 172.22.22.1/24 dev lo"
+METAL_ROUTER01_IP=$(metal -p $METAL_PROJ_ID device list -o json | jq  -r '.[] | select(.hostname=="metal-router-01.da.dlott.casa") | .ip_addresses[] | select ((.address_family==4) and .public==true) | .address')
 
-## run locally (on router box)
-nft add chain { type nat hook postrouting priority 100 \; }
-nft add rule nat postrouting oifnamne "bond1.2345" snat to 139.178.83.121
+ssh root@$METAL_ROUTER01_IP "apt update -y"
+ssh root@$METAL_ROUTER01_IP "apt upgrade -y"
+ssh root@$METAL_ROUTER01_IP "apt install -y iperf3"
+ssh root@$METAL_ROUTER01_IP "reboot"
+ssh root@$METAL_ROUTER01_IP "ip link set ens6f1 nomaster"
+ssh root@$METAL_ROUTER01_IP "ip link set ens6f3 nomaster"
+ssh root@$METAL_ROUTER01_IP "ip link add bond1 type bond"
+ssh root@$METAL_ROUTER01_IP "ip link set bond1 type bond miimon 100 mode 802.3ad"
+ssh root@$METAL_ROUTER01_IP "ip link set ens6f1 master bond1"
+ssh root@$METAL_ROUTER01_IP "ip link set ens6f3 master bond1"
+ssh root@$METAL_ROUTER01_IP "ip link set bond1 up"
+ssh root@$METAL_ROUTER01_IP "ip link add link bond1 name bond1.2345 type vlan id 2345"
+ssh root@$METAL_ROUTER01_IP "ip addr add 172.16.16.1/24 dev bond1.2345"
+ssh root@$METAL_ROUTER01_IP "ip link set dev bond1.2345 up"
+ssh root@$METAL_ROUTER01_IP "ip link set mtu 9000 bond1"
+ssh root@$METAL_ROUTER01_IP "ip link set mtu 9000 bond1.2345"
+ssh root@$METAL_ROUTER01_IP "ip link set mtu 9000 bond0"
+ssh root@$METAL_ROUTER01_IP "echo 1 | sudo tee -a /sys/class/net/bond1/bonding/xmit_hash_policy"
+
+ssh root@$METAL_ROUTER01_IP "ip link add link bond1 name bond1.965 type vlan id 965"
+ssh root@$METAL_ROUTER01_IP "ip addr add 192.168.16.1/24 dev bond1.965 "
+ssh root@$METAL_ROUTER01_IP "ip link set dev bond1.965 up"
+
+ssh root@$METAL_ROUTER01_IP "ip link add link bond0 name bond0.712 type vlan id 712"
+ssh root@$METAL_ROUTER01_IP "ip addr add 172.17.17.1/24 dev bond0.712"
+ssh root@$METAL_ROUTER01_IP "ip link set dev bond0.712 up"
+
+ssh root@$METAL_ROUTER01_IP "ip link add link bond0 name bond0.801 type vlan id 801"
+ssh root@$METAL_ROUTER01_IP "ip addr add 192.168.17.1/24 dev bond0.801"
+ssh root@$METAL_ROUTER01_IP "ip link set dev bond0.801 up"
+
+ssh root@$METAL_ROUTER01_IP "modprobe nf_conntrack"
+
+ssh root@$METAL_ROUTER01_IP "wget -O /etc/security/limits.d/99-max.conf https://raw.githubusercontent.com/dlotterman/metal_code_snippets/main/documentation_stage/stash/security-limits-max.conf"
+
+ssh root@$METAL_ROUTER01_IP "echo 1 >> /proc/sys/net/ipv4/ip_forward"
+ssh root@$METAL_ROUTER01_IP "sysctl net.ipv4.ip_forward=1"
 
 
-ssh root@$METAL_ROUTER_02_IP "apt update -y"
-ssh root@$METAL_ROUTER_02_IP "apt upgrade -y"
-ssh root@$METAL_ROUTER_02_IP "reboot"
-ssh root@$METAL_ROUTER_02_IP "ip link set ens6f1 nomaster"
-ssh root@$METAL_ROUTER_02_IP "ip link set ens6f3 nomaster"
-ssh root@$METAL_ROUTER_02_IP "ip link add bond1 type bond"
-ssh root@$METAL_ROUTER_02_IP "ip link set bond1 type bond miimon 100 mode 802.3ad"
-ssh root@$METAL_ROUTER_02_IP "ip link set ens6f1 master bond1"
-ssh root@$METAL_ROUTER_02_IP "ip link set ens6f3 master bond1"
-ssh root@$METAL_ROUTER_02_IP "ip link set bond1 up"
-ssh root@$METAL_ROUTER_02_IP "ip link add link bond1 name bond1.2345 type vlan id 2345"
-ssh root@$METAL_ROUTER_02_IP "ip addr add 172.16.16.2/24 dev bond1.2345"
-ssh root@$METAL_ROUTER_02_IP "ip link set dev bond1.2345 up"
-ssh root@$METAL_ROUTER_02_IP "ip link set mtu 9000 bond1"
-ssh root@$METAL_ROUTER_02_IP "ip link set mtu 9000 bond1.2345"
-ssh root@$METAL_ROUTER_02_IP "echo 1 | sudo tee -a /sys/class/net/bond1/bonding/xmit_hash_policy"
-ssh root@$METAL_ROUTER_02_IP "ip addr add 172.22.22.2/24 dev lo"
+
+ssh root@$METAL_ROUTER01_IP "nft add table ip nat"
+ssh root@$METAL_ROUTER01_IP "nft 'add chain nat postrouting { type nat hook postrouting priority 100 ; }'"
+ssh root@$METAL_ROUTER01_IP "nft add rule nat postrouting ip saddr 172.16.16.0/24 oif bond1.965 snat to 192.168.16.1"
+ssh root@$METAL_ROUTER01_IP "nft add rule nat postrouting ip saddr 172.17.17.0/24 oif bond1.801 snat to 192.168.17.1"
+ssh root@$METAL_ROUTER01_IP "echo 1 > /proc/sys/net/netfilter/nf_conntrack_helper"
