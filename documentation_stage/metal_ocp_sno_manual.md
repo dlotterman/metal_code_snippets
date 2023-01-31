@@ -82,7 +82,7 @@ The general flow is as follows:
 - Create name cluster object
 		- ![](https://s3.us-east-1.wasabisys.com/metalstaticassets/ocpsno/redhat_cloud_04.PNG)
 - Configure Static Networking
-	```
+```
 ---
 dns-resolver:
   config:
@@ -117,7 +117,7 @@ routes:
       next-hop-interface: bond0
       table-id: 254
 
-	```
+```
 	- ![](https://s3.us-east-1.wasabisys.com/metalstaticassets/ocpsno/redhat_cloud_05.PNG)
 - Leave "Operators" at defaults
 	- ![](https://s3.us-east-1.wasabisys.com/metalstaticassets/ocpsno/redhat_cloud_06.PNG)
