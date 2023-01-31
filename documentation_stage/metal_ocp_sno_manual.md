@@ -83,38 +83,40 @@ The general flow is as follows:
 		- ![](https://s3.us-east-1.wasabisys.com/metalstaticassets/ocpsno/redhat_cloud_04.PNG)
 - Configure Static Networking
 	```
-	dns-resolver: 
-	config: 
-	  server: 
-		- "147.75.207.207"
-	interfaces: 
-	- 
-	  ipv4: 
-		address: 
-		  - 
-			ip: "139.178.87.26"
-			prefix-length: 29
-		dhcp: false
-		enabled: true
-	  ipv6: 
-		enabled: false
-	  link-aggregation: 
-		mode: 802.3ad
-		options: 
-		  miimon: "100"
-		port: 
-		  - ens3f0
-		  - ens3f2
-	  name: bond0
-	  state: up
-	  type: bond
-	routes: 
-	config: 
-	  - 
-		destination: 0.0.0.0/0
-		next-hop-address: "139.178.87.25"
-		next-hop-interface: bond0
-		table-id: 254
+---
+dns-resolver:
+  config:
+    server:
+      - "147.75.207.207"
+interfaces:
+  -
+    ipv4:
+      address:
+        -
+          ip: "139.178.87.26"
+          prefix-length: 29
+      dhcp: false
+      enabled: true
+    ipv6:
+      enabled: false
+    link-aggregation:
+      mode: 802.3ad
+      options:
+        miimon: "100"
+      port:
+        - ens3f0
+        - ens3f2
+    name: bond0
+    state: up
+    type: bond
+routes:
+  config:
+    -
+      destination: 0.0.0.0/0
+      next-hop-address: "139.178.87.25"
+      next-hop-interface: bond0
+      table-id: 254
+
 	```
 	- ![](https://s3.us-east-1.wasabisys.com/metalstaticassets/ocpsno/redhat_cloud_05.PNG)
 - Leave "Operators" at defaults
