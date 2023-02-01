@@ -1,6 +1,6 @@
 #!ipxe
 dhcp
 set base http://ipxe.dlott.casa/util/rocky/85
-kernel ${base}/images/pxeboot/vmlinuz initrd=initrd.img inst.repo=${base}/ console=tty0 console=ttyS1,115200n8 inst.vnc inst.vncpassword=Lolwag8 ip=dhcp inst.nonibftiscsiboot inst.sshd rd.net.timeout.carrier=30 rd.neednet=1 ip=bond0:dhcp bond=bond0:enp1s0f0:enp1s0f1:mode=802.3ad,lacp_rate=1:miimon=100,xmit_hash_policy=layer3+4,updelay=10000,downdelay=1000 systemd.journald.max_level_console=debug
+kernel ${base}/images/pxeboot/vmlinuz initrd=initrd.img inst.repo=${base}/ console=tty0 console=ttyS1,115200n8 inst.vnc inst.vncpassword=Lolwag8 ip=dhcp inst.nonibftiscsiboot inst.sshd rd.net.timeout.carrier=30 rd.neednet=1 ip=bond0:dhcp bond=bond0:enp1s0f0,enp1s0f1:mode=802.3ad,lacp_rate=1:miimon=100,xmit_hash_policy=layer3+4,updelay=10000,downdelay=1000 systemd.journald.max_level_console=debug
 initrd ${base}/images/pxeboot/initrd.img
 boot || read void
