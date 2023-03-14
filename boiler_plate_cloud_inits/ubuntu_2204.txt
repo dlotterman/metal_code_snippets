@@ -1,0 +1,14 @@
+#cloud-config
+
+package_update: false
+package_upgrade: false
+### reboot after update currently broken in Metal's Ubuntu 2204
+package_reboot_if_required: false
+
+bootcmd:
+  - [ apt-get, clean ]
+  - [ apt-get, -y, autoremove ]
+
+runcmd:
+  - [ apt-get, -y, update ]
+  - [ apt-get, -y, upgrade ]
