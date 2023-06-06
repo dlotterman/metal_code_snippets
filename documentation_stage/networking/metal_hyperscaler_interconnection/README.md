@@ -8,17 +8,17 @@ All pricing is purely speculative or example and treated as highly suspicious un
 
 # Table of Contents
 1. [Metal Internet Fist](#Start-with-Metal-Internet-First)
-    - [Backend Transfer](#Backend)
-    - [Internet Egress Commercials](#Commercials)
+    - [Backend Transfer](#Backend Transfer)
+    - [Internet Egress Commercials](#Commercials-of-connectivity-options)
 2. [Trombone](#Trombone)
 3. [MTU](#MTU)
-   - [Path MTU Discovery](#Path)
+   - [Path MTU Discovery](#Path-MTU-Discovery)
 4. [BFD](#BFD)
 5. [ECMP](#ECMP)
 6. [Encryption](#Encryption)
 7. [On-ramps](#on-ramps)
-8. [No LACP on Dedicated](#Physical)
-9. [Equinix Metal VRF](#Physical-Dedicated-Interconnection-and-LACP)
+8. [No LACP on Dedicated](#Physical-Dedicated-Interconnection-and-LACP)
+9. [Equinix Metal VRF](#Equinix-Metal-VRF)
 10. [Testing](#Testing)
 
 ## Start with Metal Internet First
