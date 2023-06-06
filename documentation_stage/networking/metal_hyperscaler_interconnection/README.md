@@ -7,7 +7,7 @@ This document itself is authoritative for nothing, and defers to other, especial
 All pricing is purely speculative or example and treated as highly suspicious until confirmed and is included primarily to assist readers with begining to build their own models to reflect their own needs.
 
 # Table of Contents
-1. [Metal Internet Fist](#Start)
+1. [Metal Internet Fist](#Start-with-Metal-Internet-First)
     - [Backend Transfer](#Backend)
     - [Internet Egress Commercials](#Commercials)
 2. [Trombone](#Trombone)
@@ -18,7 +18,7 @@ All pricing is purely speculative or example and treated as highly suspicious un
 6. [Encryption](#Encryption)
 7. [On-ramps](#on-ramps)
 8. [No LACP on Dedicated](#Physical)
-9. [Equinix Metal VRF](#Equinix)
+9. [Equinix Metal VRF](#Physical-Dedicated-Interconnection-and-LACP)
 10. [Testing](#Testing)
 
 ## Start with Metal Internet First
@@ -197,7 +197,7 @@ Put another way, both AWS `us-east-1` and `us-east-2` are available for Intercon
 
 To connect Metal to a geographically diverse Hyperscaler on-ramp, a loop through a [Colocated Fabric](https://docs.equinix.com/en-us/Content/Interconnection/Fabric/ports/Fabric-port-details.htm) connection or [Network Edge](https://docs.equinix.com/en-us/Content/Interconnection/NE/landing-pages/NE-landing-main.htm) device will be necessary.
 
-## Physical Dedicated Interconnection and Equinix Metal's lack of LACP on Interconnection
+## Physical Dedicated Interconnection and LACP
 
 Equinix Metal is capable of physically Interconnecting with other networks by hosting a physical cross-connect between Metal and a A-zide location, where that A-side side can essentially be anything that speaks `SMF-LC` with `802.1q`.
 
@@ -223,7 +223,7 @@ It is likely that once released, VRF will become the preferred path for BGP spea
 
 It should be noted that Equinix Metal will not have some feature functionality in its first release. For example it is known that it will be released without BFD. Customers who are looking for a high degree of customization or control granularity will likely still want to bring their own BGP speaking functionality.
 
-## Testing and rapid, low overhead on-demand provisioning
+## Testing
 
 It is the authors belief the single most important feature to consider with Equinix Metal and interconnection is the ability to mock and test entire solutions quickly and cheaply.
 
