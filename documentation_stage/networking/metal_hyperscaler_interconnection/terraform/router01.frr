@@ -1,0 +1,35 @@
+log syslog informational
+frr defaults traditional
+service integrated-vtysh-config
+!
+ip router-id 10.68.68.1
+hostname interconnect-gcp01
+ip forwarding
+no ipv6 forwarding
+
+router bgp 65000
+ bgp log-neighbor-changes
+ bgp router-id 10.68.68.1
+ bgp ebgp-requires-policy
+ bgp network import-check
+ neighbor MetalInter peer-group
+ neighbor MetalInter remote-as 65000
+ neighbor MetalInter password Equinixmetal05
+ neighbor MetalInter capability dynamic
+ neighbor 172.16.80.11 peer-group MetalInter
+ !
+ address-family ipv4 unicast
+  network 172.16.220.0/24
+  neighbor 172.16.80.11 activate
+  neighbor 172.16.80.11 prefix-list interconnect_traffic_local_vlan01 out
+  neighbor 172.16.80.11 prefix-list default_deny_prefix in
+ exit-address-family
+!
+ip prefix-list interconnect_traffic_local_vlan01 permit 172.16.220.0/24 le 24
+ip prefix-list interconnect_traffic_local_vlan01 deny any
+!
+ip prefix-list default_deny_prefix deny any
+!
+line vty
+!
+end 

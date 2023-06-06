@@ -8,7 +8,18 @@ All pricing is purely speculative or example and treated as highly suspicious un
 
 # Table of Contents
 1. [Metal Internet Fist](#Start)
-    - [Backend Transfer](#Don't)
+    - [Backend Transfer](#Backend)
+    - [Internet Egress Commercials](#Commercials)
+2. [Trombone](#Trombone)
+3. [MTU](#MTU)
+   - [Path MTU Discovery](#Path)
+4. [BFD](#BFD)
+5. [ECMP](#ECMP)
+6. [Encryption](#Encryption)
+7. [On-ramps](#on-ramps)
+8. [No LACP on Dedicated](#Physical)
+9. [Equinix Metal VRF](#Equinix)
+10. [Testing](#Testing)
 
 ## Start with Metal Internet First
 
@@ -132,7 +143,7 @@ And additional capacity can be easily added again afterwards.
 
 It should be noted that capacity managed by ECMP / BGP Multipathing aligns with the "active/active" model of scaling, where redundancy must be calculated into the design. 
 
-When a redundant virtual circut is provisioned, the platform ensures that those virtual connections are placed on non-overlapping hardware, providing what is known as maintenance diversity, where no single outage should impact both paths at the same time. If there are only two paths of interconnection between Metal and AWS, then it is possible than with 8x virtual connections provisioned, that up to half of those could potentially be lost at a time. The remaining capacity must be able to support the platform for the duration of the outage.
+When a redundant virtual circut is provisioned, the platform ensures that those virtual connections are placed on non-overlapping hardware, providing what is known as maintenance diversity, where no single outage should impact both paths at the same time. If there are only two paths of interconnection between Metal and AWS, then it is possible that with 8x virtual connections provisioned, that up to half of those could potentially be lost at a time. The remaining capacity must be able to support the platform for the duration of the outage.
 
 ### AWS ECMP specifics
 While shaping tactics like prefix advertising manipulation will work well for all three hyperscalers, AWS in particular documents nuances and additional relevant BGP comunity strings [here](https://docs.aws.amazon.com/directconnect/latest/UserGuide/routing-and-bgp.html), which is further referenced in this blog by the [AWS team](https://aws.amazon.com/blogs/networking-and-content-delivery/creating-active-passive-bgp-connections-over-aws-direct-connect/)
@@ -182,7 +193,7 @@ It is likely that the Hyperscaler provides some monitoring available through the
 
 It is important to note that not every Hyperscaler-region is available out of every Equinix Metro. In fact only the Hyperscaler-regions with on-ramps in the local Metro will be available for Interconenction with Metal out of the same Metro. This is partially because of the limitation of Metal billed virtual connections only being able to connect to [A-side in the same Metro](https://deploy.equinix.com/developers/docs/metal/interconnections/metal-billed-fabric-vc/).
 
-Put another way, both AWS `us-east-1` and `us-east;-2 available for Interconnection in Equinix Metal's "Ashburn" metro, however `ap-east-1` will be unavailable for Interconnection.
+Put another way, both AWS `us-east-1` and `us-east-2` are available for Interconnection with Equinix Metal, however `us-east-1` is available from DC but not Chicago, where `us-west-2` is only available from Chicago.
 
 To connect Metal to a geographically diverse Hyperscaler on-ramp, a loop through a [Colocated Fabric](https://docs.equinix.com/en-us/Content/Interconnection/Fabric/ports/Fabric-port-details.htm) connection or [Network Edge](https://docs.equinix.com/en-us/Content/Interconnection/NE/landing-pages/NE-landing-main.htm) device will be necessary.
 
@@ -222,4 +233,4 @@ Customers should test all elements of their deployment before and after proceedi
 
 ### Example Metal <-> AWS A-side Terraform
 
-An example terraform is included that can be used to quickly spin up an example lab environment with which to test interconnection. The terraform is far from complete and is intended to be used primarily as reference.
+An [example terraform](terraform/) is included that can be used to quickly spin up an example lab environment with which to test interconnection. The terraform is far from complete and is intended to be used primarily as reference.
