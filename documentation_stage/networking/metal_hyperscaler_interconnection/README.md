@@ -8,7 +8,6 @@ All pricing is purely speculative or example and treated as highly suspicious un
 
 # Table of Contents
 1. [Metal Internet Fist](#Start-with-Metal-Internet-First)
-    - [Backend Transfer](#Backend Transfer)
     - [Internet Egress Commercials](#Commercials-of-connectivity-options)
 2. [Trombone](#Trombone)
 3. [MTU](#MTU)
