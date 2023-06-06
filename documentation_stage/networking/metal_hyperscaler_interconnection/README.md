@@ -6,6 +6,10 @@ This document itself is authoritative for nothing, and defers to other, especial
 
 All pricing is purely speculative or example and treated as highly suspicious until confirmed and is included primarily to assist readers with begining to build their own models to reflect their own needs.
 
+# Table of Contents
+1. [Metal Internet Fist](#Start)
+    - [Backend Transfer](#Don't)
+
 ## Start with Metal Internet First
 
 The internet access that comes with an Equinix Metal instance is first class, and because of the centrality of connectivity in Equinix sites, network performance of Metal's internet to the Hyperscalers is often "good enough" via similar network paths as private Interconnection. 
@@ -38,7 +42,7 @@ For workloads that are highly bursty, like an hourly ETL that pushes 12Gbps in a
 
 The per hour rates of the Equinix Metal Billed Virtual Connections are quite effective when thought of in terms of total transfer over the hour window they can exist. A 10GB virtual connection can push ~4400GB of traffic in an hour's lifespan, enough to drastrically change the cost calculations of certain workload analysis models.
 
-### Trombone through colocation instead
+## Trombone through colocation instead
 
 For established Equinix customers who may already have interconnection with their Hyperscaler partners provisioned to Fabric ports attached to their Colocation environment, the easiest way to Interconnect Metal with a Hyperscale resource may be to do so via tromboning traffic through that existing colocated infrastructure by connecting Metal to your Colo as a sort of virtual cage extension, allowing the Metal deployment the same network access as a colocated deployment.
 
