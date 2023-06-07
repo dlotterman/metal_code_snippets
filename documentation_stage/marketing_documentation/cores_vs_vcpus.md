@@ -1,6 +1,6 @@
 Before any hypervisor or virtualazation, any semi-modern server grade CPU will have a concept of multiple threads per physical core, with multiple cores per socket. This is often short-handed to Intel's original name for this with x86 called [Hyperthreading](https://en.wikipedia.org/wiki/Hyper-threading), though the more correct term is [SMT](https://en.wikipedia.org/wiki/Simultaneous_multithreading).
 
-Intel's default of two threads to a core has stuck every since in x86 world. This 2x default is not true in other architectures, such as Arm, which Metal also provides [on-demand](https://deploy.equinix.com/product/servers/c3-large-arm64/).
+Intel's default of two threads to a core has stuck ever since in x86 world. This 2x default is not true in other architectures, such as Arm, which Metal also provides [on-demand](https://deploy.equinix.com/product/servers/c3-large-arm64/).
 
 So when an OS is installed to a server with "Hyperthreading", if that server has a single socket CPU, where that CPU has 8x physical cores, the OS will see 16x processors available.
 
