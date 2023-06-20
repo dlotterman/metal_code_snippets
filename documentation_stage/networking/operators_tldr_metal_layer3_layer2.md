@@ -69,14 +69,14 @@ Example route scenarios:
 
 ### 10.0.0.0/8 route statement and overlap with Customer Layer-2
 
-Often, when a customer wants to bring their own subnet to Equinix Metal inside of a Layer-2 VLAN, that subnet may itself be a `10.0.0.0/8` subnet, which my overlap or conflict with the `10.x.x.x/25` network assigned by Equinix Metal, which can lead to a bit of a routing table mess without any planning.
+Often, when a customer wants to bring their own subnet to Equinix Metal inside of a [Layer-2 VLAN](https://deploy.equinix.com/developers/docs/metal/layer2-networking/vlans/), that subnet may itself be a `10.0.0.0/8` subnet, which my overlap or conflict with the `10.x.x.x/25` network assigned by Equinix Metal, which can lead to a bit of a routing table mess without any planning.
 
-When a customer wants to bring a `10.0.0.0/8` subnet to Metal Layer-2, here are some ways of thinking of the overlap problem:
+When a customer wants to bring a `10.0.0.0/8` or large `10.x.x.x` subnet to Metal Layer-2, here are some ways of thinking of the overlap problem:
 
-- If a customer does not inteded to use the Private / Backend network at all, the route statement can simply be removed from the instance all together
+- If a customer does not inteded to use the [Private](https://deploy.equinix.com/developers/docs/metal/networking/ip-addresses/#private-ipv4-management-subnets) / [Backend](https://deploy.equinix.com/developers/docs/metal/networking/backend-transfer/) network at all, the route statement can simply be removed from the instance all together
 
-- If a customer does want to use Private / Backend transfer and wants to co-locate the networks on the Metal host:
-	- Customer wants to bring `10.30.200.0/24` and use it inside Metal VLAN 2228, which does not conflict with any Metal Layer-3 IP space directly, but does conflict with the `10.0.0.0/8` route statement:
+- If a customer does want to use [Private](https://deploy.equinix.com/developers/docs/metal/networking/ip-addresses/#private-ipv4-management-subnets) / [Backend transfer](https://deploy.equinix.com/developers/docs/metal/networking/backend-transfer/) and wants to co-locate the networks on a Metal host:
+	- Customer wants to bring `10.30.200.0/24` and use it inside Metal VLAN `2228`, which does not conflict with any Metal Layer-3 IP space directly, but does conflict with the `10.0.0.0/8` route statement:
 		- The customer could assign a route statement specific to that network for that interface on the server, which should be done by default, so that any traffic that hits `10.30.200.0/24` should be sent out the `bond0@VLAN2228` interface, instead of the `bond0` interface, which will still be the default 
 
 - Customer wants to bring a network of `10.51.43.0/24` which conflicts directly with a Metal assigned block of `10.51.43.128/25`
@@ -85,5 +85,5 @@ When a customer wants to bring a `10.0.0.0/8` subnet to Metal Layer-2, here are 
 	
 Customers can also create more specific route statements than the very large `10.0.0.0/8` statement that gets assigned by default, for example:
 
-If a customer wanted to use Backend Transfer between a host in `FR` with IP `10.92.19.229/31` and a host in `PA` with an IP of `10.73.9.183/31`, instead of using the large `10.0.0.0/8`, they could assign `10.92.19.128/25` as a route via it's local private gateway of `10.73.9.182`. This will apply a more specific route `FR` <-> `PA` that will free up the `10.0.0.0/8` space for other routiung.
+If a customer wanted to use Backend Transfer between a host in `FR` with IP `10.92.19.229/31` and a host in `PA` with an IP of `10.73.9.183/31`, instead of using the large `10.0.0.0/8`, they could assign `10.92.19.128/25` as a route via it's local private gateway of `10.73.9.182`. This will apply a more specific route `FR` <-> `PA` that will free up the `10.0.0.0/8` space for other routing.
 
