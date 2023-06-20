@@ -18,6 +18,10 @@ When a customer creates a [Layer-2 VLAN](https://deploy.equinix.com/developers/d
 
 These VLANs are entirely a customer's Layer-2 space, they can bring any subnetting / architecture design needed within those broadcast domains.
 
+## Hybrid Networking Modes
+
+When placed into a [Hybrid networking mode](https://deploy.equinix.com/developers/docs/metal/layer2-networking/hybrid-bonded-mode/), a Metal instance will have connectivity to both Metal's Layer-3 network and it's customer managed Layer-2 VLANs, potentially creating overlap between the two otherwise seperate networking domains
+
 ## Understanding Private IP's and the 10.0.0.0/8 route
 
 When a Metal instance is launched, by default it is given:
@@ -65,8 +69,7 @@ Example route scenarios:
 
 ### 10.0.0.0/8 route statement and overlap with Customer Layer-2
 
-Often, when a customer wants to bring their own subnet to Equinix Metal inside of a Layer-2 VLAN, that subnet may itself be a `10.0.0.0/8` subnet, which my overlap or conflict with the `10.x.x.x/25` network assigned by Equinix Metal, which can lead to a bit of a routing table mess without any forthought.larger
-
+Often, when a customer wants to bring their own subnet to Equinix Metal inside of a Layer-2 VLAN, that subnet may itself be a `10.0.0.0/8` subnet, which my overlap or conflict with the `10.x.x.x/25` network assigned by Equinix Metal, which can lead to a bit of a routing table mess without any planning.
 
 When a customer wants to bring a `10.0.0.0/8` subnet to Metal Layer-2, here are some ways of thinking of the overlap problem:
 
