@@ -58,13 +58,13 @@ The purpose of the `10.0.0.0/8` is to enable the [Private Networking](https://de
 
 Example route scenarios:
 
-- An Equinix Metal instance wants to reach a host on the Public Internet, say 69.188.199.22
-	- That network is not in its local routing table, so it finds 93.187.217.142 as it's default gateway and sends the direction that way
-- An Equinix Metal instance wants to reach another Metal host in the same project in the same Metro (Amsterdam), say 10.12.104.98
-	- That network, 10.12.104.97/31, is part of `10.12.104.0/25`, which is part of the larger `10.0.0.0/8` block.
+- An Equinix Metal instance wants to reach a host on the Public Internet, say `69.188.199.22`
+	- That network is not in its local routing table, so it finds `93.187.217.142` as it's default gateway and sends the direction that way
+- An Equinix Metal instance wants to reach another Metal host in the same project in the same Metro (Amsterdam), say `10.12.104.98`
+	- That network, `10.12.104.97/31`, is part of `10.12.104.0/25`, which is part of the larger `10.0.0.0/8` block.
 		- So the Equinix Metal instance does have a route for it in it's local routing table, which says send any traffic for `10.0.0.0/8` to your private gateway of `10.12.105.25`
-- An Equinix Metal instance wants to reach another Metal host in the same project in a different Metro (New York), say 10.10.38.1
-	- That network `10.10.38.1` will also be caught by the `10.0.0.0/8` route statement, the traffic will be sent to the private gateaway, and if the project is enabled for [Backend Transfer](https://deploy.equinix.com/developers/docs/metal/networking/backend-transfer/), the private gateway will send the traffic over the global network to the New York network where the local New York network will route the traffic to the instance living on 10.10.38.1.
+- An Equinix Metal instance wants to reach another Metal host in the same project in a different Metro (New York), say `10.10.38.1`
+	- That network `10.10.38.1` will also be caught by the `10.0.0.0/8` route statement, the traffic will be sent to the private gateaway, and if the project is enabled for [Backend Transfer](https://deploy.equinix.com/developers/docs/metal/networking/backend-transfer/), the private gateway will send the traffic over the global network to the New York network where the local New York network will route the traffic to the instance living on `10.10.38.1`.
 
 
 ### 10.0.0.0/8 route statement and overlap with Customer Layer-2
