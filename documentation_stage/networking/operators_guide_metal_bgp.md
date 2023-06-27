@@ -6,7 +6,10 @@
 
 One of the novel features of the Equinix Metal network is its customer facing BGP endpoints and integrations, allowing operators to tap into some valuable and powerful network control and announcement toolsets.
 
-Some excellent documentation here:
+Best "code as documentation" resource:
+- [Equinix-Metal-BGP Bird Toolkit](https://github.com/enkelprifti98/Equinix-Metal-BGP)
+
+Some excellent other documentation here:
 - [Equinix Metal BGP Documentation](https://metal.equinix.com/developers/docs/bgp/bgp-on-equinix-metal/)
 - [Equinix Metal Local BGP Documnetation](https://metal.equinix.com/developers/docs/bgp/local-bgp/)
 - [Equinix Metal Global BGP Documentation](https://metal.equinix.com/developers/docs/bgp/global-bgp/)
@@ -58,9 +61,14 @@ So to clarify, if you are reading documentation where the BGP neighbor is a priv
 
 ## So how do you actually drive it:
 
-The customer facing BGP endpoint is hosted on an instance’s ToR, always on the pre-defined `169.254.255.1/32`,`169.254.255.2/32` Peer IPs.
+The customer facing BGP endpoint is hosted on an instance’s ToR, always on the pre-defined `169.254.255.1/32`,`169.254.255.2/32` Peer IPs, which are [link-local](https://en.wikipedia.org/wiki/Link-local_address) IPs.
 
-Those peering IP's expect to be reached via the [Metal Private network](https://metal.equinix.com/developers/docs/networking/ip-addresses/#private-ipv4-management-subnets), **NOT** the [Metal Public Network](https://metal.equinix.com/developers/docs/networking/ip-addresses/#public-ipv4-subnet). To be clear, that means you must peer via your instances `10.0.0.0/8` IP address, not via its Public IP address (for example `145.40.76.240/28`).
+These Peer IPs can be reached via either the instance's [Public Network]((https://metal.equinix.com/developers/docs/networking/ip-addresses/#public-ipv4-subnet)) Gateway, or it's [Private Network](https://metal.equinix.com/developers/docs/networking/ip-addresses/#private-ipv4-management-subnets) Gateway.
+
+In the case of Linux networking and software routing, there are some differences in behavior between different ecosystems. 
+
+### FRR
+For example, FRR, a common linux networking tool, has difficulty BGP peering with the Peering / link-local IP's over Linux's default gateway statement to the Public gateway. So for FRR+Linux, a static route must be issued to reach the Peering IPs via the Private Gateway.
 
 On a default Metal Linux instance, this would look like:
 
@@ -69,6 +77,26 @@ On a default Metal Linux instance, this would look like:
 
 Where `10.70.114.145` is the gateway IP for the instance's Metal [Private Network](https://metal.equinix.com/developers/docs/networking/ip-addresses/#private-ipv4-management-subnets).
 
+### Bird
+
+In the birf `1.X` config scheme, best behavior is observed by [specifying a static route the Public Gateway](https://deploy.equinix.com/developers/docs/metal/bgp/route-bgp-with-bird/#filling-out-the-bird-configuration-file):
+
+```
+protocol static {
+  route 169.254.255.1/32 via 198.51.100.0;
+  route 169.254.255.2/32 via 198.51.100.0;
+}
+```
+
+In the Bird `2.X` config scheme, there is no need for this static route specificity.
+
+An example complete Bird `2.X` config, generated from [Equinix-Metal-BGP](https://github.com/enkelprifti98/Equinix-Metal-BGP) is printed below in this document
+
+Handy Bird documentation:
+- https://blog.kintone.io/entry/bird
+- https://www.datapacket.com/blog/bird-bgp-configuration
+
+### Adding IP's to the announce
 The easiest way to configure a Linux instance to announce an [ElasticIP](https://metal.equinix.com/developers/docs/networking/elastic-ips/) address or BYO-IP block is to mount the IP block on the loopback interface, and then use your BGP speaker's equivalent of ["redistribute connected"](https://docs.frrouting.org/en/stable-7.5/bgp.html#redistribution) to have the BGP speaker announce all of the IP's and networks assigned to Linux interfaces (including loopback). For example to have the Linux instance announce a registered ElasticIP block of `145.40.76.241/28`:
 
 `ip addr add 145.40.76.241/28 dev lo:0`
@@ -343,3 +371,243 @@ BGP Connect Retry Timer in Seconds: 120
 Peer Authentication Enabled
 Read thread: on  Write thread: on  FD used: 24
 ```
+#### Bird example config
+
+```
+filter equinix_metal_bgp {
+  accept;
+}
+
+router id YOUR.PRIVATE.IP.HERE;
+
+protocol direct {
+  ipv4;
+  interface "lo";
+}
+
+protocol kernel {
+  merge paths;
+  persist;
+  scan time 20;
+  ipv4 {
+    import all;
+    export all;
+  };
+}
+
+protocol device {
+  scan time 10;
+}
+
+protocol bgp Equinix_Metal_1 {
+    ipv4 {
+      export filter equinix_metal_bgp;
+      import filter equinix_metal_bgp;
+    };
+    graceful restart;
+    local as 65000;
+    neighbor 169.254.255.1 as 65530;
+    password "YOURPASSWORDHERE";
+    multihop 4;
+}
+protocol bgp Equinix_Metal_2 {
+    ipv4 {
+      export filter equinix_metal_bgp;
+      import filter equinix_metal_bgp;
+    };
+    graceful restart;
+    local as 65000;
+    neighbor 169.254.255.2 as 65530;
+    password "YOURPASSWORDHERE";
+    multihop 4;
+}
+```
+
+
+#### Bird output examples
+```
+bird> show protocols
+Name       Proto      Table      State  Since         Info
+direct1    Direct     ---        up     17:21:40.286
+kernel1    Kernel     master4    up     17:21:40.286
+device1    Device     ---        up     17:21:40.286
+Equinix_Metal_1 BGP        ---        up     17:21:45.195  Established
+Equinix_Metal_2 BGP        ---        up     17:21:44.376  Established
+```
+
+```
+bird> show protocols all Equinix_Metal_1
+Name       Proto      Table      State  Since         Info
+Equinix_Metal_1 BGP        ---        up     17:21:45.195  Established
+  BGP state:          Established
+    Neighbor address: 169.254.255.1
+    Neighbor AS:      65530
+    Local AS:         65000
+    Neighbor ID:      136.144.54.16
+    Local capabilities
+      Multiprotocol
+        AF announced: ipv4
+      Route refresh
+      Graceful restart
+        Restart time: 120
+        AF supported: ipv4
+        AF preserved:
+      4-octet AS numbers
+      Enhanced refresh
+      Long-lived graceful restart
+    Neighbor capabilities
+      Multiprotocol
+        AF announced: ipv4
+      Route refresh
+      Graceful restart
+      4-octet AS numbers
+      ADD-PATH
+        RX: ipv4
+        TX:
+      Enhanced refresh
+    Session:          external multihop AS4
+    Source address:   10.67.63.5
+    Hold timer:       139.897/180
+    Keepalive timer:  21.217/60
+  Channel ipv4
+    State:          UP
+    Table:          master4
+    Preference:     100
+    Input filter:   equinix_metal_bgp
+    Output filter:  equinix_metal_bgp
+    Routes:         0 imported, 1 exported, 0 preferred
+    Route change stats:     received   rejected   filtered    ignored   accepted
+      Import updates:              0          0          0          0          0
+      Import withdraws:            0          0        ---          0          0
+      Export updates:              1          0          0        ---          1
+      Export withdraws:            0        ---        ---        ---          0
+    BGP Next hop:   10.67.63.5
+    IGP IPv4 table: master4
+```
+
+```
+bird> show protocols all
+Name       Proto      Table      State  Since         Info
+direct1    Direct     ---        up     17:21:40.286
+  Channel ipv4
+    State:          UP
+    Table:          master4
+    Preference:     240
+    Input filter:   ACCEPT
+    Output filter:  REJECT
+    Routes:         1 imported, 0 exported, 1 preferred
+    Route change stats:     received   rejected   filtered    ignored   accepted
+      Import updates:              1          0          0          0          1
+      Import withdraws:            0          0        ---          0          0
+      Export updates:              0          0          0        ---          0
+      Export withdraws:            0        ---        ---        ---          0
+
+kernel1    Kernel     master4    up     17:21:40.286
+  Channel ipv4
+    State:          UP
+    Table:          master4
+    Preference:     10
+    Input filter:   ACCEPT
+    Output filter:  ACCEPT
+    Routes:         0 imported, 1 exported, 0 preferred
+    Route change stats:     received   rejected   filtered    ignored   accepted
+      Import updates:              0          0          0          0          0
+      Import withdraws:            0          0        ---          0          0
+      Export updates:              1          0          0        ---          1
+      Export withdraws:            0        ---        ---        ---          0
+
+device1    Device     ---        up     17:21:40.286
+
+Equinix_Metal_1 BGP        ---        up     17:21:45.195  Established
+  BGP state:          Established
+    Neighbor address: 169.254.255.1
+    Neighbor AS:      65530
+    Local AS:         65000
+    Neighbor ID:      136.144.54.16
+    Local capabilities
+      Multiprotocol
+        AF announced: ipv4
+      Route refresh
+      Graceful restart
+        Restart time: 120
+        AF supported: ipv4
+        AF preserved:
+      4-octet AS numbers
+      Enhanced refresh
+      Long-lived graceful restart
+    Neighbor capabilities
+      Multiprotocol
+        AF announced: ipv4
+      Route refresh
+      Graceful restart
+      4-octet AS numbers
+      ADD-PATH
+        RX: ipv4
+        TX:
+      Enhanced refresh
+    Session:          external multihop AS4
+    Source address:   10.67.63.5
+    Hold timer:       139.130/180
+    Keepalive timer:  12.180/60
+  Channel ipv4
+    State:          UP
+    Table:          master4
+    Preference:     100
+    Input filter:   equinix_metal_bgp
+    Output filter:  equinix_metal_bgp
+    Routes:         0 imported, 1 exported, 0 preferred
+    Route change stats:     received   rejected   filtered    ignored   accepted
+      Import updates:              0          0          0          0          0
+      Import withdraws:            0          0        ---          0          0
+      Export updates:              1          0          0        ---          1
+      Export withdraws:            0        ---        ---        ---          0
+    BGP Next hop:   10.67.63.5
+    IGP IPv4 table: master4
+
+Equinix_Metal_2 BGP        ---        up     17:21:44.376  Established
+  BGP state:          Established
+    Neighbor address: 169.254.255.2
+    Neighbor AS:      65530
+    Local AS:         65000
+    Neighbor ID:      136.144.54.17
+    Local capabilities
+      Multiprotocol
+        AF announced: ipv4
+      Route refresh
+      Graceful restart
+        Restart time: 120
+        AF supported: ipv4
+        AF preserved:
+      4-octet AS numbers
+      Enhanced refresh
+      Long-lived graceful restart
+    Neighbor capabilities
+      Multiprotocol
+        AF announced: ipv4
+      Route refresh
+      Graceful restart
+      4-octet AS numbers
+      ADD-PATH
+        RX: ipv4
+        TX:
+      Enhanced refresh
+    Session:          external multihop AS4
+    Source address:   10.67.63.5
+    Hold timer:       111.183/180
+    Keepalive timer:  51.778/60
+  Channel ipv4
+    State:          UP
+    Table:          master4
+    Preference:     100
+    Input filter:   equinix_metal_bgp
+    Output filter:  equinix_metal_bgp
+    Routes:         0 imported, 1 exported, 0 preferred
+    Route change stats:     received   rejected   filtered    ignored   accepted
+      Import updates:              0          0          0          0          0
+      Import withdraws:            0          0        ---          0          0
+      Export updates:              1          0          0        ---          1
+      Export withdraws:            0        ---        ---        ---          0
+    BGP Next hop:   10.67.63.5
+    IGP IPv4 table: master4
+```
+	
