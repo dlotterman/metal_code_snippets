@@ -63,12 +63,9 @@ So to clarify, if you are reading documentation where the BGP neighbor is a priv
 
 The customer facing BGP endpoint is hosted on an instance’s ToR, always on the pre-defined `169.254.255.1/32`,`169.254.255.2/32` Peer IPs, which are [link-local](https://en.wikipedia.org/wiki/Link-local_address) IPs.
 
-These Peer IPs can be reached via either the instance's [Public Network]((https://metal.equinix.com/developers/docs/networking/ip-addresses/#public-ipv4-subnet)) Gateway, or it's [Private Network](https://metal.equinix.com/developers/docs/networking/ip-addresses/#private-ipv4-management-subnets) Gateway.
+Those peering IP's expect to be reached via the [Metal Private network](https://metal.equinix.com/developers/docs/networking/ip-addresses/#private-ipv4-management-subnets), **NOT** the [Metal Public Network](https://metal.equinix.com/developers/docs/networking/ip-addresses/#public-ipv4-subnet). To be clear, that means you must peer via your instances `10.0.0.0/8` IP address, not via its Public IP address (for example `145.40.76.240/28`).
 
 In the case of Linux networking and software routing, there are some differences in behavior between different ecosystems. 
-
-### FRR
-For example, FRR, a common linux networking tool, has difficulty BGP peering with the Peering / link-local IP's over Linux's default gateway statement to the Public gateway. So for FRR+Linux, a static route must be issued to reach the Peering IPs via the Private Gateway.
 
 On a default Metal Linux instance, this would look like:
 
@@ -79,16 +76,16 @@ Where `10.70.114.145` is the gateway IP for the instance's Metal [Private Networ
 
 ### Bird
 
-In the birf `1.X` config scheme, best behavior is observed by [specifying a static route the Public Gateway](https://deploy.equinix.com/developers/docs/metal/bgp/route-bgp-with-bird/#filling-out-the-bird-configuration-file):
+In the Bird `1.X` config:
 
 ```
 protocol static {
-  route 169.254.255.1/32 via 198.51.100.0;
-  route 169.254.255.2/32 via 198.51.100.0;
+  route 169.254.255.1/32 via 10.70.114.145;
+  route 169.254.255.2/32 via 10.70.114.145;
 }
 ```
 
-In the Bird `2.X` config scheme, there is no need for this static route specificity.
+In the Bird `2.X` config scheme, there is no need for this static route specificity int the config, 
 
 An example complete Bird `2.X` config, generated from [Equinix-Metal-BGP](https://github.com/enkelprifti98/Equinix-Metal-BGP) is printed below in this document
 
