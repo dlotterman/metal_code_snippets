@@ -1,17 +1,5 @@
 #cloud-config
 
-# This cloud-init file is intended to provide a "no-code" way of deploying
-# a safe and sane Ubuntu 20.04 instance on Metal
-# It does the following:
-# 1. Updates all packages / system state, including necessary reboots
-# 2. Installs commonly used packages
-# 3. Moves from root user -> adminuser
-# 4. Turns up the firewall with deny all, allow ssh, allow management traffic (10.x.x.x) network)
-# 5. Enables the UFW limit function on ssh to double guard with fail2ban
-# 6. Enables automatic updates (for security, so things like SSHD are automatically updated)
-# 7. Enables fail2ban on SSHD
-
-# This is broken while dist-upgrade is available
 package_upgrade: false
 package_reboot_if_required: false
 

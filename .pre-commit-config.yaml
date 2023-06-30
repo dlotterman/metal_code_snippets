@@ -1,0 +1,6 @@
+repos:
+  - repo: https://github.com/gitleaks/gitleaks
+    rev: v8.17.0
+    hooks:
+      - id: gitleaks
+        args: ['-c', 'gitleaks_em.toml', '--report-path', 'gitleaks-report.json', '--baseline-path', 'gitleaks-report.json']
