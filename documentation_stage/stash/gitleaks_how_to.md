@@ -63,6 +63,11 @@ Fingerprint: documentation_stage/stash/metal_rescue_clone.md:generic-api-key:40
 9:40PM WRN leaks found: 4
 ```
 
+It should be noted there are other, important ways to protect Secret privacy:
+
+- [Github: Securing your repository](https://docs.github.com/en/code-security/getting-started/securing-your-repository) # **DO THIS!!**
+- [Github: Code scanning](https://docs.github.com/en/code-security/code-scanning/automatically-scanning-your-code-for-vulnerabilities-and-errors/about-code-scanning)
+
 # Install Gitleaks CLI (Optional)
 
 [Gitleaks](https://github.com/gitleaks/gitleaks#installing) documents a couple of different paths for installing itself.
