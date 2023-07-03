@@ -14,7 +14,7 @@
     placement_admin_password: placementadmin1234
     neutron_admin_password: neutronadmin1234
     os_metadata_secret: osmetadatasecret1234
-    
+
   tasks:
     - name: openstack_install_nova_node_packages
       become: yes
@@ -26,7 +26,7 @@
 
     - name: openstack_nova_template_conf
       become: yes
-      become_method: sudo    
+      become_method: sudo
       template:
         src: nova_node.conf.j2
         dest: /etc/nova/nova.conf
@@ -39,6 +39,6 @@
         name: "{{ item }}"
         state: restarted
         enabled: yes
-      when: nova_conf.changed    
+      when: nova_conf.changed
       with_items:
         - nova-compute

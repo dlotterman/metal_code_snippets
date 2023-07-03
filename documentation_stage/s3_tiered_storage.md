@@ -10,7 +10,7 @@ A couple of clarifications before beginning:
 
 ### dm-cache vs dm-writecache
 
-In the early 2010's, there were (and still are) two different "fast disk to cache slow disk" projects, *dm-cache* and *dm-writecache*. 
+In the early 2010's, there were (and still are) two different "fast disk to cache slow disk" projects, *dm-cache* and *dm-writecache*.
 
 * dm-cache is intended to be bi-directional (read / write) cache device not dissimilar in role from a RAID controllers cache functionality or a combination of ZFS's L2Arc / ZIL / SLOG functionality for Device Mapper devices
 * dm-writecache is focused exclusively and specifically on providing a write cache in front of a Device Mapper device
@@ -39,7 +39,7 @@ The use of Discard / TRIM with Linux storage devices and designs is also complex
 ### (Lack of) High Availability
 For simplicities sake, this document assumed **NO** redundancy of the cache drive. This means the cache drive / caching function **IS** implicitly a Single Point of Failure.
 
-There are a number of ways to design availability into this tier, just the number of options fall beyond the scope of this doc. 
+There are a number of ways to design availability into this tier, just the number of options fall beyond the scope of this doc.
 
 ### Storage inside the *s3.xlarge.x86*
 The three tiers of storage inside the*s3* are:
@@ -127,48 +127,48 @@ lvconvert --type cache-pool --cachemode writeback --poolmetadata vg_01/lv_01_cac
 lvconvert --type cache --cachepool vg_01/lv_01_cache vg_01/lv_01
 ```
 
-#### Confirm 
+#### Confirm
 The `lvs -a -o +devices` command can be used to get a quick sense of a complete configuration:
 
 ```
 # lvs -a -o +devices
-  LV                        VG    Attr       LSize   Pool                Origin        Data%  Meta%  Move Log Cpy%Sync Convert Devices                                                                                                          
-  lv_01                     vg_01 Cwi-a-C---  43.66t [lv_01_cache_cpool] [lv_01_corig] 0.01   16.07           0.00             lv_01_corig(0)                                                                                                   
-  [lv_01_cache_cpool]       vg_01 Cwi---C--- 238.47g                                   0.01   16.07           0.00             lv_01_cache_cpool_cdata(0)                                                                                       
-  [lv_01_cache_cpool_cdata] vg_01 Cwi-ao---- 238.47g                                                                           /dev/nvme0n1(0)                                                                                                  
-  [lv_01_cache_cpool_cmeta] vg_01 ewi-ao----  48.00m                                                                           /dev/nvme1n1(54944)                                                                                              
-  lv_01_cache_meta          vg_01 -wi------- 214.62g                                                                           /dev/nvme1n1(0)                                                                                                  
+  LV                        VG    Attr       LSize   Pool                Origin        Data%  Meta%  Move Log Cpy%Sync Convert Devices
+  lv_01                     vg_01 Cwi-a-C---  43.66t [lv_01_cache_cpool] [lv_01_corig] 0.01   16.07           0.00             lv_01_corig(0)
+  [lv_01_cache_cpool]       vg_01 Cwi---C--- 238.47g                                   0.01   16.07           0.00             lv_01_cache_cpool_cdata(0)
+  [lv_01_cache_cpool_cdata] vg_01 Cwi-ao---- 238.47g                                                                           /dev/nvme0n1(0)
+  [lv_01_cache_cpool_cmeta] vg_01 ewi-ao----  48.00m                                                                           /dev/nvme1n1(54944)
+  lv_01_cache_meta          vg_01 -wi------- 214.62g                                                                           /dev/nvme1n1(0)
   [lv_01_corig]             vg_01 rwi-aoC---  43.66t                                                          0.02             lv_01_corig_rimage_0(0),lv_01_corig_rimage_1(0),lv_01_corig_rimage_2(0),lv_01_corig_rimage_3(0),lv_01_corig_rimage_4(0),lv_01_corig_rimage_5(0),lv_01_corig_rimage_6(0),lv_01_corig_rimage_7(0),lv_01_corig_rimage_8(0),lv_01_corig_rimage_9(0),lv_01_corig_rimage_10(0),lv_01_corig_rimage_11(0)
-  [lv_01_corig_rimage_0]    vg_01 Iwi-aor---  <7.28t                                                                           /dev/sdk(1)                                                                                                      
-  [lv_01_corig_rimage_1]    vg_01 Iwi-aor---  <7.28t                                                                           /dev/sdg(1)                                                                                                      
-  [lv_01_corig_rimage_10]   vg_01 Iwi-aor---  <7.28t                                                                           /dev/sdl(1)                                                                                                      
-  [lv_01_corig_rimage_11]   vg_01 Iwi-aor---  <7.28t                                                                           /dev/sdd(1)                                                                                                      
-  [lv_01_corig_rimage_2]    vg_01 Iwi-aor---  <7.28t                                                                           /dev/sdn(1)                                                                                                      
-  [lv_01_corig_rimage_3]    vg_01 Iwi-aor---  <7.28t                                                                           /dev/sde(1)                                                                                                      
-  [lv_01_corig_rimage_4]    vg_01 Iwi-aor---  <7.28t                                                                           /dev/sdh(1)                                                                                                      
-  [lv_01_corig_rimage_5]    vg_01 Iwi-aor---  <7.28t                                                                           /dev/sdf(1)                                                                                                      
-  [lv_01_corig_rimage_6]    vg_01 Iwi-aor---  <7.28t                                                                           /dev/sdi(1)                                                                                                      
-  [lv_01_corig_rimage_7]    vg_01 Iwi-aor---  <7.28t                                                                           /dev/sdj(1)                                                                                                      
-  [lv_01_corig_rimage_8]    vg_01 Iwi-aor---  <7.28t                                                                           /dev/sdc(1)                                                                                                      
-  [lv_01_corig_rimage_9]    vg_01 Iwi-aor---  <7.28t                                                                           /dev/sdm(1)                                                                                                      
-  [lv_01_corig_rmeta_0]     vg_01 ewi-aor---   4.00m                                                                           /dev/sdk(0)                                                                                                      
-  [lv_01_corig_rmeta_1]     vg_01 ewi-aor---   4.00m                                                                           /dev/sdg(0)                                                                                                      
-  [lv_01_corig_rmeta_10]    vg_01 ewi-aor---   4.00m                                                                           /dev/sdl(0)                                                                                                      
-  [lv_01_corig_rmeta_11]    vg_01 ewi-aor---   4.00m                                                                           /dev/sdd(0)                                                                                                      
-  [lv_01_corig_rmeta_2]     vg_01 ewi-aor---   4.00m                                                                           /dev/sdn(0)                                                                                                      
-  [lv_01_corig_rmeta_3]     vg_01 ewi-aor---   4.00m                                                                           /dev/sde(0)                                                                                                      
-  [lv_01_corig_rmeta_4]     vg_01 ewi-aor---   4.00m                                                                           /dev/sdh(0)                                                                                                      
-  [lv_01_corig_rmeta_5]     vg_01 ewi-aor---   4.00m                                                                           /dev/sdf(0)                                                                                                      
-  [lv_01_corig_rmeta_6]     vg_01 ewi-aor---   4.00m                                                                           /dev/sdi(0)                                                                                                      
-  [lv_01_corig_rmeta_7]     vg_01 ewi-aor---   4.00m                                                                           /dev/sdj(0)                                                                                                      
-  [lv_01_corig_rmeta_8]     vg_01 ewi-aor---   4.00m                                                                           /dev/sdc(0)                                                                                                      
-  [lv_01_corig_rmeta_9]     vg_01 ewi-aor---   4.00m                                                                           /dev/sdm(0)                                                                                                      
+  [lv_01_corig_rimage_0]    vg_01 Iwi-aor---  <7.28t                                                                           /dev/sdk(1)
+  [lv_01_corig_rimage_1]    vg_01 Iwi-aor---  <7.28t                                                                           /dev/sdg(1)
+  [lv_01_corig_rimage_10]   vg_01 Iwi-aor---  <7.28t                                                                           /dev/sdl(1)
+  [lv_01_corig_rimage_11]   vg_01 Iwi-aor---  <7.28t                                                                           /dev/sdd(1)
+  [lv_01_corig_rimage_2]    vg_01 Iwi-aor---  <7.28t                                                                           /dev/sdn(1)
+  [lv_01_corig_rimage_3]    vg_01 Iwi-aor---  <7.28t                                                                           /dev/sde(1)
+  [lv_01_corig_rimage_4]    vg_01 Iwi-aor---  <7.28t                                                                           /dev/sdh(1)
+  [lv_01_corig_rimage_5]    vg_01 Iwi-aor---  <7.28t                                                                           /dev/sdf(1)
+  [lv_01_corig_rimage_6]    vg_01 Iwi-aor---  <7.28t                                                                           /dev/sdi(1)
+  [lv_01_corig_rimage_7]    vg_01 Iwi-aor---  <7.28t                                                                           /dev/sdj(1)
+  [lv_01_corig_rimage_8]    vg_01 Iwi-aor---  <7.28t                                                                           /dev/sdc(1)
+  [lv_01_corig_rimage_9]    vg_01 Iwi-aor---  <7.28t                                                                           /dev/sdm(1)
+  [lv_01_corig_rmeta_0]     vg_01 ewi-aor---   4.00m                                                                           /dev/sdk(0)
+  [lv_01_corig_rmeta_1]     vg_01 ewi-aor---   4.00m                                                                           /dev/sdg(0)
+  [lv_01_corig_rmeta_10]    vg_01 ewi-aor---   4.00m                                                                           /dev/sdl(0)
+  [lv_01_corig_rmeta_11]    vg_01 ewi-aor---   4.00m                                                                           /dev/sdd(0)
+  [lv_01_corig_rmeta_2]     vg_01 ewi-aor---   4.00m                                                                           /dev/sdn(0)
+  [lv_01_corig_rmeta_3]     vg_01 ewi-aor---   4.00m                                                                           /dev/sde(0)
+  [lv_01_corig_rmeta_4]     vg_01 ewi-aor---   4.00m                                                                           /dev/sdh(0)
+  [lv_01_corig_rmeta_5]     vg_01 ewi-aor---   4.00m                                                                           /dev/sdf(0)
+  [lv_01_corig_rmeta_6]     vg_01 ewi-aor---   4.00m                                                                           /dev/sdi(0)
+  [lv_01_corig_rmeta_7]     vg_01 ewi-aor---   4.00m                                                                           /dev/sdj(0)
+  [lv_01_corig_rmeta_8]     vg_01 ewi-aor---   4.00m                                                                           /dev/sdc(0)
+  [lv_01_corig_rmeta_9]     vg_01 ewi-aor---   4.00m                                                                           /dev/sdm(0)
   [lvol0_pmspare]           vg_01 ewi-------  48.00m                                                                           /dev/nvme1n1(54956)    ```
 ```
 
 
 #### Enable Writeback
-"writeback" on a disk cache generally, and in this case, refers to the possible dangerous act of acknowledging a succesful write to a client when a write I/O lands on the cache device, but not necissarily the underlying non-volitile device (our RAID10), with the expectation it will reach the underlying device eventually. 
+"writeback" on a disk cache generally, and in this case, refers to the possible dangerous act of acknowledging a succesful write to a client when a write I/O lands on the cache device, but not necissarily the underlying non-volitile device (our RAID10), with the expectation it will reach the underlying device eventually.
 
 This can significantly enhance performance, but it is extremely important to understand the consequences to data availability.
 
@@ -183,7 +183,7 @@ lvchange --cachemode writeback vg_01/lv_01
 
 Watching the different caches can be complicated.  The "ahammer" blog from above provides a great script that can be found here: [lvmcache-statistics.sh](http://www.ahammer.ch/manuals/linux/lvm/lvmcache-statistics.sh)
 
-When trying to understand the cache, the presented statistics can be confusing, especially around state of the write cache. The `Cpy%Sync` column of the `lvs -a` output will show 2x different hints. 
+When trying to understand the cache, the presented statistics can be confusing, especially around state of the write cache. The `Cpy%Sync` column of the `lvs -a` output will show 2x different hints.
 
 * For the HDD / RAID DM, it will show the current state / percentage complete in building or the state of the RAID Device Mapper. So if just created, it is expected to be at ~0%. In a healthy / idle state, it should be at 100%.
 * For the Cache enabled volume, this column will show what percentage of the "data" cache is considered dirty, or needs to be written from NVMe down to HDD.
@@ -201,6 +201,6 @@ Other useful commands stashed here with no reference:
 
 * `lvs -o cache_dirty_blocks,cache_policy`
 * `lvs -o name,cache_policy,cache_settings,chunk_size,cache_used_blocks,cache_dirty_blocks`
-* `lvs -o+chunksize` 
+* `lvs -o+chunksize`
 * `sync; echo 3 > /proc/sys/vm/drop_caches`
 * `dmsetup ls --tree`

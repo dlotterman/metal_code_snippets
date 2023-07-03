@@ -16,4 +16,3 @@
 8: bond0.121@bond0: <BROADCAST,MULTICAST,UP,LOWER_UP> mtu 1500 qdisc noqueue state UP group default qlen 1000
     inet 169.254.254.12/29 brd 169.254.254.15 scope global bond0.121
     inet6 fe80::b696:91ff:fe70:2010/64 scope link
-

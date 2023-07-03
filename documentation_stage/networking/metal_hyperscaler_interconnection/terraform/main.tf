@@ -15,7 +15,7 @@ provider "equinix" {
 }
 
 
-provider "aws" { 
+provider "aws" {
   region = var.aws_region
 }
 
@@ -94,7 +94,7 @@ resource "equinix_metal_port_vlan_attachment" "interconnect-gcp01_convert_networ
   vlan_vnid = equinix_metal_vlan.interconnect_traffic_local_vlan01.vxlan
 }
 
-# ### 
+# ###
 
 resource "equinix_metal_device" "interconnect-gcp02" {
   hostname = "interconnect-gcp02"
@@ -119,7 +119,7 @@ resource "equinix_metal_port_vlan_attachment" "interconnect-gcp02_convert_networ
   vlan_vnid = equinix_metal_vlan.interconnect_host_local_vlan01.vxlan
 }
 
-# ### 
+# ###
 
 resource "equinix_metal_device" "worker-gcp01" {
   hostname = "worker-gcp01"
@@ -164,13 +164,13 @@ resource "aws_vpc" "this" {
 
 module "equinix-fabric-connection-aws-primary" {
   source = "equinix-labs/fabric-connection-aws/equinix"
-  
+
   fabric_notification_users     = var.fabric_notification_users
   fabric_connection_name        = local.connection_name
   fabric_destination_metro_code = var.fabric_destination_metro_code
   fabric_speed                  = var.fabric_speed
   fabric_service_token_id       = equinix_metal_connection.this.service_tokens.0.id
-  
+
   aws_account_id = var.aws_account_id
 
   aws_dx_create_vgw = true

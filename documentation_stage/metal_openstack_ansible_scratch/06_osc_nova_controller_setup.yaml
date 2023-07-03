@@ -8,7 +8,7 @@
     placement_admin_password: placementadmin1234
     neutron_admin_password: neutronadmin1234
     os_metadata_secret: osmetadatasecret1234
-    
+
   tasks:
     - name: openstack_install_nova_controller_packages
       become: yes
@@ -23,8 +23,8 @@
 
     - name: openstack_nova_mysql_db_create
       become: yes
-      become_method: sudo     
-      mysql_db: 
+      become_method: sudo
+      mysql_db:
         name: "{{ item }}"
         state: present
         login_unix_socket: /var/run/mysqld/mysqld.sock
@@ -35,8 +35,8 @@
 
     - name: openstack_nova_mysql_novadb_user_create
       become: yes
-      become_method: sudo    
-      mysql_user: 
+      become_method: sudo
+      mysql_user:
         name: nova
         append_privs: yes
         password: "{{ nova_mysql_password }}"
@@ -52,8 +52,8 @@
 
     - name: openstack_nova_mysql_nova_api_db_user_create
       become: yes
-      become_method: sudo    
-      mysql_user: 
+      become_method: sudo
+      mysql_user:
         name: nova
         append_privs: yes
         password: "{{ nova_mysql_password }}"
@@ -69,8 +69,8 @@
 
     - name: openstack_nova_mysql_nova_cell0_db_user_create
       become: yes
-      become_method: sudo    
-      mysql_user: 
+      become_method: sudo
+      mysql_user:
         name: nova
         append_privs: yes
         password: "{{ nova_mysql_password }}"
@@ -105,7 +105,7 @@
     - name: openstack_nova_osuser_create_touch_file
       become: yes
       become_method: sudo
-      file: 
+      file:
         path: /metal/lock/novaosusercreate.lock
         state: touch
       when: novaosusercreate.changed
@@ -130,11 +130,11 @@
     - name: openstack_nova_osrole_create_touch_file
       become: yes
       become_method: sudo
-      file: 
+      file:
         path: /metal/lock/novaosrolecreate.lock
         state: touch
       when: novaosrolecreate.changed
-      
+
     - name: openstack_nova_osservice_create
       become: yes
       become_method: sudo
@@ -155,10 +155,10 @@
     - name: openstack_nova_osservice_create_touch_file
       become: yes
       become_method: sudo
-      file: 
+      file:
         path: /metal/lock/novaosservicecreate.lock
         state: touch
-      when: novaosservicecreate.changed          
+      when: novaosservicecreate.changed
 
     - name: openstack_nova_osendpoint_public_create
       become: yes
@@ -180,10 +180,10 @@
     - name: openstack_nova_osendpoint_public_create_touch_file
       become: yes
       become_method: sudo
-      file: 
+      file:
         path: /metal/lock/novaosendpointpublic.lock
         state: touch
-      when: novaosendpointpublic.changed   
+      when: novaosendpointpublic.changed
 
     - name: openstack_nova_osendpoint_internal_create
       become: yes
@@ -205,10 +205,10 @@
     - name: openstack_nova_osendpoint_internal_create_touch_file
       become: yes
       become_method: sudo
-      file: 
+      file:
         path: /metal/lock/novaosendpointinternal.lock
         state: touch
-      when: novaosendpointinternal.changed   
+      when: novaosendpointinternal.changed
 
     - name: openstack_nova_osendpoint_admin_create
       become: yes
@@ -230,19 +230,19 @@
     - name: openstack_nova_osendpoint_admin_create_touch_file
       become: yes
       become_method: sudo
-      file: 
+      file:
         path: /metal/lock/novaosendpointadmin.lock
         state: touch
       when: novaosendpointadmin.changed
 
     - name: openstack_nova_template_conf
       become: yes
-      become_method: sudo    
+      become_method: sudo
       template:
         src: nova_controller.conf.j2
         dest: /etc/nova/nova.conf
       register: nova_conf
-      
+
     - name: openstack_apache_restart
       become: yes
       become_method: sudo
@@ -250,7 +250,7 @@
         name: apache2
         state: restarted
         enabled: yes
-      when: nova_conf.changed 
+      when: nova_conf.changed
 
     - name: openstack_nova_restart
       become: yes
@@ -259,16 +259,16 @@
         name: "{{ item }}"
         state: restarted
         enabled: yes
-      when: nova_conf.changed    
+      when: nova_conf.changed
       with_items:
         - nova-api
         - nova-scheduler
         - nova-conductor
         - nova-novncproxy
-        
+
     - name: openstack_nova_api_db_populate
       become: yes
-      become_method: sudo  
+      become_method: sudo
       shell: su -s /bin/sh -c "nova-manage api_db sync" nova
       args:
         creates: /metal/lock/nova_api_manage_db_sync.lock
@@ -277,14 +277,14 @@
     - name: openstack_nova_api_db_touch_file
       become: yes
       become_method: sudo
-      file: 
+      file:
         path: /metal/lock/nova_api_manage_db_sync.lock
         state: touch
       when: nova_api_manage_db_sync.changed
 
     - name: openstack_novacellv2_mapcell0_db_populate
       become: yes
-      become_method: sudo  
+      become_method: sudo
       shell: su -s /bin/sh -c "nova-manage cell_v2 map_cell0" nova
       args:
         creates: /metal/lock/nova_cellv2_map_cell0_db_sync.lock
@@ -293,14 +293,14 @@
     - name: openstack_novacellv2_mapcell0_db_touch_file
       become: yes
       become_method: sudo
-      file: 
+      file:
         path: /metal/lock/nova_cellv2_map_cell0_db_sync.lock
         state: touch
       when: nova_cellv2_map_cell0_db_sync.changed
-      
+
     - name: openstack_novacellv2_createcell1_db_populate
       become: yes
-      become_method: sudo  
+      become_method: sudo
       shell: su -s /bin/sh -c "nova-manage cell_v2 create_cell --name=cell1 --verbose" nova
       args:
         creates: /metal/lock/nova_cellv2_create_cell1_db_sync.lock
@@ -309,15 +309,15 @@
     - name: openstack_novacellv2_createcell1_db_touch_file
       become: yes
       become_method: sudo
-      file: 
+      file:
         path: /metal/lock/nova_cellv2_create_cell1_db_sync.lock
         state: touch
-      when: nova_cellv2_create_cell1_db_sync.changed            
+      when: nova_cellv2_create_cell1_db_sync.changed
 
       #This is so horrible. Why?
     - name: openstack_nova_db_populate
       become: yes
-      become_method: sudo  
+      become_method: sudo
       shell: su -s /bin/sh -c "nova-manage db sync" nova
       args:
         creates: /metal/lock/nova_manage_db_sync.lock
@@ -326,8 +326,7 @@
     - name: openstack_nova_db_touch_file
       become: yes
       become_method: sudo
-      file: 
+      file:
         path: /metal/lock/nova_manage_db_sync.lock
         state: touch
       when: nova_manage_db_sync.changed
-

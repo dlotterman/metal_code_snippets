@@ -1,6 +1,21 @@
 repos:
   - repo: https://github.com/gitleaks/gitleaks
-    rev: v8.16.1
+    rev: v8.17.0
     hooks:
       - id: gitleaks
-        args: ['-c', 'gitleaks_em.toml',  '--baseline-path', 'gitleaks-report.json']
+        args: ['-c', 'gitleaks_em.toml', '--baseline-path', 'gitleaks-report.json']
+  - repo: https://github.com/pre-commit/pre-commit-hooks
+    rev: v4.4.0
+    hooks:
+    -   id: check-yaml
+    -   id: check-json
+    -   id: end-of-file-fixer
+    -   id: trailing-whitespace
+    -   id: check-toml
+      #-   id: pretty-format-json
+    -   id: sort-simple-yaml
+    -   id: double-quote-string-fixer
+  - repo: https://github.com/psf/black
+    rev: 22.10.0
+    hooks:
+    -   id: black

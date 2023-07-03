@@ -14,12 +14,12 @@
 
     - name: openstack_horizon_template_conf
       become: yes
-      become_method: sudo    
+      become_method: sudo
       template:
         src: local_settings.py.j2
         dest: /etc/openstack-dashboard/local_settings.py
       register: horizon_conf
-      
+
     - name: openstack_glance_restart
       become: yes
       become_method: sudo
@@ -32,4 +32,4 @@
     - name: hosts_ufw_allow_http
       become: yes
       become_method: sudo
-      ufw: proto=tcp port=80 rule=allow         
+      ufw: proto=tcp port=80 rule=allow

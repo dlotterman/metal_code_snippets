@@ -42,7 +42,7 @@ Deploy the instance:
 		- No OS will be installed at this point, the server will intentionally stall out in a shell in the iPXE context, but "going green" signifies that the platform has correctly populated all of the metadata for the instance.
 
 ### Collecting Metal instance Metadata
-In order to build the cluster in the Redhat cloud platform, we need the Metal IP addresses, gateways and MAC addresses. 
+In order to build the cluster in the Redhat cloud platform, we need the Metal IP addresses, gateways and MAC addresses.
 
 The following [Metal CLI](https://github.com/equinix/metal-cli/) commands should capture the needed info. This document assumes you have configured Metal CLI
 
@@ -69,7 +69,7 @@ We will now follow the steps to create the SNO Cluster object in the Redhat clou
 
 The general flow is as follows:
 - First we create the OpenShift Cluster object in the Redhat Cloud Console
-- The Redhat Cloud Console will provide is with an ISO (with metadata provided here loaded) 
+- The Redhat Cloud Console will provide is with an ISO (with metadata provided here loaded)
 - The instance we have already provisioned is configured to boot from that ISO
 - The Redhat Cloud platform will supervise the installation and configuration of OpenShift SNO from there
 
@@ -142,7 +142,7 @@ routes:
 - Proceed
 	- ![](https://s3.us-east-1.wasabisys.com/metalstaticassets/ocpsno/update_metal_instance_06.PNG)
 - Leave storage at defaults
-	- ![](https://s3.us-east-1.wasabisys.com/metalstaticassets/ocpsno/update_metal_instance_07.PNG)	
+	- ![](https://s3.us-east-1.wasabisys.com/metalstaticassets/ocpsno/update_metal_instance_07.PNG)
 - Leave networking at defaults
 	- ![](https://s3.us-east-1.wasabisys.com/metalstaticassets/ocpsno/update_metal_instance_08.PNG)
 - Install Cluster
@@ -158,8 +158,8 @@ routes:
 	- `apps.DOMAIN` needs to point to the IP listed
 		- So example `apps.sno-ocp01.ocp-da01.dlott.casa -> 139.178.87.26`
 	- `*.apps.DOMAIN` wildcard needs to point to the IP listed
-		- So example `*.apps.sno-ocp01.ocp-da01.dlott.casa -> 139.178.87.26`	
+		- So example `*.apps.sno-ocp01.ocp-da01.dlott.casa -> 139.178.87.26`
 	- `api.DOMAIN` needs to point to the IP listed
 		- Some example `api.sno-ocp01.ocp-da01.dlott.casa -> 139.178.87.26`
 - Login to OpenShift
-	- ![](https://s3.us-east-1.wasabisys.com/metalstaticassets/ocpsno/installation_complete_02.PNG)	
+	- ![](https://s3.us-east-1.wasabisys.com/metalstaticassets/ocpsno/installation_complete_02.PNG)

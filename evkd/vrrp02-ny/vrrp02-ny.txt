@@ -13,7 +13,7 @@ ip link add link bond0 name bond0.1529 type vlan id 1529
 ip addr add 172.16.25.30/24 dev bond0.1529
 ip link set dev bond0.1529 up
 
-ufw allow from 172.16.0.0/12 
+ufw allow from 172.16.0.0/12
 
 
 
@@ -103,12 +103,12 @@ vrrp_instance VC_1_VI_1 {
     track_script {
         VC_1_VI_1_peer_check
         VC_1_VI_1_remote_check
-      }    
+      }
 
     track_file {
         VC_1_VI_1_track_file weight 1
 
-      }      
+      }
 
     notify_master "/tmp/vrrp_02_vc_1_vi_1_vc_switcher.sh" adminuser
 
@@ -156,15 +156,15 @@ vrrp_instance VC_2_VI_2 {
     track_script {
         VC_2_VI_2_peer_check
         VC_2_VI_2_remote_check
-      }    
+      }
 
     track_file {
         VC_2_VI_2_track_file weight 1
-      }         
+      }
 
     notify_master "/tmp/vrrp_02_vc_2_vi_2_vc_switcher.sh" adminuser
 }
-    
+
 EOL
 
 
@@ -185,8 +185,8 @@ VRRPRACKFILE=$5
 function pingcheck {
     PING=$(fping -t $TIMEOUT -c $NUMPING $HOST | grep -c bytes)
     echo "$(tail -10000 $LOGFILE)" > $LOGFILE # just not letting the log file grow to much
-    if [ $PING -ge $NUMPING ]; then 
-        
+    if [ $PING -ge $NUMPING ]; then
+
         echo "$(date +"%Y-%m-%d_%H%M%S") - $HOST UP" | tee -a $LOGFILE
         exit 0
     else

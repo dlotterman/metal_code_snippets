@@ -49,7 +49,7 @@ datasource:
 
 bootcmd:
   - systemctl enable sshd || true
- 
+
 runcmd:
   - systemctl disable sshd
   - systemctl stop sshd
@@ -112,4 +112,3 @@ write_files:
       debuglevel = -2
       mdpolicy = group:main
     permissions: '0644'
-

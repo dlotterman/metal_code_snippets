@@ -9,4 +9,3 @@ kernel ${BASEURL}/rhcos-4.8.14-x86_64-live-kernel-x86_64 initrd=main coreos.live
 initrd --name main ${BASEURL}/rhcos-4.8.14-x86_64-live-initramfs.x86_64.img
 
 boot
-

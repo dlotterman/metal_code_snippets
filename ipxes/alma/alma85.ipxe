@@ -5,4 +5,3 @@ set base http://ipxe.dlott.casa/util/alma/85
 kernel ${base}/images/pxeboot/vmlinuz initrd=initrd.img inst.repo=${base}/ console=tty0 console=ttyS1,115200n8 inst.text ip=dhcp rd.shell
 initrd ${base}/images/pxeboot/initrd.img
 boot || read void
-

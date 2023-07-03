@@ -15,7 +15,7 @@
     neutron_admin_password: neutronadmin1234
     os_metadata_secret: osmetadatasecret1234
     neutron_mysql_password: neutronmysql1234
-    
+
   tasks:
     - name: openstack_install_neutron_node_packages
       become: yes
@@ -27,7 +27,7 @@
 
     - name: openstack_neutron_template_conf
       become: yes
-      become_method: sudo    
+      become_method: sudo
       template:
         src: neutron_controller.conf.j2
         dest: /etc/neutron/neutron.conf
@@ -35,7 +35,7 @@
 
     - name: openstack_neutron_linuxbridge_agent_template_conf
       become: yes
-      become_method: sudo    
+      become_method: sudo
       template:
         src: linuxbridge_agent.ini.j2
         dest: /etc/neutron/plugins/ml2/linuxbridge_agent.ini
@@ -49,7 +49,7 @@
         name: "{{ item }}"
         state: restarted
         enabled: yes
-      when: neutron_conf.changed or openstack_neutron_linuxbridge_agent_template_conf.changed 
+      when: neutron_conf.changed or openstack_neutron_linuxbridge_agent_template_conf.changed
       with_items:
         - nova-compute
         - neutron-linuxbridge-agent

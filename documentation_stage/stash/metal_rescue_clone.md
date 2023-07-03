@@ -118,7 +118,7 @@ mount -t xfs /dev/sda /tmp/mount
 ## Copy target's boot disk
 ```
 # dd if=/dev/sdc bs=8M | pv | dd of=/tmp/mount/image01-sv-sdc.dd
-1.52GiB 0:00:08 [ 185MiB/s] [             <=>                                   
+1.52GiB 0:00:08 [ 185MiB/s] [             <=>
 ```
 
 ```

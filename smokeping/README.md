@@ -1,6 +1,6 @@
 # Metal Smokeping Instance
 
-Copy + Paste Smokeping Instance / Appliance for Equinix Metal. 
+Copy + Paste Smokeping Instance / Appliance for Equinix Metal.
 
 ## What it is
 This script, in conjunction with the associated [cloud-init](../boiler_plate_cloud_inits/smokeping_ubuntu_2004.yaml) file, will turn a Metal instance provisioned with Ubuntu 20.04 into a self-configuring smokeping instance. This is intended to be used for troubleshooting or gathering an understanding of the latency characteristics of various network endpoints from the perspective of the launched instance, ideally with "no-code" or "no-ops" besides the copying and pasting of the cloud-init text into the user_data field of the Equinix Metal instance as it is launched.
@@ -34,9 +34,9 @@ To add to the targets being monitored, simply SSH in as `adminuser`, and add to 
 
 [![unstable](http://badges.github.io/stability-badges/dist/unstable.svg)](http://github.com/badges/stability-badges)
 
-This code / project is intended for non-production operation use. It is intended to be a safe and sane but quick and dirty tool or path towards providing monitoring and trending data of network latency and health, it is not intended to be integrated into any production environment. 
+This code / project is intended for non-production operation use. It is intended to be a safe and sane but quick and dirty tool or path towards providing monitoring and trending data of network latency and health, it is not intended to be integrated into any production environment.
 
-The expectation of the code / project however is that it should function to serve it's purpose, and is currently maintained to do so. 
+The expectation of the code / project however is that it should function to serve it's purpose, and is currently maintained to do so.
 
 ### Support
 

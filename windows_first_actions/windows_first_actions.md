@@ -16,17 +16,17 @@ The gist of the actions taken here:
   * Allow RDP in via 10.0.0.1/8 network
 * Install outstanding windows updates
   * Enabled automatic updates
-* Update Windows "Admin" password  
+* Update Windows "Admin" password
 * Add VLANs to the Windows 2019 NIC Teaming function
   * Opt VLAN interfaces into "Private" firewall namespace
   * Configure "Private" firewall namespace for Allow / Allow style traffic
-* Disable Public IP Interface  
+* Disable Public IP Interface
 
-This document will presume that the operator is working of a Equinix Metal instance provisioned entirely according to defaults with the Equinix Metal Windows 2019 option as the chosen OS. 
-  
-  
+This document will presume that the operator is working of a Equinix Metal instance provisioned entirely according to defaults with the Equinix Metal Windows 2019 option as the chosen OS.
+
+
 ## SSH + SOCKS + RDP
-It is commonly accepted that leaving any kind of host OS exposed directly to the public internet is a high risk vector for compromise, in particular Windows environments, which are generally "presumed to be installed and operated on a private first network model". 
+It is commonly accepted that leaving any kind of host OS exposed directly to the public internet is a high risk vector for compromise, in particular Windows environments, which are generally "presumed to be installed and operated on a private first network model".
 
 In order to get to a "private only" network mode for a provisioned Equinix Metal instance, we need at least one path for network based management (RDP).
 
@@ -66,7 +66,7 @@ While the "image" for an Operating System is often updated by Equinix Metal to c
 For reference, this can include multiple reboot loops to catch up on all incremental updates from Microsoft. As of June 2021, it requires 3x full patch / reboot cycles to catch the instance up to current.
 
 ### Automatic updates
-For an instance deployment that may be long-lived, it would be strongly [suggested to configure](https://docs.microsoft.com/en-us/windows-server/administration/windows-server-update-services/deploy/4-configure-group-policy-settings-for-automatic-updates#allow-automatic-updates-immediate-installation) the instance to [automatic updates](https://docs.microsoft.com/en-us/windows/deployment/update/waas-wufb-group-policy). 
+For an instance deployment that may be long-lived, it would be strongly [suggested to configure](https://docs.microsoft.com/en-us/windows-server/administration/windows-server-update-services/deploy/4-configure-group-policy-settings-for-automatic-updates#allow-automatic-updates-immediate-installation) the instance to [automatic updates](https://docs.microsoft.com/en-us/windows/deployment/update/waas-wufb-group-policy).
 
 GPO Automatic Updates Path:  [Server Manager, > Tools, > Group Policy Management](https://docs.microsoft.com/en-us/windows-server/administration/windows-server-update-services/deploy/4-configure-group-policy-settings-for-automatic-updates#accessing-the-windows-update-settings-in-group-policy)
 

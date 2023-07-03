@@ -1,6 +1,6 @@
 # How to protect a documentation git repository with Gitleaks
 
-Documentation repositories, which go by many names and aliases, are a great tool for sharing information in a long-lived but unofficial way. The very nature of their purpose can make them vulnerable to operator error, if the intent if the repo is to document work such as `curl` based API commands, then sensitive API credentials are simply likely to leak into the repository. 
+Documentation repositories, which go by many names and aliases, are a great tool for sharing information in a long-lived but unofficial way. The very nature of their purpose can make them vulnerable to operator error, if the intent if the repo is to document work such as `curl` based API commands, then sensitive API credentials are simply likely to leak into the repository.
 
 [Gitleaks](https://github.com/gitleaks/gitleaks) is a fantastic tool for this problem. While clearly purposed more for developer oriented workspaces, it's simplicity of [baseline management](https://github.com/gitleaks/gitleaks#creating-a-baseline) and ease of integration with [pre-commit](https://pre-commit.com/), mean that it can be easily configured to prevent credential leaks easily, before they are commited and then pushed, which is ideal for documentation repositories that may not be "GitOps" managed to include any Github or repository host side security protection.
 
@@ -128,7 +128,7 @@ repos:
     hooks:
       - id: gitleaks
         args: ['-c', 'gitleaks_em.toml', '--baseline-path', 'gitleaks-report.json']
-```		
+```
 
 ### pre-hook build errors
 
@@ -181,14 +181,14 @@ Check the log at /home/dlotterman/.cache/pre-commit/pre-commit.log
 
 You can be a responsible operator and really dig into it, or you can be lazy like me and find it's a ephemeral (likely) golang toolchain problem I don't really care about, so I can ignore it and re-run my commit with a `GOFLAG`:
 
-- `GOFLAGS=-buildvcs=false git commit .` 
+- `GOFLAGS=-buildvcs=false git commit .`
 
 And then never worry about it again.
 
 # Gitleaks .toml file
 The default [configuration toml file](https://github.com/gitleaks/gitleaks#configuration) is enough for most things, it should catch Metal and related tokens.
 
-I've stared a WIP of some more explicit Metal toml [here](/gitleaks_em.toml). It has fairly aggressive checks on Equinix Metal related magic numbers, namely `32` character strings that look like API tokens, and UUID's. 
+I've stared a WIP of some more explicit Metal toml [here](/gitleaks_em.toml). It has fairly aggressive checks on Equinix Metal related magic numbers, namely `32` character strings that look like API tokens, and UUID's.
 
 The aggressive checks are intended for these documentation heavy repositories. Where the aggressive checks are there to catch absent minded additions, with the expectation being that the operator updates the baseline
 

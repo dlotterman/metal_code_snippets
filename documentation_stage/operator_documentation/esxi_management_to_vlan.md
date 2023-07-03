@@ -1,15 +1,15 @@
 ## Moving the ESXi Management IP to a Metal Layer-2 VLAN Interface
 
-**Disclaimer**: This document is **NOT** an official document, and is not supported by Equinix Metal. It is here for reference / convenience. 
+**Disclaimer**: This document is **NOT** an official document, and is not supported by Equinix Metal. It is here for reference / convenience.
 
-When Equinix Metal instances are deployed with ESXi, by default the ESXi "management" interface, as in the IP address that is used to bind the management services (console, SSH etc), is assigned to the Equinix Metal provided Layer-3 IP addresses (by default Public IP, if not Public then Management). 
+When Equinix Metal instances are deployed with ESXi, by default the ESXi "management" interface, as in the IP address that is used to bind the management services (console, SSH etc), is assigned to the Equinix Metal provided Layer-3 IP addresses (by default Public IP, if not Public then Management).
 
 The following steps allow an operator to move that management interface to a Metal VLAN interface.
 
 This guide makes the following assumptions where you can make changes or substitutions as relevant for your deployment.
 
 * Layer-3 Networks:
-	* Metal Public: `147.28.150.96/29`	
+	* Metal Public: `147.28.150.96/29`
 	* Metal Private: `10.68.93.184/29`
 	* Operator Management Network: `172.16.10.15/24`
 		* Where Operator has gateway in that network assigned to IP: `172.16.10.1/24`
@@ -24,7 +24,7 @@ This document does not address the use of [Metal's Gateway](https://metal.equini
 
 #### Configuring the Metal Instance for Unbonded Layer-2 aware modes
 
-[This section is convered by the Metal "Hybrid Unbonded" documentation visible here](https://metal.equinix.com/developers/docs/layer2-networking/hybrid-unbonded-mode/): 
+[This section is convered by the Metal "Hybrid Unbonded" documentation visible here](https://metal.equinix.com/developers/docs/layer2-networking/hybrid-unbonded-mode/):
 
 1) Find the newly provisioned ESXi instance and load it's details page
 2) Under the "Network" details page where "Network" is visible on the lefthand side page selection bar:
@@ -36,7 +36,7 @@ This document does not address the use of [Metal's Gateway](https://metal.equini
 	5) The Metal instances switch ports will now be converted to Hybrid Unbonded mode
 3) Once complete, the blue "+ Add New Vlan" button should be visible in the lower right hand side
 	1) Add your first VLAN to the `eth1` interface (this represent the second physical interface of the box, for `n2.xlarge.x86` instances this would likely be `eth3`)
-	2) Add a second VLAN to the `eth1` interface. The reasoning for this is it enforces `802.1q` tagging all the way to the host. 
+	2) Add a second VLAN to the `eth1` interface. The reasoning for this is it enforces `802.1q` tagging all the way to the host.
 4) Connect to the "Out-of-band console", [the details for which should be exposed by a clickable button at the top of the instances details page](https://metal.equinix.com/developers/docs/resilience-recovery/serial-over-ssh/)
 	* It is strongly recommended to ensure your SSH / terminal client is sized for *at least* 80x pixels wide by 25x pixels tall. It may be useful for operator sanity to have your terminal be signifincalty larger than that.
 5) Once connected to the console, you may need to press enter or other keystroke to be presented with the output from the VMWare mangement text interface:
@@ -117,7 +117,7 @@ x                                                                              x
 x                                        <Enter> Change          <Esc> Log Out x
 mqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqj
                VMware ESXi 6.7.0 (VMKernel Release Build 16713306)
-	
+
 ```
 9) Use the arrow keys to select `Configure Management Network` and hit enter:
 ```

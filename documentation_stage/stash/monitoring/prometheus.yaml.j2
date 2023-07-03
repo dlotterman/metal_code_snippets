@@ -19,7 +19,7 @@ scrape_configs:
         {{"labels:"}}
           {{"instance: " + hostvars[host]['ansible_facts']['hostname']}}
     {% endfor %}
-        
+
   - job_name: 'cockroachdb'
     metrics_path: '/_status/vars'
     # Insecure mode:
@@ -35,4 +35,3 @@ scrape_configs:
           {{"instance: " + hostvars[host]['ansible_facts']['hostname']}}
           {{"cluster: 'metal_cdb'"}}
     {% endfor %}
-

@@ -37,22 +37,22 @@ From the manufacturer: *__"all the PCIe lanes on X11SCM, X11SCH are connected an
 
 The `PCI bridge: Intel Corporation Cannon Lake PCH PCI Express Root Port #17 (rev f0)` in the chassis makes the chassis look like a more SR-IOV capable box then it is. Because the PCI lanes the go directly into the CPU instead of the chipset root controller, non of the SR-IOV supporting capabilities are relevant. The ports / lanes that go directly into the CPU do not support PCIe ACS / ARI functionality.
 
-This is why there is no `SR-IOV` `enabled / disabled`  toggle in the BIOS. In fact no code to enabled a toggle is provided by Intel for this CPU in this configuration. 
+This is why there is no `SR-IOV` `enabled / disabled`  toggle in the BIOS. In fact no code to enabled a toggle is provided by Intel for this CPU in this configuration.
 
-Similarly, this is why the "ACS disable" patches that are often spoken of have no impact with this limitation. Even though there is no ACS / ARI support due to the lanes going directly to the CPU, the simple IOMMU layout allows for simple SR-IOV creation, just not across PCIe boundaries that would normally require more advanced functionality. 
+Similarly, this is why the "ACS disable" patches that are often spoken of have no impact with this limitation. Even though there is no ACS / ARI support due to the lanes going directly to the CPU, the simple IOMMU layout allows for simple SR-IOV creation, just not across PCIe boundaries that would normally require more advanced functionality.
 
 The most important limitation comes from the BIOS of the motherboard, which as a refresher on SR-IOV, the BIOS of the motherboard / CPU performs the following SR-IOV downstream dependant function. From the SR-IOV primer doc above:
 
 ```
-The BIOS performs a role in partitioning Memory Mapped I/O and PCI Express Bus numbers 
+The BIOS performs a role in partitioning Memory Mapped I/O and PCI Express Bus numbers
 between host bridges.
-In many systems, mechanisms for allocating PCI resources to the host bridges are not 
-standardized and software relies on the BIOS to configure these devices with sufficient 
-memory space and bus ranges to support I/O devices in the hierarchy beneath each host 
+In many systems, mechanisms for allocating PCI resources to the host bridges are not
+standardized and software relies on the BIOS to configure these devices with sufficient
+memory space and bus ranges to support I/O devices in the hierarchy beneath each host
 bridge.
-BIOS enumeration code needs to be enhanced to recognize SR-IOV devices so that enough 
-MMIO (Memory Mapped IO) space is allocated to encompass the requirements of VFs. Refer 
-to the PCI-SIG SR-IOV specification for details on how to parse PCI Config space and 
+BIOS enumeration code needs to be enhanced to recognize SR-IOV devices so that enough
+MMIO (Memory Mapped IO) space is allocated to encompass the requirements of VFs. Refer
+to the PCI-SIG SR-IOV specification for details on how to parse PCI Config space and
 calculate the maximum amount of VF MMIO space required.
 ```
 
@@ -65,5 +65,4 @@ This is the imposing limitation of the `X11SCM-F` and `X11SHM-F` motherboards. T
 	* The reason why is that each enumeration of interuppt to `VF` consume space in our extremely limited enumeration allocation from the BIOS
 * Example Mellanox configuration that allows for 3x SR-IOV `VF`'s per port:
 	* `mlxconfig -d /dev/mst/mt4117_pciconf0 set SRIOV_EN=1 NUM_OF_VFS=4 NUM_VF_MSIX=4 NUM_PF_MSIX=15`
-* The exact behavior will be heavily dependant on a combination of configuration factors. Exact mileage will vary. 
-
+* The exact behavior will be heavily dependant on a combination of configuration factors. Exact mileage will vary.

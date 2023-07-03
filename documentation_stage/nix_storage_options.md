@@ -14,7 +14,7 @@ At low storage or throughput / access volumes, hosted object storage can be a ve
 
 When calculating pricing, it is important remember that ingress to Equinix Metal from the public internet is free of charge.
 
-For performance considerations, Equinix Metal tactically places itself as close to major internet meeting points as possible, more often than not plugging directly into the incumbent IX in a given geographic area. While performance of 3rd party object storage may not be as perfomant as local disk, it can be *surprisingly* performant for a majority of 2nd or 3rd tier data strategies. 
+For performance considerations, Equinix Metal tactically places itself as close to major internet meeting points as possible, more often than not plugging directly into the incumbent IX in a given geographic area. While performance of 3rd party object storage may not be as perfomant as local disk, it can be *surprisingly* performant for a majority of 2nd or 3rd tier data strategies.
 
 Examples:
 
@@ -68,14 +68,14 @@ The options for self-hosted on Metal are too many and with vastly different pro'
 
 * Cohesity - https://metal.equinix.com/solutions/cohesity/
 
-  * Cohesity has partnered with Equinix Metal to provide a unique performant, resilient and supported storage and services platform inside of a customer's Equinix Metal environment. 
+  * Cohesity has partnered with Equinix Metal to provide a unique performant, resilient and supported storage and services platform inside of a customer's Equinix Metal environment.
   * This pre-certified solution takes advantage of all of the advantages detailed her and provides them in an easier to consume, fully supported and certified platform.
 
 * [Layer-2 + Customer Owned Network](https://metal.equinix.com/developers/docs/layer2-networking/)
 
   * Storage is functionally useless without a supporting network. For storage designs that require specific constraints (floating VIPs, BYO-Subnets, BYO-Overlay etc), our Layer-2 functionality gives customers their own entirely dedicated Layer-2 domains (presented as 802.1q VLANs).
     * This also gives us a point of control for [storage traffic shaping](https://octetz.com/docs/2020/2020-09-16-tc/) on multi-tenant networks
-    * This allows us to follow most "standard" or "traditional" design choices with storage and availability, for example enabling the traditional "Pacemaker / Keepalived" HA solutions. 
+    * This allows us to follow most "standard" or "traditional" design choices with storage and availability, for example enabling the traditional "Pacemaker / Keepalived" HA solutions.
 
 * [Metal Gateways](https://metal.equinix.com/developers/docs/networking/metal-gateway/)
 
@@ -83,18 +83,18 @@ The options for self-hosted on Metal are too many and with vastly different pro'
 
 * The [Equinix Metal API](https://metal.equinix.com/developers/api/) and [Integrations](https://metal.equinix.com/developers/docs/integrations/)
 
-  The Equinix Metal API and associated integrations enable Metal instances and configuration to be managed and lifecycled as "Infrastructure as Code", which also enables "Storage as Code" workflows. When designing distributed or robust storage architectures,  tools like [ansible](https://github.com/equinix/ansible-collection-metal), [terraform](https://registry.terraform.io/providers/equinix/metal/latest) and [cloud-init](https://metal.equinix.com/developers/docs/servers/user-data/) can be used to have nodes auto-join clusters, pull seed data from object stores and configure clients. 
+  The Equinix Metal API and associated integrations enable Metal instances and configuration to be managed and lifecycled as "Infrastructure as Code", which also enables "Storage as Code" workflows. When designing distributed or robust storage architectures,  tools like [ansible](https://github.com/equinix/ansible-collection-metal), [terraform](https://registry.terraform.io/providers/equinix/metal/latest) and [cloud-init](https://metal.equinix.com/developers/docs/servers/user-data/) can be used to have nodes auto-join clusters, pull seed data from object stores and configure clients.
 
 * Hosting a Virtual Appliance
 
 
-  * Equinix Metal is a great host for Virtual Appliances, which can be especially useful when a proprietary storage technology is required or a concept needs to be quickly mocked out. 
+  * Equinix Metal is a great host for Virtual Appliances, which can be especially useful when a proprietary storage technology is required or a concept needs to be quickly mocked out.
 
     * [Virtual Appliance Host as Code](https://github.com/dlotterman/metal_code_snippets/blob/main/virtual_appliance_host/no_code_with_guardrails/README.md)
 
 ### SAN-as-a-Service
 
-Equinix Metal has partnered with a handful of strategic partners such as [Pure](https://metal.equinix.com/solutions/pure-storage/) to provide SAN-as-a-Service to customers with sufficient requirements to justify the implementation (generally around 50TB or higher). Please contact an Equinix Metal sales team for more information regarding this storage path. 
+Equinix Metal has partnered with a handful of strategic partners such as [Pure](https://metal.equinix.com/solutions/pure-storage/) to provide SAN-as-a-Service to customers with sufficient requirements to justify the implementation (generally around 50TB or higher). Please contact an Equinix Metal sales team for more information regarding this storage path.
 
 [Hints of what this looks like can be seen here](https://support.purestorage.com/Solutions/VMware_Platform_Guide/User_Guides_for_VMware_Solutions/Pure_Storage_on_Equinix_Metal).
 
@@ -114,7 +114,7 @@ Equinix Metal has partnered with a handful of strategic partners such as [Pure](
 
 #### High activity flat file data set
 
-Many high performance data intensive workloads now base their data set on extremely simple flat file layouts. Leveldb, Lucene, Kyoto Cabinet, RocksDB all leverage the same paradigm of simple flat files with process level compaction or lifecycling for intelligence. While simple from an intial setup and process bootstrapping perspective, these datasets can be unwiedly at scale. 
+Many high performance data intensive workloads now base their data set on extremely simple flat file layouts. Leveldb, Lucene, Kyoto Cabinet, RocksDB all leverage the same paradigm of simple flat files with process level compaction or lifecycling for intelligence. While simple from an intial setup and process bootstrapping perspective, these datasets can be unwiedly at scale.
 
 Nodes that participate in these data sets generally have the same operational lifecycle:
 
@@ -123,10 +123,10 @@ Nodes that participate in these data sets generally have the same operational li
 * Catchup
 * Participate
 * Backup
-* Decommission intentionally or unintentionally 
+* Decommission intentionally or unintentionally
 
 In the scenario where we have a number of *m3.large.x86*'s hosting flat file datasets, each data set can be broken up across [NVMe namespaces](https://www.snia.org/sites/default/files/SDCEMEA/2020/4%20-%20Or%20Lapid%20Micron%20-%20Understanding%20NVMe%20namespaces%20-%20Final.pdf) for control and easy [sharding / scaling](https://en.wikipedia.org/wiki/Shard_(database_architecture)). A great ecosystem of tooling exists to back up large flat file datasets to *S3-like* endpoints, which we can leverage here. The backup target could be an *s3.xlarge.x86* running Minio with tiering, where that *s3.xlarge.x86* can be configured to backup it's own dataset to another *s3.xlarge.x86* in another site leveraging *Backend Transfer*.
 
 When a new *m3.large.x86* joins the cluster or replaces a previous node, it can pull the shard dataset down from the local *s3.xlarge.x86* and become a participant in the cluster. It can seed this shard dataset at the full 10G or 20G available to the *s3.xlarge.x86*, so node entry into the cluster can be both performant and cost effective.  In the event that an entire site is lost, the *m3.large.x86* cluster can be brought up in the same site as the backup *s3.xlarge.x86*. For datasets that are sensitive to exact dataset position relative to a data timeline or history, we can configure our message queue or data pipeline (Kafka, NSQ, Fluentd, Pulsar, RabbitMQ ) that fronts the data set to also send a copy of the relevant data stream to the redundant site via Backend Transfer for replay.
 
-With this perspective on a design, we can introduce pragmatic flexibility, cost effectiveness, performance and resilience with relatively minimal overhead into an Equinix Metal deployment. 
+With this perspective on a design, we can introduce pragmatic flexibility, cost effectiveness, performance and resilience with relatively minimal overhead into an Equinix Metal deployment.

@@ -5,4 +5,3 @@ set net0-1000/ip 172.16.14.30
 set net0-1000/netmask 255.255.255.0
 sanboot iscsi:172.16.14.20:::1:iqn.2020-07.example.com:metallun0
 boot
-

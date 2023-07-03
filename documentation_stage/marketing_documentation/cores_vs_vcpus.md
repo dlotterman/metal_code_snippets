@@ -10,7 +10,7 @@ With large parts of the EC2 instance catalogue as an example (and most providers
 
 To be explict, many vendors, including the Hyperscalers, have toggles and options around this subject, this snippet is not authoratative on other products.
 
-This is one of the reasons we believe Metal to be so cost advantageous for on-demand compute, but it often gets lost in Apples to Oranges conversation (edited) 
+This is one of the reasons we believe Metal to be so cost advantageous for on-demand compute, but it often gets lost in Apples to Oranges conversation (edited)
 
 Hyperscaler Documentation:
 - [GCP](https://cloud.google.com/compute/docs/instances/set-threads-per-core)

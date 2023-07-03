@@ -1,8 +1,8 @@
 # Hyperscaler Interconnection Considerations for Equinix Metal
 
-This document is intended to be a living best practices document for working with Hyperscaler focused Interconnection in the context of an Equinix Metal deployment. 
+This document is intended to be a living best practices document for working with Hyperscaler focused Interconnection in the context of an Equinix Metal deployment.
 
-This document itself is authoritative for nothing, and defers to other, especially official documentation when conflicting or confusing information is presented. This document is also not intended to be prescriptive. There are too many kinds of workloads deployed in too many ways on Metal that need Interconnection to Hyperscalers to provide one-size fits all designs. Rather this is intended to be a shortlist of the "must checkbox" considerations when thinking about deploying Interconnection prescriptive workloads on Equinix Metal. 
+This document itself is authoritative for nothing, and defers to other, especially official documentation when conflicting or confusing information is presented. This document is also not intended to be prescriptive. There are too many kinds of workloads deployed in too many ways on Metal that need Interconnection to Hyperscalers to provide one-size fits all designs. Rather this is intended to be a shortlist of the "must checkbox" considerations when thinking about deploying Interconnection prescriptive workloads on Equinix Metal.
 
 All pricing is purely speculative or example and treated as highly suspicious until confirmed and is included primarily to assist readers with begining to build their own models to reflect their own needs.
 
@@ -22,7 +22,7 @@ All pricing is purely speculative or example and treated as highly suspicious un
 
 ## Start with Metal Internet First
 
-The internet access that comes with an Equinix Metal instance is first class, and because of the centrality of connectivity in Equinix sites, network performance of Metal's internet to the Hyperscalers is often "good enough" via similar network paths as private Interconnection. 
+The internet access that comes with an Equinix Metal instance is first class, and because of the centrality of connectivity in Equinix sites, network performance of Metal's internet to the Hyperscalers is often "good enough" via similar network paths as private Interconnection.
 
 Each Hyperscaler has their own IPSec Interconnection endpoint, which can be terminated directly onto a Metal instance or function hosted on a Metal instance.
 
@@ -48,7 +48,7 @@ For workloads that are highly bursty, like an hourly ETL that pushes 12Gbps in a
 		- This transfer over the [public internet would have cost $0.11](https://cloud.google.com/vpc/network-pricing#general), a difference of $0.07 per GB
 			- The cost efficiency point is than different for GCP egress to Metal, a 10Gbps Fabric virtual connection pays for itself in ~15GB of transfer when moving data out of GCP.
 	- *[Azure has a concept of local circuits](https://azure.microsoft.com/en-us/pricing/details/expressroute/?ef_id=_k_EAIaIQobChMI4erur7ul_wIVOimtBh1N1wHbEAAYASAAEgImbPD_BwE_k_&OCID=AIDcmm5edswduu_SEM__k_EAIaIQobChMI4erur7ul_wIVOimtBh1N1wHbEAAYASAAEgImbPD_BwE_k_&gad=1&gclid=EAIaIQobChMI4erur7ul_wIVOimtBh1N1wHbEAAYASAAEgImbPD_BwE) which expose a path for no egrees free transfer.
-			
+
 
 The per hour rates of the Equinix Metal Billed Virtual Connections are quite effective when thought of in terms of total transfer over the hour window they can exist. A 10GB virtual connection can push ~4400GB of traffic in an hour's lifespan, enough to drastrically change the cost calculations of certain workload analysis models.
 
@@ -60,20 +60,20 @@ While there are very clear reasons to Interconnect Metal directly to a Hyperscal
 
 - Existing network infrastructure can support the Metal traffic
 	- Firewalls, IDS / IPS, Monitoring on the Colocation side
-	- Transit Gateways, VPC-Peerings etc on the Hyperscaler side 
+	- Transit Gateways, VPC-Peerings etc on the Hyperscaler side
 - Existing logic doesn't have to be re-implemented
-	- Network mappings between Hyperscale-VPC and Customer Networks may be complicated 
+	- Network mappings between Hyperscale-VPC and Customer Networks may be complicated
 - Change control doesn't have to be re-negotiated across domains
 	- Just bump out Metal on the network once.
 - Cost, if you were going to Interconnect Metal and the Colocation footprint in the first place...
 - You may be forced to by limitations
 	- Metal can only Interconnect with Metro-local Hyperscaller On-ramps for example
 		- To connect Metal in Ashburn to us-west1, a loop through Network Edge or Fabric ports will be required
-		
+
 
 ## MTU - MSS
 
-[Maximum Transmission Unit](https://en.wikipedia.org/wiki/Maximum_transmission_unit) is a notorious gremlin in interconnection with highly abstracted or virtualized (cloud) networks. MTU can also be highly variable to changes inside or between services providers, for example when a hyperscaler performs a maintenance and temporarily double encapsulates a network, temporarily changing observed normals. 
+[Maximum Transmission Unit](https://en.wikipedia.org/wiki/Maximum_transmission_unit) is a notorious gremlin in interconnection with highly abstracted or virtualized (cloud) networks. MTU can also be highly variable to changes inside or between services providers, for example when a hyperscaler performs a maintenance and temporarily double encapsulates a network, temporarily changing observed normals.
 
 - Equinix Metal honors a customer [VLAN MTU up to 9000](https://deploy.equinix.com/developers/docs/metal/layer2-networking/vlans/)
 - Equinix Fabric honors a customer MTU [up to 9100](https://docs.equinix.com/en-us/Content/Interconnection/Fabric/ports/Fabric-port-details.htm) depending on the implementation
@@ -82,7 +82,7 @@ Equinix Metal and Equinix Fabric will get you to the Z-side (the Hyperscaler's d
 
 It's also important to note that MTU settings and best practices will be different between Fabric virtual connections, and Equinix Metal Dedicated Connections or AWS Direct Connect that goes directly into a customers physical ports. Put AWS speak for clarity, there is a distinction between ["Dedicated" and "Hosted" Connections](https://docs.aws.amazon.com/directconnect/latest/UserGuide/WorkingWithConnections.html), each path may have their own substantially different MTU normals.
 
-In particular, MTU 
+In particular, MTU
 
 - AWS MTU Documentation
 	- [Dedicated vs Hosted](https://docs.aws.amazon.com/directconnect/latest/UserGuide/WorkingWithConnections.html)
@@ -140,7 +140,7 @@ And additional capacity can be easily added again afterwards.
 
 ## Scaling Capacity
 
-It should be noted that capacity managed by ECMP / BGP Multipathing aligns with the "active/active" model of scaling, where redundancy must be calculated into the design. 
+It should be noted that capacity managed by ECMP / BGP Multipathing aligns with the "active/active" model of scaling, where redundancy must be calculated into the design.
 
 When a redundant virtual circut is provisioned, the platform ensures that those virtual connections are placed on non-overlapping hardware, providing what is known as maintenance diversity, where no single outage should impact both paths at the same time. If there are only two paths of interconnection between Metal and AWS, then it is possible that with 8x virtual connections provisioned, that up to half of those could potentially be lost at a time. The remaining capacity must be able to support the platform for the duration of the outage.
 
@@ -159,7 +159,7 @@ While shaping tactics like prefix advertising manipulation will work well for al
 
 GCP also [highlights a natural preference for keeping individual swim-lanes](https://cloud.google.com/network-connectivity/docs/interconnect/how-to/dedicated/configuring-onprem-routers) of Interconnect from cross-populating BGP announcements between routers on each side.
 
-That is to say, given `gcp_cloud_router_A` and `gcp_cloud_router_B` with `metal_router_A` and `metal_router_B`, to only establish BGP peerings between `gcp_cloud_router_A` + `metal_router_A` and **NOT** the mesh of allowing `gcp_cloud_router_A` to create a mesh with `metal_router_B` 	
+That is to say, given `gcp_cloud_router_A` and `gcp_cloud_router_B` with `metal_router_A` and `metal_router_B`, to only establish BGP peerings between `gcp_cloud_router_A` + `metal_router_A` and **NOT** the mesh of allowing `gcp_cloud_router_A` to create a mesh with `metal_router_B`
 
 ## Encryption
 
@@ -175,13 +175,13 @@ Each of the hyperscalers provides an endpoint to tie together VPN encryption ove
 
 ## Monitoring
 
-While the Equinix Fabric can provide some [statistics](https://developer.equinix.com/dev-docs/fabric/api-reference/fabric-v4-apis#get-connection-statistics) regarding virtual connections, it should be understood that monitoring of Interconnection is primarily a BYO based effort. 
+While the Equinix Fabric can provide some [statistics](https://developer.equinix.com/dev-docs/fabric/api-reference/fabric-v4-apis#get-connection-statistics) regarding virtual connections, it should be understood that monitoring of Interconnection is primarily a BYO based effort.
 
 When monitoring Equinix Metal Layer-2 networks like VLANs or Interconnection, it is important to remember that attributes that are common for a physical network, may not be available to a virtual or abstracted network such as Metal's, Fabric's or a Hyperscalers.
 
-An easy example is link state. In the path betwen an Equinix Metal instance and a Hyperscaler, only a Metal instance's physical NICs would likely report a link failure in response to an outage between the Metal instance and it's ToR. Any other outage or cut in the path would be unlikely to update any customer visible link state, instead likely creating a silent blackhole in the middle of the path. 
+An easy example is link state. In the path betwen an Equinix Metal instance and a Hyperscaler, only a Metal instance's physical NICs would likely report a link failure in response to an outage between the Metal instance and it's ToR. Any other outage or cut in the path would be unlikely to update any customer visible link state, instead likely creating a silent blackhole in the middle of the path.
 
-For this reason, Equinix Metal heavily suggest the use of path, flow or endpoint based monitoring rather than 
+For this reason, Equinix Metal heavily suggest the use of path, flow or endpoint based monitoring rather than
 "configured state" monitoring. Instead of monitoring if a port is up, monitor if a endpoint is suddenly no longer reachable via a path or receiving traffic.
 
 ### Hyperscaler side monitoring
@@ -214,7 +214,7 @@ Equinix Metal VRF introduces a "BGP-as-a-Service" feature that is orchestrated a
 
 With Equinix Metal VRF, customers can provision a virtual routing function that is abstracted and hosted on each Top of Rack of each Metal instance in the configured customer network. That VRF can be configured to BGP peer with other neighbors inside the same network namespace and apply routing updates to a customer's network automatically.
 
-This allows a customer to configure what is a BGP speaker hosted by the Metal network, inside the Metal network. 
+This allows a customer to configure what is a BGP speaker hosted by the Metal network, inside the Metal network.
 
 This will be a paid for feature once released.
 

@@ -25,7 +25,7 @@
         facility: "{{ metal_faciltiy }}"
         user_data: "{{ ubuntu_user_data }}"
         wait_for_public_IPv: 4
-      register: new_metal_hosts_osc        
+      register: new_metal_hosts_osc
     - name: provision_osw_host
       equinix.metal.device:
         project_id: "{{ metal_project_id }}"
@@ -49,7 +49,7 @@
         port: 22
         state: started
         timeout: 500
-      with_items: "{{ new_metal_hosts_osc.devices }}"        
+      with_items: "{{ new_metal_hosts_osc.devices }}"
     - name:  provision_osw_wait_for_ssh
       ansible.builtin.wait_for:
         delay: 1
@@ -57,7 +57,7 @@
         port: 22
         state: started
         timeout: 500
-      with_items: "{{ new_metal_hosts_osw.devices }}"  
+      with_items: "{{ new_metal_hosts_osw.devices }}"
 
 
     # VLAN Work, we do the same work for both OSC / OSW, this could be made lists with_items
@@ -65,54 +65,54 @@
       uri:
         url: https://api.equinix.com/metal/v1/projects/{{metal_project_id}}/virtual-networks
         method: POST
-        headers: 
+        headers:
           X-Auth-Token: "{{ metal_api_token }}"
         body_format: json
         body:
           metro: "{{ metal_metro }}"
-          vxlan: "{{ metal_os_vlan }}" 
+          vxlan: "{{ metal_os_vlan }}"
           description: "metal_openstack"
         status_code: [201, 422]
-    # OSC    
+    # OSC
     - name: provision_os_osc_hosts_retrieve_isntance_details
       uri:
         url: https://api.equinix.com/metal/v1/devices/{{new_metal_hosts_osc.devices[0].id}}
         method: GET
-        headers: 
+        headers:
           X-Auth-Token: "{{ metal_api_token }}"
         return_content: yes
         status_code: 200
       register: new_metal_hosts_osc_api_data
-        
+
     - name: provision_os_osc_hosts_attach_metal_vlan
       uri:
         url: https://api.equinix.com/metal/v1/ports/{{new_metal_hosts_osc_api_data.json.network_ports[0].id}}/assign
         method: POST
-        headers: 
+        headers:
           X-Auth-Token: "{{ metal_api_token }}"
         body_format: json
         body:
-          vnid: "{{ metal_os_vlan }}" 
-        status_code: [200, 422] 
+          vnid: "{{ metal_os_vlan }}"
+        status_code: [200, 422]
 
       # OSW
     - name: provision_os_osw_hosts_retrieve_isntance_details
       uri:
         url: https://api.equinix.com/metal/v1/devices/{{new_metal_hosts_osw.devices[0].id}}
         method: GET
-        headers: 
+        headers:
           X-Auth-Token: "{{ metal_api_token }}"
         return_content: yes
         status_code: 200
       register: new_metal_hosts_osw_api_data
-        
+
     - name: provision_os_osw_hosts_attach_metal_vlan
       uri:
         url: https://api.equinix.com/metal/v1/ports/{{new_metal_hosts_osw_api_data.json.network_ports[0].id}}/assign
         method: POST
-        headers: 
+        headers:
           X-Auth-Token: "{{ metal_api_token }}"
         body_format: json
         body:
-          vnid: "{{ metal_os_vlan }}" 
-        status_code: [200, 422]        
+          vnid: "{{ metal_os_vlan }}"
+        status_code: [200, 422]

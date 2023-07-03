@@ -15,7 +15,7 @@ Alpine often has some particular opinions, and the easiest way to get bonding go
 	- `passwd root`
 	- Login via OOB / SOS
 #### Via OOB / SOS, down the `eth0` interface
-- Down the exisiting interface 
+- Down the exisiting interface
 	- `ip link set dev eth0 down`
 - Create the `/etc/network/interfaces` file with the following contents (note Alpine doesn't ship with `vim`, but does ship with `vi`:
 ```

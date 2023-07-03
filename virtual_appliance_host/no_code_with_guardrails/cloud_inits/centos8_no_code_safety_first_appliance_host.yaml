@@ -5,7 +5,7 @@
 #    * 22 (SSH) in from the world
 #    * All traffic in from the Metal management network (10.0.0.0/8)
 #    * Traffic to cockpit
-#2) Setups fail2ban to block abusive SSH login attempts and cockpit login attempts 
+#2) Setups fail2ban to block abusive SSH login attempts and cockpit login attempts
 #3) Enables dnf automatic, which will automatically update packages \
 #This is all in the persuit of having operator "safety" guards
 #for instances that will be managed collaboratively
@@ -62,12 +62,12 @@ bootcmd:
   - [ cloud-init-per, instance, systemctl, disable, sshd ]
   - systemctl stop kdump || true
   - systemctl disable kdump || true
- 
+
 runcmd:
   - systemctl stop sshd || true
   - systemctl disable sshd || true
   - systemctl stop iscsi
-  - systemctl stop nis-domainname  
+  - systemctl stop nis-domainname
   - systemctl stop iscsi-onboot
   - systemctl stop nfs-convert
   - systemctl disable iscsi
@@ -97,7 +97,7 @@ runcmd:
   - sed -i -e '/^#PermitRootLogin/s/^.*$/PermitRootLogin no/' /etc/ssh/sshd_config
   - sed -i -e '/^PermitRootLogin/s/^.*$/PermitRootLogin no/' /etc/ssh/sshd_config
   - systemctl restart network
-  - systemctl enable NetworkManager  
+  - systemctl enable NetworkManager
   - systemctl start NetworkManager
   - systemctl enable libvirtd
   - systemctl start libvirtd
@@ -106,9 +106,9 @@ runcmd:
   - systemctl enable pmcd
   - systemctl start pmcd
   - systemctl enable --now cockpit.socket
-  - systemctl start cockpit  
+  - systemctl start cockpit
   - systemctl enable --now dnf-automatic-install.timer
-  - systemctl enable sshd  
+  - systemctl enable sshd
   - systemctl start sshd
   - systemctl enable podman
   - systemctl start podman

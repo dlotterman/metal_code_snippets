@@ -23,7 +23,7 @@ groups:
 users:
   - name: $REPLACE_ME
     primary_group: sftp_users
-    passwd: $$REPLACE ME: `mkpasswd --method=SHA-512 --rounds=4096`
+      #passwd: $$REPLACE ME: `mkpasswd --method=SHA-512 --rounds=4096`
     shell: /sbin/nologin
     home: /data/sftp_chroot/sftp_user
     no_create_home: true

@@ -18,16 +18,16 @@
 
     - name: openstack_ironic_mysql_db_create
       become: yes
-      become_method: sudo     
-      mysql_db: 
+      become_method: sudo
+      mysql_db:
         name: ironic
         state: present
         login_unix_socket: /var/run/mysqld/mysqld.sock
 
     - name: openstack_ironice_mysql_user_create
       become: yes
-      become_method: sudo    
-      mysql_user: 
+      become_method: sudo
+      mysql_user:
         name: ironic
         password: "{{ ironic_mysql_password }}"
         priv: 'ironic.*:ALL,GRANT'
@@ -42,12 +42,12 @@
 
     - name: openstack_ironic_template_conf
       become: yes
-      become_method: sudo    
+      become_method: sudo
       template:
         src: ironic_controller.conf.j2
         dest: /etc/ironic/ironic.conf
       register: ironic_conf
-      
+
     - name: openstack_ironic_restart
       become: yes
       become_method: sudo
@@ -60,7 +60,7 @@
       #This is so horrible. Why?
     - name: openstack_ironic_db_populate
       become: yes
-      become_method: sudo  
+      become_method: sudo
       shell: ironic-dbsync --config-file /etc/ironic/ironic.conf create_schema
       args:
         creates: /metal/lock/openstack_ironic_db_populate.lock
@@ -69,20 +69,20 @@
     - name: openstack_ironic_db_populate_touch_file
       become: yes
       become_method: sudo
-      file: 
+      file:
         path: /metal/lock/openstack_ironic_db_populate.lock
         state: touch
       when: openstack_ironic_db_populate.changed
-      
+
       #TODO this should go to available then symlink to be debian-like apache
     - name: openstack_ironic_template_apache_conf
       become: yes
-      become_method: sudo    
+      become_method: sudo
       template:
         src: apache_ironic.conf
         dest: /etc/apache2/sites-available/ironic.conf
       register: openstack_ironic_template_apache_conf
-      
+
     - name: openstack_service_restart_apache
       become: yes
       become_method: sudo
@@ -90,4 +90,4 @@
         name: apache2
         state: restarted
         enabled: yes
-      when: openstack_ironic_template_apache_conf.changed      
+      when: openstack_ironic_template_apache_conf.changed

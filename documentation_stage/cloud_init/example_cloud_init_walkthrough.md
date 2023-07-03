@@ -34,7 +34,7 @@ bootcmd:
   - [ subscription-manager, repos, --enable, rhel-8-for-x86_64-appstream-rpms ]
 ```
 
-[`bootcmd`](https://cloudinit.readthedocs.io/en/latest/topics/modules.html?highlight=bootcmd#bootcmd) is a place to list "commands", where those "commands" are interpreted by the Cloud-init's default shell (likely `bash` or `sh`) and run by cloud-init to configure the system. 
+[`bootcmd`](https://cloudinit.readthedocs.io/en/latest/topics/modules.html?highlight=bootcmd#bootcmd) is a place to list "commands", where those "commands" are interpreted by the Cloud-init's default shell (likely `bash` or `sh`) and run by cloud-init to configure the system.
 
 `bootcmd` is very similar to [`runcmd`](https://github.com/dlotterman/metal_code_snippets/blob/main/documentation_stage/cloud_init/example_cloud_init_walkthrough.md#runcmd), just that it is run much earlier in the provisioning process, meaning it can be useful for ordering dependencies. If you need commands run before you can say install packages, you can put those in `bootcmd` so that the downstream packages section act without modification.
 
@@ -93,7 +93,7 @@ runcmd:
   - [ systemctl, restart, NetworkManager.service ]
 ```
 
-These are [commands that will be exectued](https://cloudinit.readthedocs.io/en/latest/topics/modules.html?highlight=bootcmd#runcmd) by the default shell (likely `bash` or `sh`), with "comma space" seperation to minimize common shell command + string parsing problems. 
+These are [commands that will be exectued](https://cloudinit.readthedocs.io/en/latest/topics/modules.html?highlight=bootcmd#runcmd) by the default shell (likely `bash` or `sh`), with "comma space" seperation to minimize common shell command + string parsing problems.
 
 `runcmd` comes after `bootcmd`, `packages` *and* `write_files`.
 
@@ -125,18 +125,18 @@ write_files:
   permissions: "0644"
   owner: "root:root"
   content: |
-    DEVICE=bond0.1001 
-    NAME=bond0.1001 
-    ONPARENT=yes 
-    VLAN=yes 
-    BOOTPROTO=none 
-    ONBOOT=yes 
-    USERCTL=no 
+    DEVICE=bond0.1001
+    NAME=bond0.1001
+    ONPARENT=yes
+    VLAN=yes
+    BOOTPROTO=none
+    ONBOOT=yes
+    USERCTL=no
     NM_CONTROLLED=no
     BRIDGE=br0
 ```
 
-This will will write the configuration needed to add the VLAN 1000 to the bonded interface that comes by default with a Metal instance. 
+This will will write the configuration needed to add the VLAN 1000 to the bonded interface that comes by default with a Metal instance.
 
 `NM_CONTROLLER` is set to `no` because KVM / `libvirtd` will manage the turnup of `br0`, which will then manage the turnup of the `bond0.1001` VLAN interface.
 
@@ -146,14 +146,14 @@ This will will write the configuration needed to add the VLAN 1000 to the bonded
   permissions: "0644"
   owner: "root:root"
   content: |
-    DEVICE=br0 
-    TYPE=Bridge 
-    IPADDR=192.168.100.10 
-    NETMASK=255.255.255.0 
-    ONBOOT=yes 
-    BOOTPROTO=none 
+    DEVICE=br0
+    TYPE=Bridge
+    IPADDR=192.168.100.10
+    NETMASK=255.255.255.0
+    ONBOOT=yes
+    BOOTPROTO=none
     NM_CONTROLLED=no
-    DELAY=0 
+    DELAY=0
 ```
 
 This configures the IP information for the `br0` default device we created in the `runcmd` section
@@ -177,11 +177,11 @@ Note the use of `write_files:` here, where this will cause Cloud-init to **ADD**
   permissions: "0644"
   owner: "root:root"
   content: |
-    <network> 
-      <name>br0</name> 
-      <forward mode="bridge" /> 
-      <bridge name="br0" />   
-    </network> 
+    <network>
+      <name>br0</name>
+      <forward mode="bridge" />
+      <bridge name="br0" />
+    </network>
 ```
 
 This is the xml file definition for the `br0` device we create in the `runcmd` section.
@@ -227,8 +227,8 @@ Add the needed line to the `fstab` file so that the RAID6 software raid we creat
 #### Boilerplate
 
 There are some configuration options that are there to silence cloud-init alarms or other logs:
-    
-```    
+
+```
 datasource:
   Ec2:
     strict_id: false
@@ -291,35 +291,35 @@ runcmd:
   - [ mkfs.ext4, -F, /dev/md0 ]
   - [ mount, /dev/md0, /mnt/md0 ]
   - [ systemctl, restart, NetworkManager.service ]
-  
+
 
 write_files:
 - path: "/etc/sysconfig/network-scripts/ifcfg-bond0.1001"
   permissions: "0644"
   owner: "root:root"
   content: |
-    DEVICE=bond0.1001 
-    NAME=bond0.1001 
-    ONPARENT=yes 
-    VLAN=yes 
-    BOOTPROTO=none 
-    ONBOOT=yes 
-    USERCTL=no 
+    DEVICE=bond0.1001
+    NAME=bond0.1001
+    ONPARENT=yes
+    VLAN=yes
+    BOOTPROTO=none
+    ONBOOT=yes
+    USERCTL=no
     NM_CONTROLLED=no
-    BRIDGE=br0 
+    BRIDGE=br0
 
 - path: "/etc/sysconfig/network-scripts/ifcfg-br0"
   permissions: "0644"
   owner: "root:root"
   content: |
-    DEVICE=br0 
-    TYPE=Bridge 
-    IPADDR=192.168.100.10 
-    NETMASK=255.255.255.0 
-    ONBOOT=yes 
-    BOOTPROTO=none 
+    DEVICE=br0
+    TYPE=Bridge
+    IPADDR=192.168.100.10
+    NETMASK=255.255.255.0
+    ONBOOT=yes
+    BOOTPROTO=none
     NM_CONTROLLED=no
-    DELAY=0 
+    DELAY=0
 
 - path: "/etc/sysctl.conf"
   permissions: "0644"
@@ -333,11 +333,11 @@ write_files:
   permissions: "0644"
   owner: "root:root"
   content: |
-    <network> 
-      <name>br0</name> 
-      <forward mode="bridge" /> 
-      <bridge name="br0" />   
-    </network> 
+    <network>
+      <name>br0</name>
+      <forward mode="bridge" />
+      <bridge name="br0" />
+    </network>
 
 - path: "/opt/metal_ddve/raid6_largest_drives.sh"
   permissions: "0744"
@@ -359,7 +359,7 @@ write_files:
   append: true
   content: |
     /dev/md0 /mnt/md0 ext4 defaults,nofail,discard 0 0
-    
+
 datasource:
   Ec2:
     strict_id: false

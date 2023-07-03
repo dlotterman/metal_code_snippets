@@ -3,7 +3,7 @@
   vars:
     keystone_mysql_password: keystonemysql1234
     keystone_admin_password: keystoneadmin1234
-    
+
   tasks:
     - name: openstack_install_keystone_packages
       become: yes
@@ -15,17 +15,17 @@
 
     - name: openstack_keystone_mysql_db_create
       become: yes
-      become_method: sudo     
-      mysql_db: 
+      become_method: sudo
+      mysql_db:
         name: keystone
         state: present
         login_unix_socket: /var/run/mysqld/mysqld.sock
 
     - name: openstack_keystone_mysql_user_create
       become: yes
-      become_method: sudo    
-      mysql_user: 
-        name: keystone  
+      become_method: sudo
+      mysql_user:
+        name: keystone
         password: "{{ keystone_mysql_password }}"
         priv: 'keystone.*:ALL,GRANT'
         login_unix_socket: /var/run/mysqld/mysqld.sock
@@ -39,16 +39,16 @@
 
     - name: openstack_keystone_template_conf
       become: yes
-      become_method: sudo    
+      become_method: sudo
       template:
         src: keystone.conf.j2
         dest: /etc/keystone/keystone.conf
-      register: keystone_conf    
-      
+      register: keystone_conf
+
       #This is so horrible. Why?
     - name: openstack_keystone_db_populate
       become: yes
-      become_method: sudo  
+      become_method: sudo
       #become_user: keystone
       shell: su -s /bin/sh -c "keystone-manage db_sync" keystone
       args:
@@ -60,10 +60,10 @@
     - name: openstack_keystone_db_touch_file
       become: yes
       become_method: sudo
-      file: 
+      file:
         path: /metal/lock/keystonemanagedbsync.lock
         state: touch
-      when: keystonemanagedbsync.changed 
+      when: keystonemanagedbsync.changed
 
     - name: openstack_keystone_fernet_setup
       become: yes
@@ -72,15 +72,15 @@
       args:
         creates: /metal/lock/keystonemanagefernetsetup.lock
         strip_empty_ends: false
-      register: keystonemanagefernetsetup    
+      register: keystonemanagefernetsetup
 
     - name: openstack_keystone_fernet_setup_touch_file
       become: yes
       become_method: sudo
-      file: 
+      file:
         path: /metal/lock/keystonemanagefernetsetup.lock
         state: touch
-      when: keystonemanagefernetsetup.changed 
+      when: keystonemanagefernetsetup.changed
 
     - name: openstack_keystone_credential_setup
       become: yes
@@ -89,16 +89,16 @@
       args:
         strip_empty_ends: false
         creates: /metal/lock/keystonemanagecredentialsetup.lock
-      register: keystonemanagecredentialsetup    
+      register: keystonemanagecredentialsetup
 
     - name: openstack_keystone_credential_setup_touch_file
       become: yes
       become_method: sudo
-      file: 
+      file:
         path: /metal/lock/keystonemanagecredentialsetup.lock
         state: touch
-      when: keystonemanagecredentialsetup.changed 
-    
+      when: keystonemanagecredentialsetup.changed
+
     # Need to var this
     - name: openstack_keystone_bootstrap
       become: yes
@@ -121,14 +121,14 @@
     - name: openstack_keystone_bootstrap_touch_file
       become: yes
       become_method: sudo
-      file: 
+      file:
         path: /metal/lock/keystonemanagebootstrap.lock
         state: touch
       when: keystonemanagebootstrap.changed
 
     - name: openstack_keystone_template_apacheconf
       become: yes
-      become_method: sudo    
+      become_method: sudo
       template:
         src: apache2.conf.j2
         dest: /etc/apache2/apache2.conf
@@ -142,7 +142,7 @@
         state: restarted
         enabled: yes
       when: apache_conf.changed
-      
+
     # Need to var and or rework all of this
     - name: openstack_glance_osservice_project_create
       become: yes
@@ -164,7 +164,7 @@
     - name: openstack_glance_osservice_project_create_touch_file
       become: yes
       become_method: sudo
-      file: 
+      file:
         path: /metal/lock/osserviceproject.lock
         state: touch
-      when: osserviceproject.changed      
+      when: osserviceproject.changed

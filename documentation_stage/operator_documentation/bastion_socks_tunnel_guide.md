@@ -6,7 +6,7 @@ Fortunately provisioning an Equinix Metal instance provisioned with Linux to ope
 
 By using a bastion host, we can forward a local browsers conenction through an SSH managed tunnel such that our local browser uses the bastion boxes's network connectivity, allowing us to reach resources that are private and local within Metal networks via the public internet in a *reasonably* secure way.
 
-Using browser forwarding via SOCKs with SSH for transit is a generally very well understood 
+Using browser forwarding via SOCKs with SSH for transit is a generally very well understood
 
 ## Provisioning an Equinix Metal instance intended for use as a bastion instance
 
@@ -38,7 +38,7 @@ Note that this document intentionally configures the Linux bastion instance usin
 	- `dnf update -y`
 	- `dnf -y install dnf-automatic git jq firewalld`
 	- If asked if `cloud-init` should have its config file updated, the safest answer is to answer **NO**, which would be to enter `N` at the prompt `cloud.cfg (Y/I/N/O/D/Z) [default=N] ? N`
-	- It is possible that an update to the servers `sshd` certificates will need to be re-signed after updating, this may prompt a 
+	- It is possible that an update to the servers `sshd` certificates will need to be re-signed after updating, this may prompt a
 - Create a new administrative user (to retire root as common operator user)
 	- `useradd adminuser`
 	- `usermod -aG wheel adminuser`
@@ -63,7 +63,7 @@ Note that this document intentionally configures the Linux bastion instance usin
 	- `sed -i -e '/^apply_updates/s/^.*$/apply_updates = yes/' /etc/dnf/automatic.conf`
 	- `systemctl enable --now dnf-automatic.timer`
 	- `echo "05 11 * * * root systemctl restart sshd" >> /etc/crontab`
-- Reboot 
+- Reboot
 - You can now ssh in as `adminuser` instead of `root`, where `root` should be denied access via SSH but still be allowed via local login and the [Metal OOB/SOS](https://deploy.equinix.com/developers/docs/metal/resilience-recovery/serial-over-ssh/)
 
 ## Configuring SSH with SOCKs
@@ -81,8 +81,8 @@ From here, the remaining work is in the context of "Tunnel a browser via SSH wit
 	- [create-socks-proxy](https://www.simplified.guide/putty/create-socks-proxy)
 - *nix / OSX
 	- [simple-ssh-tunneling-with-foxyproxy](https://www.willchatham.com/security/simple-ssh-tunneling-with-foxyproxy/)
-	
-### Author's setup 
+
+### Author's setup
 
 I personally use [Kitty](http://www.9bis.net/kitty/index.html#!index.md) and [Kitty Session Manager](https://www.noobunbox.net/projects/kitty-session-manager) as my [Putty](https://www.chiark.greenend.org.uk/~sgtatham/putty/) alternative.
 

@@ -10,13 +10,13 @@
 # It will take the unused drive, put that into a linux software raid
 # copy the partition and filesytem over to that single disk raid
 # update grub and the bootables to boot from the single disk raid
-# So the instance can be reboot, and the old disk wiped and 
+# So the instance can be reboot, and the old disk wiped and
 # added to the raid array.
-# This allows for a software RAID1 of an Equinix Metal Rocky instance's 
-# internal drives. 
+# This allows for a software RAID1 of an Equinix Metal Rocky instance's
+# internal drives.
 
 # Support / Warning / Disclaimer: This script is PoC ONLY
-# It it meant to demonstrate the concept of moving to RAID 
+# It it meant to demonstrate the concept of moving to RAID
 # for a live Metal instance
 # It is NOT production ready, it should be read and understood
 # and re-written entirely to not be as terrible as it currently is
@@ -73,13 +73,13 @@ mdadm --stop /dev/md0
 mdadm --stop /dev/md1
 mdadm --remove /dev/md0
 mdadm --remove /dev/md1
-mdadm --fail /dev/md0 /dev/"$DESTDRIVE"2 
-mdadm --remove /dev/md0 /dev/"$DESTDRIVE"2 
+mdadm --fail /dev/md0 /dev/"$DESTDRIVE"2
+mdadm --remove /dev/md0 /dev/"$DESTDRIVE"2
 mdadm --fail /dev/md1 /dev/"$DESTDRIVE"3
 mdadm --remove /dev/md1 /dev/"$DESTDRIVE"3
 mdadm --zero-superblock /dev/$DESTDRIVE > /dev/null 2>&1
 
-sgdisk --zap-all /dev/$DESTDRIVE 
+sgdisk --zap-all /dev/$DESTDRIVE
 
 
 partprobe
@@ -87,7 +87,7 @@ sleep 5
 
 # copy partition table to get bios_grub parition
 # build other partitions as a little diff than Metal default
-# The reason we take this approach is to protect the 1MB 
+# The reason we take this approach is to protect the 1MB
 # bios_grub legacy boot partition used by Equinix Metal
 sgdisk -R /dev/$DESTDRIVE /dev/$TARGETDRIVE
 sgdisk -G /dev/$DESTDRIVE
@@ -108,7 +108,7 @@ mdadm --create /dev/md1 --force --level 1 --raid-devices 2 /dev/"$DESTDRIVE"3 mi
 mkswap -L SWAP /dev/md0
 mkfs.ext4 -F -L ROOT /dev/md1
 
-# mount array 
+# mount array
 mkdir -p $TMPDIR
 mount /dev/md1 $TMPDIR
 
@@ -137,7 +137,7 @@ GRUB_ENABLE_BLSCFG=true
 GRUB_PRELOAD_MODULES="mdraidlx"
 EOL
 
-# build script for inside of chroot 
+# build script for inside of chroot
 cat > $TMPDIR/tmp/raidchroot.sh << EOL
 #/bin/bash
 mdadm --detail --scan >> /etc/mdadm.conf

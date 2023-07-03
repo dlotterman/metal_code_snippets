@@ -22,7 +22,7 @@ packages:
  - iperf3
  - screen
  - ethtool
- 
+
 runcmd:
   - systemctl enable fail2ban
   - systemctl start fail2ban

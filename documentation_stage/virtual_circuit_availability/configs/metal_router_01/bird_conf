@@ -46,4 +46,3 @@ protocol bgp ny_to_dc_secondary_backup {
    import all;
    export where source = RTS_STATIC;
 }
-

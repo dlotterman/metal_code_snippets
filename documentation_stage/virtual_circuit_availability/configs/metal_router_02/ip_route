@@ -3,4 +3,3 @@
 169.254.254.8/29 dev bond0.121 proto kernel scope link src 169.254.254.12
 192.168.100.0/24 via 169.254.254.1 dev bond0.111 proto bird
 192.168.200.0/24 dev bond0.101 proto kernel scope link src 192.168.200.3
-

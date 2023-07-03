@@ -7,10 +7,6 @@ datasource:
   Ec2:
     strict_id: false
 
-datasource:
-  Ec2:
-    strict_id: false
-
 packages:
   - iperf3
   - tmux
@@ -22,14 +18,14 @@ packages:
   - nc
   - git
   - dnf-automatic
- 
+
 groups:
   - sftp_users
 
 users:
   - name: sftpuser
     primary_group: sftp_users
-    passwd: $$REPLACE ME: `mkpasswd --method=SHA-512 --rounds=4096`
+      #passwd: $$REPLACE ME: `mkpasswd --method=SHA-512 --rounds=4096`
     shell: /sbin/nologin
     home: /data/sftp_chroot/sftp_user
     no_create_home: true
@@ -188,4 +184,4 @@ write_files:
       enabled=0
       gpgkey=file:///etc/pki/rpm-gpg/RPM-GPG-KEY-EPEL-8
       gpgcheck=1
-    permissions: "0644"    
+    permissions: "0644"

@@ -142,7 +142,6 @@ write_files:
     append: true
     content: |
       8021q
-    permissions: "0644"
 
   - path: "/etc/dnf/dnf.conf"
     permissions: "0644"
@@ -151,7 +150,6 @@ write_files:
     content: |
       max_parallel_downloads=10
       fastestmirror=True
-    permissions: "0644"
 
   - owner: root:root
     path: "/etc/fail2ban/jail.d/00-firewalld.local"
@@ -180,4 +178,3 @@ write_files:
       15 11 * * * root systemctl restart serial-getty@ttyS1.service
       20 11 * * * root systemctl restart getty@tty1.service
     permissions: '0644'
-

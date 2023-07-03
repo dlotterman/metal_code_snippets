@@ -20,4 +20,3 @@ colo_switch_01 BGP      master   up     2021-06-29  Established
     Source address:   169.254.254.3
     Hold timer:       129/180
     Keepalive timer:  46/60
-

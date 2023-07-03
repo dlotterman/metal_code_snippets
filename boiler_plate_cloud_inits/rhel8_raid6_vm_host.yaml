@@ -49,41 +49,40 @@ runcmd:
   - [ mkfs.ext4, -F, /dev/md0 ]
   - [ mount, /dev/md0, /mnt/md0 ]
   - [ systemctl, restart, NetworkManager.service ]
-  
+
 
 write_files:
 - path: "/etc/sysconfig/network-scripts/ifcfg-bond0.1001"
   permissions: "0644"
   owner: "root:root"
   content: |
-    DEVICE=bond0.1001 
-    NAME=bond0.1001 
-    ONPARENT=yes 
-    VLAN=yes 
-    BOOTPROTO=none 
-    ONBOOT=yes 
-    USERCTL=no 
+    DEVICE=bond0.1001
+    NAME=bond0.1001
+    ONPARENT=yes
+    VLAN=yes
+    BOOTPROTO=none
+    ONBOOT=yes
+    USERCTL=no
     NM_CONTROLLED=no
-    BRIDGE=br0 
+    BRIDGE=br0
 
 - path: "/etc/sysconfig/network-scripts/ifcfg-br0"
   permissions: "0644"
   owner: "root:root"
   content: |
-    DEVICE=br0 
-    TYPE=Bridge 
-    IPADDR=192.168.100.10 
-    NETMASK=255.255.255.0 
-    ONBOOT=yes 
-    BOOTPROTO=none 
+    DEVICE=br0
+    TYPE=Bridge
+    IPADDR=192.168.100.10
+    NETMASK=255.255.255.0
+    ONBOOT=yes
+    BOOTPROTO=none
     NM_CONTROLLED=no
-    DELAY=0 
+    DELAY=0
 
 - path: "/etc/sysctl.conf"
   permissions: "0644"
   owner: "root:root"
   append: true
-  permissions: "0644"
   content: |
     net.ipv4.ip_forward = 1
 
@@ -91,11 +90,11 @@ write_files:
   permissions: "0644"
   owner: "root:root"
   content: |
-    <network> 
-      <name>br0</name> 
-      <forward mode="bridge" /> 
-      <bridge name="br0" />   
-    </network> 
+    <network>
+      <name>br0</name>
+      <forward mode="bridge" />
+      <bridge name="br0" />
+    </network>
 
 - path: "/opt/metal_ddve/raid6_largest_drives.sh"
   permissions: "0744"
@@ -117,7 +116,7 @@ write_files:
   append: true
   content: |
     /dev/md0 /mnt/md0 ext4 defaults,nofail,discard 0 0
-    
+
 datasource:
   Ec2:
     strict_id: false

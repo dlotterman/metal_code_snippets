@@ -28,7 +28,7 @@ When a Metal instance is launched, by default it is given:
 - [/31 Public IP address](https://deploy.equinix.com/developers/docs/metal/networking/ip-addresses/#public-ipv4-subnet)
 - [/31 Private IP address](https://deploy.equinix.com/developers/docs/metal/networking/ip-addresses/#private-ipv4-management-subnets)
 
-Where: 
+Where:
 
 - That Public /31 is a block carved from a [larger, multi-tenant block of public IP's owned by Metal](https://deploy.equinix.com/developers/docs/metal/networking/ip-addresses/#equinix-metals-public-ip-address-blocks), presumably /24 or larger.
 - The Private /31 comes from a larger, pre-defined /25 block of private IPs that the Equinix Metal platform assigned into the project for the specific Metro.
@@ -40,7 +40,7 @@ Again, this 10.x.x.x network is delivered to the Metal instance on the *native* 
 
 So when an Equinix Metal instance is provisioned, it could have the following configuration:
 
-IP Addresses 
+IP Addresses
 ```
 Public IP: 93.187.217.143/31 on bond0
 Private IP: 10.12.104.25/31 on bond0
@@ -54,7 +54,7 @@ default via 93.187.217.142 dev bond0
 93.187.217.142/31 deb bond0 src 93.187.217.143
 ```
 
-The purpose of the `10.0.0.0/8` is to enable the [Private Networking](https://deploy.equinix.com/developers/docs/metal/networking/ip-addresses/#private-ipv4-management-subnets) and [Backend Transfer](https://deploy.equinix.com/developers/docs/metal/networking/backend-transfer/) features of Equinix Metal, it's a simple, one line route statement that tells the Metal instance "Any 10.x.x.x traffic, just pass it to your private gateway and the network will figure it out". 
+The purpose of the `10.0.0.0/8` is to enable the [Private Networking](https://deploy.equinix.com/developers/docs/metal/networking/ip-addresses/#private-ipv4-management-subnets) and [Backend Transfer](https://deploy.equinix.com/developers/docs/metal/networking/backend-transfer/) features of Equinix Metal, it's a simple, one line route statement that tells the Metal instance "Any 10.x.x.x traffic, just pass it to your private gateway and the network will figure it out".
 
 Example route scenarios:
 
@@ -77,13 +77,12 @@ When a customer wants to bring a `10.0.0.0/8` or large `10.x.x.x` subnet to Meta
 
 - If a customer does want to use [Private](https://deploy.equinix.com/developers/docs/metal/networking/ip-addresses/#private-ipv4-management-subnets) / [Backend transfer](https://deploy.equinix.com/developers/docs/metal/networking/backend-transfer/) and wants to co-locate the networks on a Metal host:
 	- Customer wants to bring `10.30.200.0/24` and use it inside Metal VLAN `2228`, which does not conflict with any Metal Layer-3 IP space directly, but does conflict with the `10.0.0.0/8` route statement:
-		- The customer could assign a route statement specific to that network for that interface on the server, which should be done by default, so that any traffic that hits `10.30.200.0/24` should be sent out the `bond0@VLAN2228` interface, instead of the `bond0` interface, which will still be the default 
+		- The customer could assign a route statement specific to that network for that interface on the server, which should be done by default, so that any traffic that hits `10.30.200.0/24` should be sent out the `bond0@VLAN2228` interface, instead of the `bond0` interface, which will still be the default
 
 - Customer wants to bring a network of `10.51.43.0/24` which conflicts directly with a Metal assigned block of `10.51.43.128/25`
 	- Customer can create a new project so that a new internal IP block is assigned that will likely not conflict
 	- Customer can remove the Private / [Backend Transfer](https://deploy.equinix.com/developers/docs/metal/networking/backend-transfer/) networking and design using another network.
-	
+
 Customers can also create more specific route statements than the very large `10.0.0.0/8` statement that gets assigned by default, for example:
 
 If a customer wanted to use Backend Transfer between a host in `FR` with IP `10.92.19.229/31` and a host in `PA` with an IP of `10.73.9.183/31`, instead of using the large `10.0.0.0/8`, they could assign `10.92.19.128/25` as a route via it's local private gateway of `10.73.9.182`. This will apply a more specific route `FR` <-> `PA` that will free up the `10.0.0.0/8` space for other routing.
-

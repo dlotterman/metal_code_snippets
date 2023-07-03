@@ -6,4 +6,3 @@ kernel http://ipxe.dlott.casa/util/debian/xepa/vmlinuz-5.10.0-13-amd64 boot=live
 initrd http://ipxe.dlott.casa/util/debian/xepa/initrd.img-5.10.0-13-amd64
 
 boot
-

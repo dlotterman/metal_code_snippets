@@ -91,7 +91,6 @@ write_files:
     append: true
     content: |
       8021q
-    permissions: "0644"
 
   - path: "/etc/dnf/dnf.conf"
     permissions: "0644"
@@ -100,7 +99,6 @@ write_files:
     content: |
       max_parallel_downloads=10
       fastestmirror=True
-    permissions: "0644"
 
   - path: "/etc/security/faillock.conf"
     permissions: "0644"
@@ -112,7 +110,6 @@ write_files:
       audit
       even_deny_root
       root_unlock_time=60
-    permissions: "0644"
 
   - path: /etc/crontab
     owner: root:root

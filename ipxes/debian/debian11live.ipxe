@@ -2,7 +2,7 @@
 
 # Steps to prep
 # 1) Build HTTP host / endpoint of choice (s3 / nginx / apache)
-# 2) Download "Debian Live Standard $ARCH" 
+# 2) Download "Debian Live Standard $ARCH"
 # 2a) Exmaple: "debian-live-11.2.0-amd64-standard.iso"
 # 3) Mount, unpack the iso and copy the following files from "Live\" into your http endpoint:
 # 3a) vmlinuz-$VERSION-amd64

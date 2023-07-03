@@ -10,7 +10,7 @@ When evaluating or working with Equinix Metal, users often want a "fastest" path
 
 While it may make sense to "short path" to running an appliance in Metal in a variety of ways (ESXi for example), those "short paths" often ignore very real and present challenges, namely security in the pursuit of "getting things to work".
 
-This guide and associated folders is intended to provide a documented "short but safe path" to running a virtual appliance inside an Equinix Metal environment with "0 code", where minimal technical knowledge is assumed but that the end result should be "safe" within reason. 
+This guide and associated folders is intended to provide a documented "short but safe path" to running a virtual appliance inside an Equinix Metal environment with "0 code", where minimal technical knowledge is assumed but that the end result should be "safe" within reason.
 
 For the purposes of brevity, it will be assumed that the "virtual appliance" in this case is a network focused (router / firewall etc) appliance.
 
@@ -55,7 +55,7 @@ The characteristics of this "no code safe virtual appliance" host are as follow:
 
 Equinix Metal has two primary networking "namespaces", it's batteries included Layer-3 networking and it's customer managed Layer-2 networking modes. Network appliances in Metal will often want connectivity into a variety of networks so this guide will assume both Layer-3 and Layer-2 connectivity is desired for the virtual appliance.
 
-Following best practices, the easiet way to provision a host as a hypervisor / VM host with Layer-3 networking for it's guests is to provision the host with defined, contigous IP blocks, for both public and private. Before provisioning any Metal hosts, ensure that a block of "Public" (not Global) IP's has been provisioned into the facility. It's strongly suggested the block be at least a **/29** for ease of use. 
+Following best practices, the easiet way to provision a host as a hypervisor / VM host with Layer-3 networking for it's guests is to provision the host with defined, contigous IP blocks, for both public and private. Before provisioning any Metal hosts, ensure that a block of "Public" (not Global) IP's has been provisioned into the facility. It's strongly suggested the block be at least a **/29** for ease of use.
 
 [More documentation here about reserving public IP addresses](https://metal.equinix.com/developers/docs/networking/standard-ips/)
 
@@ -86,7 +86,7 @@ This guide currently leverages CentOS8 as the chosen operating system due to it'
 
 ## Configure IPs
 
-* After toggling the <strong>"Configure IPs" </strong> radio, the <strong>"Deploy from your subnet"</strong> option should be available. Choose the block of IPs that you provisioned in the "Network Preparation" section earlier. 
+* After toggling the <strong>"Configure IPs" </strong> radio, the <strong>"Deploy from your subnet"</strong> option should be available. Choose the block of IPs that you provisioned in the "Network Preparation" section earlier.
 
 * Be sure to include a private block of the same size. This will allow the appliance to have access to both the public and management Layer-3 networks
 
@@ -157,7 +157,7 @@ Once the <strong> "Create VM"</strong> botton has been pressed, more configurati
 
 When the VM is created, it is created on the default VM "bridged" network that is created by default by KVM. This will give it access to the public internet via a private, NAT'ed network local to the host (Tthe Metal instance). The decision to keep or remove this interface is up to the user, however it can facilitate installation of appliances dependant on internet connectivity as part of their installation (network installs etc).
 
-In total, a minimum of 3x interfaces need to be added to the VM, all 3x of which need to be in "direct attachment" mode against the "bond0" interface. The "direct attachment" mode will give the guest appliance interfaces access to the same logical properties and access as the bonded interface it is attaching to. 
+In total, a minimum of 3x interfaces need to be added to the VM, all 3x of which need to be in "direct attachment" mode against the "bond0" interface. The "direct attachment" mode will give the guest appliance interfaces access to the same logical properties and access as the bonded interface it is attaching to.
 
 ![](https://s3.wasabisys.com/packetrepo/vm_interface.PNG)
 
@@ -189,7 +189,7 @@ The same logic is true of the Layer-3 private management network.
 
 ## Troubleshooting Layer-2 inside the VM
 
-If attempting to troubleshoot connectivity into the Layer-2 VLAN from inside the guest, it can be useful to configure the guest with an IP from the private block that was chosen in the Cockpit configuration section of this guide (presumably 172.16.0./1). 
+If attempting to troubleshoot connectivity into the Layer-2 VLAN from inside the guest, it can be useful to configure the guest with an IP from the private block that was chosen in the Cockpit configuration section of this guide (presumably 172.16.0./1).
 
 To clarify this, both the bonded interface on the host and the virtual interface inside the guest should be configured to be VLAN aware for any "Layer-2" networks attached.
 

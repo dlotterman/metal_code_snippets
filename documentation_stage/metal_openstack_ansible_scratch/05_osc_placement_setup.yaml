@@ -3,7 +3,7 @@
   vars:
     placement_mysql_password: placementmysql1234
     placement_admin_password: placementadmin1234
-    
+
   tasks:
     - name: openstack_install_placement_packages
       become: yes
@@ -15,16 +15,16 @@
 
     - name: openstack_placement_mysql_db_create
       become: yes
-      become_method: sudo     
-      mysql_db: 
+      become_method: sudo
+      mysql_db:
         name: placement
         state: present
         login_unix_socket: /var/run/mysqld/mysqld.sock
 
     - name: openstack_placement_mysql_user_create
       become: yes
-      become_method: sudo    
-      mysql_user: 
+      become_method: sudo
+      mysql_user:
         name: placement
         append_privs: yes
         password: "{{ placement_mysql_password }}"
@@ -59,7 +59,7 @@
     - name: openstack_placement_osuser_create_touch_file
       become: yes
       become_method: sudo
-      file: 
+      file:
         path: /metal/lock/placementosusercreate.lock
         state: touch
       when: placementosusercreate.changed
@@ -84,11 +84,11 @@
     - name: openstack_placemente_osrole_create_touch_file
       become: yes
       become_method: sudo
-      file: 
+      file:
         path: /metal/lock/placementosrolecreate.lock
         state: touch
       when: placementosrolecreate.changed
-      
+
     - name: openstack_placement_osservice_create
       become: yes
       become_method: sudo
@@ -109,10 +109,10 @@
     - name: openstack_glance_osservice_create_touch_file
       become: yes
       become_method: sudo
-      file: 
+      file:
         path: /metal/lock/placementosservicecreate.lock
         state: touch
-      when: placementosservicecreate.changed          
+      when: placementosservicecreate.changed
 
     - name: openstack_placement_osendpoint_public_create
       become: yes
@@ -134,10 +134,10 @@
     - name: openstack_placement_osendpoint_public_create_touch_file
       become: yes
       become_method: sudo
-      file: 
+      file:
         path: /metal/lock/placementosendpointpublic.lock
         state: touch
-      when: placementosendpointpublic.changed   
+      when: placementosendpointpublic.changed
 
     - name: openstack_placement_osendpoint_internal_create
       become: yes
@@ -159,10 +159,10 @@
     - name: openstack_placement_osendpoint_internal_create_touch_file
       become: yes
       become_method: sudo
-      file: 
+      file:
         path: /metal/lock/placementosendpointinternal.lock
         state: touch
-      when: placementosendpointinternal.changed   
+      when: placementosendpointinternal.changed
 
     - name: openstack_placement_osendpoint_admin_create
       become: yes
@@ -184,19 +184,19 @@
     - name: openstack_placement_osendpoint_admin_create_touch_file
       become: yes
       become_method: sudo
-      file: 
+      file:
         path: /metal/lock/placementosendpointadmin.lock
         state: touch
       when: placementosendpointadmin.changed
 
     - name: openstack_placement_template_conf
       become: yes
-      become_method: sudo    
+      become_method: sudo
       template:
         src: placement.conf.j2
         dest: /etc/placement/placement.conf
       register: placement_conf
-      
+
     - name: openstack_apache_restart
       become: yes
       become_method: sudo
@@ -209,7 +209,7 @@
       #This is so horrible. Why?
     - name: openstack_placement_db_populate
       become: yes
-      become_method: sudo  
+      become_method: sudo
       shell:  su -s /bin/sh -c "placement-manage db sync" placement
       args:
         creates: /metal/lock/placementemanagedbsync.lock
@@ -218,9 +218,7 @@
     - name: openstack_placement_db_touch_file
       become: yes
       become_method: sudo
-      file: 
+      file:
         path: /metal/lock/placementemanagedbsync.lock
         state: touch
       when: placementemanagedbsync.changed
-
-

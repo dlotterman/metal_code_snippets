@@ -61,7 +61,7 @@ variable "fabric_speed" {
 variable "redundancy_type" {
   type        = string
   description = <<EOF
-  Whether to create a 'SINGLE' connection or 'REDUNDANT'. 
+  Whether to create a 'SINGLE' connection or 'REDUNDANT'.
   EOF
   default     = "SINGLE"
 }
@@ -81,7 +81,7 @@ variable "seller_metro_code" {
   default     = "DC"
 
   validation {
-    condition = ( 
+    condition = (
       var.seller_metro_code == "" ? true : can(regex("^[A-Z]{2}$", var.seller_metro_code))
     )
     error_message = "Valid metro code consits of two capital leters, i.e. 'FR', 'SV', 'DC'."

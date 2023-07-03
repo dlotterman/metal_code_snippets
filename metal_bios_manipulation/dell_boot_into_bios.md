@@ -2,7 +2,7 @@
 
 * [Dell OpenManage 9.5 Documentation](https://www.dell.com/support/home/en-us/product-support/product/openmanage-server-administrator-v9.5/docs)
 
-1. Follow the [OpenManage installation steps](http://linux.dell.com/repo/community/openmanage/) to install OpenManage and get the services running for your distrobution of choice. 
+1. Follow the [OpenManage installation steps](http://linux.dell.com/repo/community/openmanage/) to install OpenManage and get the services running for your distrobution of choice.
     * Example one-liner for apt source file creation for OpenMange `9.5.0` with Ubuntu 20.04 / `focal` release: `sudo echo 'deb http://linux.dell.com/repo/community/openmanage/950/focal focal main' | sudo tee -a /etc/apt/sources.list.d/linux.dell.com.sources.list`
     * It is strongly suggested to install the `srvadmin-all` OpenManage metapackage
     * Note there is a missed dependency on `libxslt.so.1` for Ubuntu and Debian based distros, this can be installed via the package `libxslt1-dev`
@@ -19,7 +19,7 @@
 
 6. Reboot the host: ```reboot```
 
-7. The host will go through two reboot loops, on the second loop, after loading the lifecycle chain, you will see the following console prompt, after a prompt providing a legend for keystroke translation between virtual -> physical keystrokes. 
+7. The host will go through two reboot loops, on the second loop, after loading the lifecycle chain, you will see the following console prompt, after a prompt providing a legend for keystroke translation between virtual -> physical keystrokes.
     * For windows based keyboards, the `Esc` + `2` keys in conjuction should register through the SSH session and console emulator to proceed into the BIOS
 
 ```Initializing PCIe, USB, and Video... Done

@@ -3,9 +3,9 @@
 **Disclaimer:**
 *This document is UN-official, is only meant to be used as a reference, and is in no way supported by Equinix Metal itself.*
 
-Since ~2018, most up-to-date distributions of Windows 10 and adjacent releases (Server etc) have included a command-line SSH client as part of it's standard distrobution. This ssh client, which can be found via the `cmd` terminal or powershell terminal, closely mimics/behaves in line with the common behaviors exhibited by default SSH clients on *nix platforms. 
+Since ~2018, most up-to-date distributions of Windows 10 and adjacent releases (Server etc) have included a command-line SSH client as part of it's standard distrobution. This ssh client, which can be found via the `cmd` terminal or powershell terminal, closely mimics/behaves in line with the common behaviors exhibited by default SSH clients on *nix platforms.
 
-This greatly simplifies paths to *nix systems administration and operation from Windows 10 based workstations, however, the native client has some behavior deviations from the standard *nix clients that can be confusing, and can potentially clash with other "ssh client" documentation easily found via search engines. 
+This greatly simplifies paths to *nix systems administration and operation from Windows 10 based workstations, however, the native client has some behavior deviations from the standard *nix clients that can be confusing, and can potentially clash with other "ssh client" documentation easily found via search engines.
 
 This document aims to quickly describe:
 
@@ -33,17 +33,17 @@ This means that SSH keys, and their installation onto a Metal instance by the Me
 
 #### Secondary / SOS / OOB
 
-The Equinix Metal SOS is a secondary management vector for the management of Equinix Metal instances. It can be used in a variety of different ways / functions depending on the design of the deployment, but is primarily there as a "backup" management vector of last resort, intended for "loss of networking" events or instances that need to be configured when a management network is unavailable. 
+The Equinix Metal SOS is a secondary management vector for the management of Equinix Metal instances. It can be used in a variety of different ways / functions depending on the design of the deployment, but is primarily there as a "backup" management vector of last resort, intended for "loss of networking" events or instances that need to be configured when a management network is unavailable.
 
 When an Equinix Metal instance is provisioned, the same SSH-keys that are provided to the host via the Metadata API, are also installed at the SSH keys granting access to the SOS console. Similar to host Operating System SSH keys, these SOS SSH keys are primarily managed at install time. Unlike the host OS management problem, Equinix Metal has end to end lifecycle control over the SOS console, and hence can manage and update SSH keys after provisioning time. This can be key to recovering an instance where the initial management SSH keys may have been lost, or new users are added to the platform that may need that management access.
 
-It is worth being extremely clear here: The SOS console ONLY provides logical ACCESS to the Bare Metal instance's host OS, it does NOT provide a user or an authentication vector to the host OS behind the SOS console. The operator must have the local login credentials to the box, even with the SOS console. Think of the SOS console as your IP-KVM, where you still need a local user inside the host OS in order to subsequently login to the Operating Systems environment. 
+It is worth being extremely clear here: The SOS console ONLY provides logical ACCESS to the Bare Metal instance's host OS, it does NOT provide a user or an authentication vector to the host OS behind the SOS console. The operator must have the local login credentials to the box, even with the SOS console. Think of the SOS console as your IP-KVM, where you still need a local user inside the host OS in order to subsequently login to the Operating Systems environment.
 
 It should be noted that the feature to update the SSH keys of the SOS console is new to the platform as of Q4 2021. Previously it was a static configuration set at deploy time.
 
 ### Generating an SSH key on a Windows 10 workstation with the native Windows 10 ssh toolchain
 
-Generating an SSH key with the Windows 10 ssh toolchain for the most part will follow SSH client documentation, in particular Windows documentation. What "search engine" found documentation will often miss is that keys, including SSH keys, are an attribute of Microsoft systems configuration, and things like environment variables and default behavior can be inherited from Active Directory or other change management sources. 
+Generating an SSH key with the Windows 10 ssh toolchain for the most part will follow SSH client documentation, in particular Windows documentation. What "search engine" found documentation will often miss is that keys, including SSH keys, are an attribute of Microsoft systems configuration, and things like environment variables and default behavior can be inherited from Active Directory or other change management sources.
 
 Most often, this can mean SSH key files are generated either in unexpected directories, or any directory outside of the default / expected `~/.ssh/` folder. Because of this, I encourage users to specify their own name for the SSH key, this will force the generation of the associated private and public files to be written to the local, working directory at the time of generation. This lets us know for a fact where our keys are.
 
@@ -59,19 +59,19 @@ Please be sure to see the section of this document titled "Using your SSH key wi
 
 ### Applying and using that generated SSH key with Equinix Metal
 
-The **exact** string contents of the `myname_metal_ssh_key.pub` file are [what need to be uploaded to the Equinix Metal platform as the users public side of their SSH key](https://metal.equinix.com/developers/docs/accounts/ssh-keys/#ssh-keys). For example from the command issued above, the string to be entered would be: 
+The **exact** string contents of the `myname_metal_ssh_key.pub` file are [what need to be uploaded to the Equinix Metal platform as the users public side of their SSH key](https://metal.equinix.com/developers/docs/accounts/ssh-keys/#ssh-keys). For example from the command issued above, the string to be entered would be:
 
 ```ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAACAQCqotlb6DnOg9b/5suwqpo+hcXFMQRaRWot7+OQ0MBkWxM62nBg/efFiaNsOptj1pFhtMmOT8sphRsiW6UWbA70w2fzYemGxVPiQ4zMiScoUDf7T5M+ZdtQ5LKBxf3scsTl4/ovUPYQF6w2091Dwsl5Ao60ZFGTZlrXfFoD9DcaBLxu3ZgM8hORl3H/UWbYSZx27n/x+M/2GIVatgy1JA2z8vyVClpOknCSdbxlYddNHi01OZUf1Qe7fsKGOvzctnWbpV2bYc0VmtpsbjfBDqtzxtRC/2YBbNW6QSOobpsBk1ubPRnkmUhOOU55zx9a/Ozf2PgX2jGo9quB+XWa3snm5jPj7IiN7cPcwdL2B/1T+BBuf/Ib8NEdaBLxNN379m4gDlT7p6A6G2kFNq+IhWB9PlIW/ycXiYYUL4U4alF6BhIv1deVI4RBYfrZgOzJAX/ETt8RfptSTLF8kvJ+ljjpbEwg6MUZDkBDaR5ayu+TbaLQTr+lw9iFDFP/SOfuM1HgCTkuGwomlWDbJTobhf2rWBf6fOaHjz7YDN07Wvv01pqEeWvc2IHs/O84rXJxssRA1vI2aKqSADy0UmTi13N0T3Vtp1Gdbh3Cy+VsWE9tEeCOqaUfuOB5DZ4MZDn4IQKFBhIoQndSCoE7MfG4w4ejVxYIa2d6YyuA37+/sFdZtw== myemail@domain.com```
 
 Note that if your string contains the substring `-----BEGIN OPENSSH PRIVATE KEY-----`, you are looking at the PRIVATE key, which is the incorrect side to upload to the Metal platform.
 
-#### Updating the SOS console 
+#### Updating the SOS console
 
-When a new key is uploaded to the Equinix Metal platform, there is an option to "Associate key with these instances", where the operator can filter and select the already provisioned instances they would like to add their SSH key to. 
+When a new key is uploaded to the Equinix Metal platform, there is an option to "Associate key with these instances", where the operator can filter and select the already provisioned instances they would like to add their SSH key to.
 
 ![](https://s3.wasabisys.com/metalstaticassets/metal_ssh_key_add.JPG)
 
-Per the documentation above, Equinix Metal *CANNOT* update the SSH keys installed to the host OS after provision time. This means that the uploaded key will *NOT* be present on the instance until the operator uploads the key themselves, or the instance is "reinstalled" via the Equinix Metal platform, which functionally triggers a full re-provision, which gives the oppertunity for the new key to be loaded. 
+Per the documentation above, Equinix Metal *CANNOT* update the SSH keys installed to the host OS after provision time. This means that the uploaded key will *NOT* be present on the instance until the operator uploads the key themselves, or the instance is "reinstalled" via the Equinix Metal platform, which functionally triggers a full re-provision, which gives the oppertunity for the new key to be loaded.
 
 However, the SSH keys for the SOS / OOB endpoint for the instances WILL be updated, such that the new key should immediately be available for use with the SOS / OOB console after it is uploaded, so long as the correct instances are selected at upload time.
 
@@ -92,4 +92,3 @@ Warning: Permanently added 'sos.ny5.platformequinix.com,IP' (RSA) to the list of
 [SOS Session Ready. Use ~? for help.]
 [Note: You may need to press RETURN or Ctrl+L to get a prompt.]
 ```
-

@@ -1,6 +1,6 @@
 # Equinix Metal: Designing for availability with Virtual Circuits from Equinix Fabric
 
-This brief will informally cover key concerns regarding availability when designing architectures that leverage interconnection with the Equinix Fabric. This document is not intended to be exhaustive or complete, it also cedes authority to any / other official documentation. 
+This brief will informally cover key concerns regarding availability when designing architectures that leverage interconnection with the Equinix Fabric. This document is not intended to be exhaustive or complete, it also cedes authority to any / other official documentation.
 
 This document also assumes an *unreasonable* amount of domain and operator knowledge and experience. Please contact Equinix Metal Support or your Equinix account team for additional guidance if this document is unclear.
 
@@ -10,7 +10,7 @@ This document also assumes an *unreasonable* amount of domain and operator knowl
 
 While the cloudy nature of Fabric Virtual Circuits provide significant operational advantages, the additional abstractions in implementation of the product do introduce additional or specific concerns when designing availability conscious Interconnection architectures, that may be different from more traditional interconnection mediums or may be specific to the integration between Equinix Metal and Equinix Fabric.
 
-In particular, this document will focus on describing: 
+In particular, this document will focus on describing:
   - That Virtual Circuits are provisioned in a Primary / Secondary pattern (vs a hot failover in place pattern) where each Primary / Secondary path is a distinct Layer-2 (only) namespace
   - That in order to leverage the "Secondary" path of a "redundant" Virtual Circuit, the operator (customer) must design a Layer-3 mechanism to send traffic down that path.
 
@@ -53,8 +53,8 @@ The below is a pseudo-logical series of "steps" that are use to describe an envi
       - The OS of the `metal_router_01` instance has been [configured to route / pass traffic for other hosts](https://linuxconfig.org/how-to-turn-on-off-ip-forwarding-in-linux)
       - The OS of the `metal_router_01` instance has been configured with an IP in the private address space that will act as the Default Gateway for other Metal instances in this deployment model.
         - `192.168.200.1` in this documentation / diagram
-    
-3. #### Scenario #1: Customer has configured Fabric 
+
+3. #### Scenario #1: Customer has configured Fabric
 
   - Customer has "activated" their [Fabric account](https://docs.equinix.com/en-us/Content/Interconnection/Fabric/getting-started/Fabric-getting-started.htm) and provisioned all physical infrastructure
   - The switch in [*Step 1*](https://github.com/dlotterman/metal_code_snippets/blob/main/documentation_stage/virtual_circuit_availability/equinix_metal_fabric_vcs_availability.md#scenario-1-customer-has-configured-colocation) is connected to the [Equinix Fabric via cross-connect](https://docs.equinix.com/en-us/Content/Interconnection/Fabric/Fabric-landing-main.htm) and [Fabric Ports](https://docs.equinix.com/en-us/Content/Interconnection/Fabric/ports/Fabric-port-details.htm)
@@ -65,7 +65,7 @@ The below is a pseudo-logical series of "steps" that are use to describe an envi
   - Customer has completed the provisioning of the Virtual Circuit via Equinix Fabric
   - This virtual circuit is completed with the *Fabric Ports* associated with [Step 1](https://github.com/dlotterman/metal_code_snippets/blob/main/documentation_stage/virtual_circuit_availability/equinix_metal_fabric_vcs_availability.md#scenario-1-customer-has-configured-colocation) of this [scenario as the A-side](https://docs.equinix.com/en-us/Content/Interconnection/Fabric/layer-2/Fabric-layer-2-connections.htm)
 
-4. #### Scenario #1: Customer has configured A & Z-Side of Virtual Circuit 
+4. #### Scenario #1: Customer has configured A & Z-Side of Virtual Circuit
   - The switch associated with the [*1st Step*](https://github.com/dlotterman/metal_code_snippets/blob/main/documentation_stage/virtual_circuit_availability/equinix_metal_fabric_vcs_availability.md#scenario-1-customer-has-configured-colocation) has been configured to receive the VLAN carried by the virtual circuit as configured in the provisioned of the Virtual Circuit VLANID
   - Customer has tied the [Virtual Circuit to the Equinix Metal VLAN](https://metal.equinix.com/developers/docs/equinix-interconnect/shared-ports/#connecting-vlans-to-shared-ports)
         - Where the Metal VLAN is the `metal_to_virtual_circuit_vlan_0001` VLAN referenced in the [*2nd Step*](https://github.com/dlotterman/metal_code_snippets/blob/main/documentation_stage/virtual_circuit_availability/equinix_metal_fabric_vcs_availability.md#scenario-1-customer-has-configured-metal)
@@ -90,15 +90,15 @@ When a server from the *"Metal Backend Server"* group (say `192.168.200.15`) tri
 ### Scenario #1 Availability Concerns
 
 1. #### Availability of the Default Gateway
-  - In both the Colo and Metal networks, the *"backend"* servers require a traditional default gateway to pass traffic via the Interconnection, in this case the `Metal_router_01` and `Colo_switch_01` 
-    - As configured, `192.168.100.1` and `192.168.200.1` are both assigned to a single piece of equipment or host. If that hardware or host fails, the gateway for the backend servers will be unavailable and traffic will not cross the Interconnection. 
+  - In both the Colo and Metal networks, the *"backend"* servers require a traditional default gateway to pass traffic via the Interconnection, in this case the `Metal_router_01` and `Colo_switch_01`
+    - As configured, `192.168.100.1` and `192.168.200.1` are both assigned to a single piece of equipment or host. If that hardware or host fails, the gateway for the backend servers will be unavailable and traffic will not cross the Interconnection.
 2. #### Availability of the Virtual Circuit
-  - A *"Virtual Circuit"* is only a single path through a single chain of hardware through the integration between Equinix Metal, Fabric and the handoff from Fabric to the Customers Fabric Ports. 
+  - A *"Virtual Circuit"* is only a single path through a single chain of hardware through the integration between Equinix Metal, Fabric and the handoff from Fabric to the Customers Fabric Ports.
     - This is entirely a single point of failure
 
 #### Making the Default Gateway Highly Available
 
-The most common solution for making the default gateway role highly available is the traditional *"floating VIP"* model, and to leverage a cluster or availability tool to move the VIP (the default gateway) between routing hosts. 
+The most common solution for making the default gateway role highly available is the traditional *"floating VIP"* model, and to leverage a cluster or availability tool to move the VIP (the default gateway) between routing hosts.
 - Leveraging *keepalived* to manage VIPs in Metal is well documented. It is worth noting that managing IPs with *keepalived* inside of a Metal Layer-2 VLAN is a very different set of problems than what is being solved for in most [Metal + Keepalived](https://metal.equinix.com/developers/guides/load-balancing-ha/) documentation, which is the management of IPs in Metal's [managed Layer-3 network](https://metal.equinix.com/developers/docs/networking/ip-addresses/)
 
   - When operating inside a Metal VLAN, best practices will resemble more traditional *keepalived* administration and operation documentation
@@ -115,7 +115,7 @@ Again to be explicit, from the documentation:
 The relationship of virtual circuits to VLANs is 1:1. You can only attach one VLAN to one virtual circuit, and one virtual circuit to one VLAN. The same VLAN can't be connected to two or more virtual circuits.
 ```
 
-"Redundant" Virtual Circuits are named as such because when the two paths / virtual circuits are provisioned, the platform ensures they are deployed on infrastructure that will not be subject to the same or overlapping maintenance or outage windows. This means at least one path should be up even in the event of an expected or unexpected failure of one of the paths. 
+"Redundant" Virtual Circuits are named as such because when the two paths / virtual circuits are provisioned, the platform ensures they are deployed on infrastructure that will not be subject to the same or overlapping maintenance or outage windows. This means at least one path should be up even in the event of an expected or unexpected failure of one of the paths.
 
 Critically, this means while we may have two available paths, they are only Layer-2 paths. In order to take advantage of the redundancy provided by the second Layer-2 path, we have to configure a Layer-3 mechanism to divert or split traffic across virtual circuits depending on the intended availability characteristics, but in the simplest scenario of using the virtual circuits as *hot*/*cold* paths, we must be able to move Layer-3 traffic from one VLAN / Virtual Circuit to another on the Metal and Colocation sides in response to various failures.
 
@@ -159,7 +159,7 @@ In order to highlight the infrastructure differences between scenarios #1 & #2, 
       - All **3x** (or more) instances have been placed ["Layer-2 Bonded Mode"](https://metal.equinix.com/developers/docs/layer2-networking/layer2-mode/)
       - ~~Both 2x (or more) instances have been placed in the `metal_backend_vlan_0001` or `101` VLAN~~
       - All **3x** (or more) instances have been placed in the `metal_backend_vlan_0001` or `101` VLAN
-        - `802.1Q TAG` [enabled](https://metal.equinix.com/developers/docs/layer2-networking/native-vlan/#unsetting-a-native-vlan)      
+        - `802.1Q TAG` [enabled](https://metal.equinix.com/developers/docs/layer2-networking/native-vlan/#unsetting-a-native-vlan)
       - The OS of the Metal instances have been configured with a private address space for East <-> Metal traffic
         - In this diagram or example `192.168.200.xxx/24`
       - ~~1x of the Metal instances is designated as `metal_router_01` instance~~
@@ -175,7 +175,7 @@ In order to highlight the infrastructure differences between scenarios #1 & #2, 
       - **The OS  of the `metal_router_0[1-2]` instances have been configured with [keepalived](https://github.com/dlotterman/metal_code_snippets/blob/main/documentation_stage/virtual_circuit_availability/equinix_metal_fabric_vcs_availability.md#making-the-default-gateway-highly-available) (or other service / cluster availability tool)**
           - **keepalived has been configured to make the default gateway or `192.168.200.1` for the `101` hosted private network highly available across both `metal_router0[1-2]` instances**
 
-3. #### Scenario #2: Customer has configured Fabric 
+3. #### Scenario #2: Customer has configured Fabric
 
   - Customer has "activated" their [Fabric account](https://docs.equinix.com/en-us/Content/Interconnection/Fabric/getting-started/Fabric-getting-started.htm) and provisioned all physical infrastructure
   - The switches in [*Step 1*](https://github.com/dlotterman/metal_code_snippets/blob/main/documentation_stage/virtual_circuit_availability/equinix_metal_fabric_vcs_availability.md#scenario-2-customer-has-configured-colocation) is connected to the [Equinix Fabric via cross-connect](https://docs.equinix.com/en-us/Content/Interconnection/Fabric/Fabric-landing-main.htm) and [Fabric Ports](https://docs.equinix.com/en-us/Content/Interconnection/Fabric/ports/Fabric-port-details.htm)
@@ -185,7 +185,7 @@ In order to highlight the infrastructure differences between scenarios #1 & #2, 
   - Customer has recorded the token they are presented by the Metal platform
   - Customer has completed the provisioning of the Virtual Circuit via the Equinix Fabric console of API
 
-4. #### Scenario #2: Customer has configured A & Z-Side of Virtual Circuit 
+4. #### Scenario #2: Customer has configured A & Z-Side of Virtual Circuit
   - The switch associated with the [*1st Step*](https://github.com/dlotterman/metal_code_snippets/blob/main/documentation_stage/virtual_circuit_availability/equinix_metal_fabric_vcs_availability.md#scenario-2-customer-has-configured-colocation) have been configured to receive the VLAN carried by the virtual circuit as configured in the provisioned of the Virtual Circuit VLAN_ID, with Fabric ports receiving the A-side of the virtual circuit.
   - ~~Customer has tied the [Virtual Circuit to the Equinix Metal VLAN](https://metal.equinix.com/developers/docs/equinix-interconnect/shared-ports/#connecting-vlans-to-shared-ports)~~
   - Customer has tied the [Virtual Circuits to the Equinix Metal VLANs](https://metal.equinix.com/developers/docs/equinix-interconnect/shared-ports/#connecting-vlans-to-shared-ports)
@@ -233,6 +233,6 @@ In this scenario, a piece of equipment or software in the path of the primary Vi
 When a server from the  *"Metal Backend Server"* group (say `192.168.200.15`) tries to reach a *"Colo Backend Server"* (say `192.168.100.60`):
 
 - The destination of `192.168.100.60/24` will be out of its local network so it will pass the traffic to the configured default gateway. The default gateway IP of `192.168.200.1` will be hosted by one of the two `metal_router_0[1-2]` instances depending on the state of *keepalived*
-- The router instance, having lost it's BGP session with `colo_switch[1-2]`, will have withdrawn it's route table entry to `192.168.100.1/24` via `169.254.254.1`, and will identify that it's interface associated with the secondary VLAN (`metal_to_virtual_circuit_vlan_0002` or `121`) is the only path available to reach `169.254.254.2` via it's own `169.254.254.11` interface on VLAN `121`, which is announcing itself as a path to `192.168.100.1/24` 
+- The router instance, having lost it's BGP session with `colo_switch[1-2]`, will have withdrawn it's route table entry to `192.168.100.1/24` via `169.254.254.1`, and will identify that it's interface associated with the secondary VLAN (`metal_to_virtual_circuit_vlan_0002` or `121`) is the only path available to reach `169.254.254.2` via it's own `169.254.254.11` interface on VLAN `121`, which is announcing itself as a path to `192.168.100.1/24`
 - The router instance will pass the traffic in that North <-> South direction via the secondary virtual circuit or `121`, where it is carried via the Virtual Circuit across Fabric and is handed off to `colo_switch_02` in the Customers colocation environment, where it will follow a similar flow to the colo server.
 - Return traffic would follow a similar flow

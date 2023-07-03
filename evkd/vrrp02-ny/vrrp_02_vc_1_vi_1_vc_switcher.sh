@@ -113,7 +113,7 @@ fi
 # We also want to loop after making the unassociate call first
 # for both VC's to start that as quickly as possible
 
-for ATTEMPT in {1..40}; do 
+for ATTEMPT in {1..40}; do
     if [ $PRIVC_PASS_LOOP == true ]; then
         break
     fi
@@ -142,7 +142,7 @@ for ATTEMPT in {1..40}; do
 done
 
 ### Looping control from # Unassociate SECVC from SECVLAN
-for ATTEMPT in {1..15}; do 
+for ATTEMPT in {1..15}; do
     if [ $SECVC_PASS_LOOP = true ]; then
         break
     fi
@@ -226,4 +226,3 @@ ENDTIME=$(( SECONDS - $STARTTIME ))
 log "Work work complete in $ENDTIME seconds, exiting"
 
 exit
-

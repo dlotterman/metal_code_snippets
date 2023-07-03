@@ -6,7 +6,7 @@
 
     - name: metal_lock_file_dir
       become: yes
-      become_method: sudo    
+      become_method: sudo
       file:
         path: /metal/lock/
         state: directory
@@ -28,7 +28,7 @@
         filename: cloudarchive-wallaby.list
         update_cache: yes
         validate_certs: no
-        
+
     - name: hosts_install_system_packages
       become: yes
       become_method: sudo
@@ -45,7 +45,7 @@
           - xfsprogs
           - smartmontools
           - moreutils
-          - screen          
+          - screen
           - tmux
           - ufw
         state: latest
@@ -56,13 +56,13 @@
       ansible.builtin.package:
         name:
           - nano
-        state: absent        
+        state: absent
 
     - name: hosts_ufw_allow_ssh
       become: yes
       become_method: sudo
       ufw: proto=tcp port=22 rule=allow
-      
+
     - name: hosts_ufw_allow_all_access_from_RFC1918
       become: yes
       become_method: sudo
@@ -81,12 +81,12 @@
 
     - name: hosts_template_dnsmasq_conf
       become: yes
-      become_method: sudo    
+      become_method: sudo
       template:
         src: dnsmasq.conf.j2
         dest: /etc/dnsmasq.conf
       register: dnsmasq_conf
-        
+
     - name: hosts_template_resolveconf
       become: yes
       become_method: sudo
@@ -138,10 +138,10 @@
         name: "{{ item }}"
         state: restarted
         enabled: yes
-      when: fail2ban_conf.changed    
+      when: fail2ban_conf.changed
       with_items:
         - fail2ban
-    # https://docs.openstack.org/neutron/victoria/install/controller-install-option1-ubuntu.html#configure-the-linux-bridge-agent    
+    # https://docs.openstack.org/neutron/victoria/install/controller-install-option1-ubuntu.html#configure-the-linux-bridge-agent
     - name: hosts_add_kernel_module_8021q
       become: yes
       become_method: sudo
@@ -151,33 +151,33 @@
 
     - name: hosts_add_kernel_module_brfilter
       become: yes
-      become_method: sudo    
+      become_method: sudo
       community.general.modprobe:
         name: br_netfilter
         state: present
-    
+
     # https://docs.openstack.org/neutron/victoria/install/controller-install-option1-ubuntu.html#configure-the-linux-bridge-agent
     - name: os_settings_sysctl_settings_set_nf_iptables
       become: yes
-      become_method: sudo        
+      become_method: sudo
       sysctl:
         name: net.bridge.bridge-nf-call-iptables
         value: '1'
-        sysctl_set: yes        
+        sysctl_set: yes
 
     - name: os_settings_sysctl_settings_set_nf_ip6tables
       become: yes
-      become_method: sudo        
+      become_method: sudo
       sysctl:
         name: net.bridge.bridge-nf-call-ip6tables
 
         value: '1'
-        sysctl_set: yes   
+        sysctl_set: yes
 
     # Network
     - name: hosts_network_bond_vlan_{{ metal_os_vlan }}_add
       become: yes
-      become_method: sudo  
+      become_method: sudo
       shell: ip link add link bond0 name bond0.{{ metal_os_vlan }} type vlan id {{ metal_os_vlan }}
       args:
         creates: /metal/lock/hosts_network_bond_vlan_{{ metal_os_vlan }}_add.lock
@@ -187,15 +187,15 @@
     - name: hosts_network_bond_vlan_{{ metal_os_vlan }}_add_touch_file
       become: yes
       become_method: sudo
-      file: 
+      file:
         path: /metal/lock/hosts_network_bond_vlan_{{ metal_os_vlan }}_add.lock
         state: touch
       when: hosts_network_bond_vlan_1_add.changed
 
     - name: hosts_network_bond_vlan_{{ metal_os_vlan }}_up
       become: yes
-      become_method: sudo  
-      shell: ip link set dev bond0.{{ metal_os_vlan }} up 
+      become_method: sudo
+      shell: ip link set dev bond0.{{ metal_os_vlan }} up
       args:
         creates: /metal/lock/hosts_network_bond_vlan_{{ metal_os_vlan }}_up.lock
       # Can't template register calls, look into #todo
@@ -204,7 +204,7 @@
     - name: hosts_network_bond_vlan_{{ metal_os_vlan }}_up_touch_file
       become: yes
       become_method: sudo
-      file: 
+      file:
         path: /metal/lock/hosts_network_bond_vlan_{{ metal_os_vlan }}_up.lock
         state: touch
       when: hosts_network_bond_vlan_1_up.changed

@@ -11,7 +11,7 @@
 # 6. Enables automatic updates (for security, so things like SSHD are automatically updated)
 # 7. Enables fail2ban on SSHD
 
-# This cloud-init file will also configure a c3.medium as a open iSCSI target 
+# This cloud-init file will also configure a c3.medium as a open iSCSI target
 # The only thing that should need to be modified is the networking section
 # /etc/network/interfaces of write_files, and also updating the UFW section in runcmd
 # to punch a hole for the network you choose
@@ -152,4 +152,3 @@ write_files:
       15 11 * * * root systemctl restart serial-getty@ttyS1.service
       20 11 * * * root systemctl restart getty@tty1.service
     permissions: '0644'
-

@@ -117,7 +117,7 @@ write_files:
       05 11 * * * root systemctl restart sshd
       15 11 * * * root systemctl restart serial-getty@ttyS1.service
       20 11 * * * root systemctl restart getty@tty1.service
-    permissions: '0644'    
+    permissions: '0644'
 
   - path: "/etc/modules-load.d/networking.conf"
     permissions: "0644"
@@ -126,4 +126,3 @@ write_files:
     content: |
       bonding
       8021q
-    permissions: "0644"

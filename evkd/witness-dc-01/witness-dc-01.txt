@@ -3,7 +3,7 @@
 
 
 public: $$$
-mgmt: $$$ # Shouldnt be necessary for witness-dc-01 
+mgmt: $$$ # Shouldnt be necessary for witness-dc-01
 VLAN 2084: 10.60.75.10
 VLAN 1529: 172.16.25.10
 
@@ -28,4 +28,4 @@ ip rule add from 172.16.25.10/32 table VLAN1529
 ip rule add to 172.16.25.10/32 table VLAN1529
 sysctl -w net.ipv4.conf.bond0/1529.rp_filter=1
 
-ufw allow from 172.16.0.0/12 
+ufw allow from 172.16.0.0/12

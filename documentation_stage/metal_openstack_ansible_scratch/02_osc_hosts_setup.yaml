@@ -31,7 +31,7 @@
         dest: /etc/mysql/mariadb.conf.d/99-openstack.cnf
         mode: 0644
       register: maria_os_cnf
-      
+
     - name: openstack_mariadb_service_enable
       become: yes
       become_method: sudo
@@ -46,12 +46,12 @@
       ansible.builtin.service:
         name: mariadb
         state: restarted
-        enabled: yes   
+        enabled: yes
       when: maria_os_cnf.changed
 
     - name: openstack_mariadb_secure_mysql_mycnf
       become: yes
-      become_method: sudo     
+      become_method: sudo
       template:
         src: dotmy.cnf.j2
         dest: /root/.my.cnf
@@ -59,10 +59,10 @@
 
     - name: openstack_mariadb_secure_mysql_root_user
       become: yes
-      become_method: sudo    
-      mysql_user: 
-        name: root 
-        host: "{{ item }}" 
+      become_method: sudo
+      mysql_user:
+        name: root
+        host: "{{ item }}"
         password: "{{ mysql_root_password }}"
         login_unix_socket: /var/run/mysqld/mysqld.sock
       with_items:
@@ -72,10 +72,10 @@
 
     - name: openstack_mariadb_secure_mysql_remove_anon_user
       become: yes
-      become_method: sudo     
-      mysql_user: 
-        name: "" 
-        host: "{{ item }}" 
+      become_method: sudo
+      mysql_user:
+        name: ""
+        host: "{{ item }}"
         state: absent
         login_unix_socket: /var/run/mysqld/mysqld.sock
       with_items:
@@ -84,10 +84,10 @@
 
     - name: openstack_mariadb_secure_mysql_remove_host_user
       become: yes
-      become_method: sudo     
-      mysql_user: 
-        name: root 
-        host: "{{ ansible_nodename }}" 
+      become_method: sudo
+      mysql_user:
+        name: root
+        host: "{{ ansible_nodename }}"
         state: absent
         login_unix_socket: /var/run/mysqld/mysqld.sock
       with_items:
@@ -96,9 +96,9 @@
 
     - name: openstack_mariadb_secure_mysql_remove_testdb
       become: yes
-      become_method: sudo     
-      mysql_db: 
-        name: test 
+      become_method: sudo
+      mysql_db:
+        name: test
         state: absent
         login_unix_socket: /var/run/mysqld/mysqld.sock
 
@@ -109,11 +109,11 @@
         name: rabbitmq-server
         state: started
         enabled: yes
-        
+
     - name: openstack_rabbitmq_user_check
       become: yes
       become_method: sudo
-      command: 
+      command:
         cmd: rabbitmqctl list_users
         strip_empty_ends: false
       register: rabbitmqctl_list_users
@@ -132,7 +132,7 @@
 
     - name: openstack_memcache_template_conf
       become: yes
-      become_method: sudo    
+      become_method: sudo
       template:
         src: memcached.conf.j2
         dest: /etc/memcached.conf
@@ -145,7 +145,7 @@
         name: memcached
         state: restarted
         enabled: yes
-      when: memcache_conf.changed  
+      when: memcache_conf.changed
 
     - name: openstack_etcd_template_conf
       become: yes
@@ -170,7 +170,5 @@
       ansible.builtin.service:
         name: etcd
         state: restarted
-        enabled: yes   
+        enabled: yes
       when: etcd_os_cnf.changed
-      
-   

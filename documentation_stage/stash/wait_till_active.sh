@@ -17,4 +17,3 @@ do
         STATE=$(curl -s -X GET --header 'Accept: application/json' --header "X-Auth-Token: $METAL_READ_API_KEY" "https://api.equinix.com/metal/v1/devices/$INSTANCE_ID"  | python3 -c 'import json,sys; print(json.load(sys.stdin)["state"])')
 
 done
-

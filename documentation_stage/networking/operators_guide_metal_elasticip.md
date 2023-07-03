@@ -9,7 +9,7 @@ Due to the added levels of abstraction in virtualization and some quirks of how 
 
 This guide intends to very simply describe the task at hand and walkthrough the steps and the reasoning associated with assigning an ElasticIP into or inside of a Virtual Machine.
 
-It is worth clarifying that this document does *not* include any of the [Metal Gateway](https://metal.equinix.com/developers/docs/networking/metal-gateway/) feature functionality in scope. 
+It is worth clarifying that this document does *not* include any of the [Metal Gateway](https://metal.equinix.com/developers/docs/networking/metal-gateway/) feature functionality in scope.
 
 This document also assumed static ElasticIP assignment. If you are looking to manage ElasticIPs through BGP, additional documentation can be [found here](https://github.com/dlotterman/metal_code_snippets/blob/main/documentation_stage/networking/operators_guide_metal_bgp.md)
 
@@ -23,9 +23,9 @@ When an Equinix Metal instance is launched, it can be launched with a [Public](h
 
 There is quite a bit of overlap in subject domain space between public and private IPs. This document assumes [public IP's](https://metal.equinix.com/developers/docs/networking/ip-addresses/#public-ipv4-subnet) only.
 
-#### Minimum block size for VM hosted ElasticIP 
+#### Minimum block size for VM hosted ElasticIP
 
-The block size assigned to the instance by default will very as [documented here](https://metal.equinix.com/developers/docs/networking/reserve-public-ipv4s/). 
+The block size assigned to the instance by default will very as [documented here](https://metal.equinix.com/developers/docs/networking/reserve-public-ipv4s/).
 
 It is important to note, in order to work with ElasticIP's inside of hosted guests, you will need a block larger than the default Linux size of a `/31`, where you would likely want a minimum of a `/29`. The reason for this will be fleshed out below.
 
@@ -35,7 +35,7 @@ When an instance is launched with a block larger than a `/31` (this document wil
 
 `145.40.76.240/28`:
 - `145.40.76.241`: is assigned as the Gateway for the block `145.40.76.240/28`, and is the gateway for the instance
-- `145.40.76.242`: is assigned as the IP address for the Metal instance, that is to say it is assumed that the Operating System of the Metal Instance is or will be configured to host that IP address on it's configuration of it's interfaces. 
+- `145.40.76.242`: is assigned as the IP address for the Metal instance, that is to say it is assumed that the Operating System of the Metal Instance is or will be configured to host that IP address on it's configuration of it's interfaces.
 - `145.40.76.243` - `145.40.76.254`: These IP's are unassigned, and are free to be assigned to either the instance itself, or to VM's hosted on the instance.
 
 
@@ -52,7 +52,7 @@ If we wanted a guest VM to host an IP address from the host's block, it could be
 
 ### ElasticIP blocks
 
-ElasticIP blocks are simply blocks of IPs, and that's it. The quirk of working with them is that they do **NOT** have their own gateway, there is no routing or gateway specifically for an ElasticIP block. 
+ElasticIP blocks are simply blocks of IPs, and that's it. The quirk of working with them is that they do **NOT** have their own gateway, there is no routing or gateway specifically for an ElasticIP block.
 
 When a block of ElasticIP's is assigned to an Equinix Metal instance, the platform essentially instructs the network to "send any traffic for this block of IPs to the same place you send traffic for the host's network".
 
@@ -65,7 +65,7 @@ The platform will essentially instruct the network:
 
 Any traffic you see for `147.28.143.192/29`, send it to the same place you have configured for `145.40.76.240/28`. It really is as simple as that.
 
-#### Using an ElasticIP on the **HOST** 
+#### Using an ElasticIP on the **HOST**
 
 If the Metal instance with the IP `145.40.76.242` and the gateway `145.40.76.241`, and the Operator assigns the IP `147.28.143.193` from the ElasticIP block `147.28.143.192/29`, then the network will direct all traffic for `147.28.143.192/29` to `145.40.76.240/28`, where the instance has `145.40.76.242`, so all traffic for `147.28.143.192/29` will be directed to it.
 
@@ -80,8 +80,8 @@ We need to assign an IP address from the hosts block of `145.40.76.240/28` into 
 In this scenario, the IP allocation would look like:
 `145.40.76.240/28`:
 - `145.40.76.241`: is assigned as the Gateway for the block `145.40.76.240/28`, and is the gateway for the instance
-- `145.40.76.242`: is assigned as the IP address for the Metal instance, that is to say it is assumed that the Operating System of the Metal Instance is or will be configured to host that IP address on it's configuration of it's interfaces. 
-- `145.40.76.243`: is assigned as the IP address for the inside of the *GUEST VM* 
+- `145.40.76.242`: is assigned as the IP address for the Metal instance, that is to say it is assumed that the Operating System of the Metal Instance is or will be configured to host that IP address on it's configuration of it's interfaces.
+- `145.40.76.243`: is assigned as the IP address for the inside of the *GUEST VM*
 - `145.40.76.244` - `145.40.76.254`: These IP's are unassigned, and are free to be assigned to either the instance itself, or to VM's hosted on the instance.
 
 That `145.40.76.243` IP address needs to be hosted *inside* the guest VM in order to give the VM a path to the gateway of `145.40.76.241`. Once it has a gateway of `145.40.76.241`, it can then be configured to host the block `147.28.143.192/29`.
@@ -95,4 +95,3 @@ In this sceario the traffic flow could be outlined as:
 - Guest VM computes what needs to happen
 - Guest VM returns traffic for `147.28.143.192/29` to it's default gateway of `145.40.76.241`, which is returned through the *hosts* virtual network
 - Traffic is passed back to the network via the gateway of `145.40.76.241` and goes off to whereever it needs to go.
-

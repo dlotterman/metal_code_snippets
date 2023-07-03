@@ -31,4 +31,3 @@ A user of the cloud-init file should first look at the `passwd` line of the file
 
 
 In the event that an `iperf3` server becomes unvailable (crash, lockup etc), an end iperf3 client user can simply pick on of the other available ports / servers. If all `iperf3` servers become unavailable, the a reboot of the instance should return the instance to expected functionality.
-

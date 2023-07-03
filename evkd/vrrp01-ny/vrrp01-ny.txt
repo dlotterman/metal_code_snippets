@@ -14,7 +14,7 @@ ip link add link bond0 name bond0.1529 type vlan id 1529
 ip addr add 172.16.25.20/24 dev bond0.1529
 ip link set dev bond0.1529 up
 
-ufw allow from 172.16.0.0/12 
+ufw allow from 172.16.0.0/12
 
 
 
@@ -56,7 +56,7 @@ EOL
 # TODO MASTER needs a way to keep in fault state after transition
 cat > /usr/local/etc/keepalived/keepalived.conf << \EOL
 
-global_defs {   
+global_defs {
     log_unknown_vrids
     enable_script_security
 }
@@ -103,11 +103,11 @@ vrrp_instance VC_1_VI_1 {
     track_script {
         VC_1_VI_1_peer_check
         VC_1_VI_1_remote_check
-      }      
-      
+      }
+
     track_file {
         VC_1_VI_1_track_file weight 1
-      }          
+      }
 }
 
 vrrp_script VC_2_VI_2_peer_check {
@@ -137,7 +137,7 @@ vrrp_instance VC_2_VI_2 {
     state MASTER
     priority 200
     advert_int 1
-    nopreempt    
+    nopreempt
 
     virtual_router_id 20
     unicast_src_ip 10.66.59.131
@@ -152,13 +152,13 @@ vrrp_instance VC_2_VI_2 {
     track_script {
         VC_2_VI_2_peer_check
         VC_2_VI_2_remote_check
-      }      
-      
+      }
+
     track_file {
         VC_2_VI_2_track_file weight 1
-      }          
+      }
 }
-    
+
 EOL
 
 # Citation: https://www.unixmen.com/simple-bash-script-for-pinging-hosts/
@@ -178,8 +178,8 @@ VRRPRACKFILE=$5
 function pingcheck {
     PING=$(fping -t $TIMEOUT -c $NUMPING $HOST | grep -c bytes)
     echo "$(tail -10000 $LOGFILE)" > $LOGFILE # just not letting the log file grow to much
-    if [ $PING -ge $NUMPING ]; then 
-        
+    if [ $PING -ge $NUMPING ]; then
+
         echo "$(date +"%Y-%m-%d_%H%M%S") - $HOST UP" | tee -a $LOGFILE
         exit 0
     else

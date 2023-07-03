@@ -39,7 +39,7 @@ This BGP feature functionality enables a couple of key use cases:
 
 ### Realtime management of ElasticIPs:
 
-Equinix Metal provides "table stakes" [ElasticIP](https://metal.equinix.com/developers/docs/networking/elastic-ips/) functionality, where specific IPs of specific blocks can be assigned to instance's for all the cloudy reasons an operator would normally do so. ElasticIPs can be managed through the usual interfaces, API or GUI, but in Metal, they can also be managed via BGP, allowing Metal instances acting as BGP speakers to dynamically move ElasticIPs around in near real time, without having to wait for API calls and host re-configuration. There are great reasons to do this. 
+Equinix Metal provides "table stakes" [ElasticIP](https://metal.equinix.com/developers/docs/networking/elastic-ips/) functionality, where specific IPs of specific blocks can be assigned to instance's for all the cloudy reasons an operator would normally do so. ElasticIPs can be managed through the usual interfaces, API or GUI, but in Metal, they can also be managed via BGP, allowing Metal instances acting as BGP speakers to dynamically move ElasticIPs around in near real time, without having to wait for API calls and host re-configuration. There are great reasons to do this.
 - One of my personal favorites, is using Metal Private IP's as ElasticIPs for internal control plane management.
 
 This functionality falls within the scope of the ["Local BGP"](https://metal.equinix.com/developers/docs/bgp/local-bgp/) sub-feature of BGP, where an operators intent is to control the  Metal Layer-3 network within the local scope of a [Metro](https://metal.equinix.com/developers/docs/locations/metros/).
@@ -50,7 +50,7 @@ Equinix Metal allows customers to bring their own IP's via its BGP functionality
 
 ### Legacy vs Current clarifications:
 
-Prior to its acquisition by [Equinix in 2020](https://www.equinix.com/newsroom/press-releases/2020/03/equinix-completes-acquisition-of-bare-metal-leader-packet), the platform currently known as Metal was developed and operated by a startup called ["Packet"](https://www.crunchbase.com/organization/packet-host). The BGP feature was initially released and documented prior to the acquisition, where after the acquisition some substantive advancements in its network infrastructure altered the BGP featureset in some discrete ways. 
+Prior to its acquisition by [Equinix in 2020](https://www.equinix.com/newsroom/press-releases/2020/03/equinix-completes-acquisition-of-bare-metal-leader-packet), the platform currently known as Metal was developed and operated by a startup called ["Packet"](https://www.crunchbase.com/organization/packet-host). The BGP feature was initially released and documented prior to the acquisition, where after the acquisition some substantive advancements in its network infrastructure altered the BGP featureset in some discrete ways.
 
 The effect of this is that at the time of this writing:
 
@@ -65,7 +65,7 @@ The customer facing BGP endpoint is hosted on an instance’s ToR, always on the
 
 Those peering IP's expect to be reached via the [Metal Private network](https://metal.equinix.com/developers/docs/networking/ip-addresses/#private-ipv4-management-subnets), **NOT** the [Metal Public Network](https://metal.equinix.com/developers/docs/networking/ip-addresses/#public-ipv4-subnet). To be clear, that means you must peer via your instances `10.0.0.0/8` IP address, not via its Public IP address (for example `145.40.76.240/28`).
 
-In the case of Linux networking and software routing, there are some differences in behavior between different ecosystems. 
+In the case of Linux networking and software routing, there are some differences in behavior between different ecosystems.
 
 On a default Metal Linux instance, this would look like:
 
@@ -85,7 +85,7 @@ protocol static {
 }
 ```
 
-In the Bird `2.X` config scheme, there is no need for this static route specificity int the config, 
+In the Bird `2.X` config scheme, there is no need for this static route specificity int the config,
 
 An example complete Bird `2.X` config, generated from [Equinix-Metal-BGP](https://github.com/enkelprifti98/Equinix-Metal-BGP) is printed below in this document
 
@@ -100,7 +100,7 @@ The easiest way to configure a Linux instance to announce an [ElasticIP](https:/
 
 This will be registered as a "connected" network in your BGP speaker's configuration and redistribute that network into its BGP table.
 
-The operator can then configure a BGP speaker of choice ([FRR](https://frrouting.org/), [Bird](https://bird.network.cz/), [GoBGP](https://github.com/osrg/gobgp) to interface with the [Peer IPs](https://metal.equinix.com/developers/docs/bgp/bgp-on-equinix-metal/#routing-overview). 
+The operator can then configure a BGP speaker of choice ([FRR](https://frrouting.org/), [Bird](https://bird.network.cz/), [GoBGP](https://github.com/osrg/gobgp) to interface with the [Peer IPs](https://metal.equinix.com/developers/docs/bgp/bgp-on-equinix-metal/#routing-overview).
 
 Quick reminders from official documentation:
 - The Equinix Metal network will always participate as AS `65530`.
@@ -151,9 +151,9 @@ line vty
 end
 ```
 
-Some quick notes: 
+Some quick notes:
 - This example config has a wide open route-map. This should not be used in production as it can easily have FRR do things an operator wouldnt want, but is also by far the easiest to use to get "FRR working in the first place"
-    - Operators should go to production with a more specific route and prefix list structure. 
+    - Operators should go to production with a more specific route and prefix list structure.
 - multihop should be configured for the BGP neighbors
 - Equinix Metal's community strings are [documented here](https://metal.equinix.com/developers/docs/bgp/global-communities/)
     - They are really only useful in conjunction with BYO-IP
@@ -165,7 +165,7 @@ For operators who want to BGP peer with Metal from a VM hosted on a Metal instan
 
 - The Equinix Metal network will ONLY accept BGP connections from the [Metal Private IP address](https://metal.equinix.com/developers/docs/networking/ip-addresses/#private-ipv4-management-subnets) assigned to the Metal instance directly. So if a Metal instance is assigned an Metal Private network of `10.66.59.130/29`, then the ToRs will only accept connections from the specific `/32` IP assigned as the instance's private IP, not any other IP in the block, in this example: `10.66.59.131`
     - This means that the Metal Private IP **MUST BE REMOVED** from the Metal instance (host) itself, so that it can be assigned **INSIDE** of the VM.
-    - The VM must also be configured with the same static routing so that BGP requests are directed via the Metal Private IP assigned above. 
+    - The VM must also be configured with the same static routing so that BGP requests are directed via the Metal Private IP assigned above.
 - BGP peering happens ONLY on the Metal Layer-3 network. This means the VM must have ports on a virtual switch where that virtual switch is attached directly to the Metal Layer-3 network with NO abstraction in between (VLANs, NAT etc).
     - For ESXi this has its own specific implications. By default ESXi instances are launched in an un-bonded configuration on the ESXi host, where `vSwitch0` is associated with the first NIC (linux equivalent of `eth0`). The VM must be placed on an equivalent of `vSwitch0`, where it can pass packets directly to the Metal Layer-3 network with Metal Layer-3 IPs configured **INSIDE** the guest.
     - Linux instances by default are launched with the Metal Layer-3 IP's placed on the `bond0` interface. The VM's ports should be on a bridge or directly attached to that `bond0` interface, and not any sub-interfaces or VLANs.
@@ -182,11 +182,11 @@ The pseudo steps to launching an Equinix Metal instance and configuring it to ho
 - Remove the [Metal Private IP](https://metal.equinix.com/developers/docs/networking/ip-addresses/#private-ipv4-management-subnets) from the bonded interface of the host
     - For ESXi this would be removing the VMKernel IP
 - Create a VM with a port directly attached to `bond0`
-    - For ESXi this would be assigned a port from the `vSwitch0` interface 
+    - For ESXi this would be assigned a port from the `vSwitch0` interface
 - Add the Metal Private IP and route to the VM's interface
     - `ip addr add 10.70.114.146/29 dev enp1s0`
     - `ip route add 10.0.0.0/8 via 10.70.114.145`
-- Add the ElasticIP block (or BYO-IP block) to the loopback interface 
+- Add the ElasticIP block (or BYO-IP block) to the loopback interface
     - `ip addr add 145.40.76.241/28 dev lo:0`
 - Add the static routes to send traffic to the peer_ip's through the Private Gateway
     - `ip route add 169.254.255.1/32 via 10.70.114.145`
@@ -218,7 +218,7 @@ K>* 169.254.255.2/32 [0/0] via 10.70.114.145, enp1s0, 00:06:24
 ```
 
 ```
-# show bgp ipv4 
+# show bgp ipv4
 BGP table version is 3, local router ID is 10.70.114.146, vrf id 0
 Default local pref 100, local AS 65000
 Status codes:  s suppressed, d damped, h history, * valid, > best, = multipath,
@@ -236,7 +236,7 @@ Displayed  3 routes and 3 total paths
 ```
 
 ```
-# show bgp summary 
+# show bgp summary
 
 IPv4 Unicast Summary:
 BGP router identifier 10.70.114.146, local AS number 65000 vrf-id 0
@@ -253,7 +253,7 @@ Total number of neighbors 2
 ```
 
 ```
-# show bgp neighbors 
+# show bgp neighbors
 BGP neighbor is 169.254.255.1, remote AS 65530, local AS 65000, external link
  Member of peer-group MetalBGP for session parameters
   BGP version 4, remote router ID 145.40.76.80, local router ID 10.70.114.146
@@ -607,4 +607,3 @@ Equinix_Metal_2 BGP        ---        up     17:21:44.376  Established
     BGP Next hop:   10.67.63.5
     IGP IPv4 table: master4
 ```
-	

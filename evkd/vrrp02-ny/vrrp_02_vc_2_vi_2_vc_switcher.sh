@@ -85,7 +85,7 @@ fi
 # The variability is significant enough
 # that if you just sleep your oppertunity cose
 # is too high.
-for ATTEMPT in {1..40}; do 
+for ATTEMPT in {1..40}; do
     if [ $PRIVC_PASS_LOOP == true ]; then
         break
     fi
@@ -135,7 +135,7 @@ else
     exit 1
 fi
 
-for ATTEMPT in {1..15}; do 
+for ATTEMPT in {1..15}; do
     if [ $SECVC_PASS_LOOP = true ]; then
         break
     fi
@@ -218,4 +218,3 @@ ENDTIME=$(( SECONDS - $STARTTIME ))
 log "Work work complete in $ENDTIME seconds, exiting"
 
 exit
-

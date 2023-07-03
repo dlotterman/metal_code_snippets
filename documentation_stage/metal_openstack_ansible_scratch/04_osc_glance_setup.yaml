@@ -3,7 +3,7 @@
   vars:
     glance_mysql_password: glancemysql1234
     glance_admin_password: glanceadmin1234
-    
+
   tasks:
     - name: openstack_install_glance_packages
       become: yes
@@ -15,17 +15,17 @@
 
     - name: openstack_glance_mysql_db_create
       become: yes
-      become_method: sudo     
-      mysql_db: 
+      become_method: sudo
+      mysql_db:
         name: glance
         state: present
         login_unix_socket: /var/run/mysqld/mysqld.sock
 
     - name: openstack_glance_mysql_user_create
       become: yes
-      become_method: sudo    
-      mysql_user: 
-        name: glance  
+      become_method: sudo
+      mysql_user:
+        name: glance
         password: "{{ glance_mysql_password }}"
         priv: 'glance.*:ALL,GRANT'
         login_unix_socket: /var/run/mysqld/mysqld.sock
@@ -58,7 +58,7 @@
     - name: openstack_glance_osuser_create_touch_file
       become: yes
       become_method: sudo
-      file: 
+      file:
         path: /metal/lock/glanceosusercreate.lock
         state: touch
       when: glanceosusercreate.changed
@@ -83,11 +83,11 @@
     - name: openstack_glance_osrole_create_touch_file
       become: yes
       become_method: sudo
-      file: 
+      file:
         path: /metal/lock/glanceosrolecreate.lock
         state: touch
       when: glanceosrolecreate.changed
-      
+
     - name: openstack_glance_osservice_create
       become: yes
       become_method: sudo
@@ -108,10 +108,10 @@
     - name: openstack_glance_osservice_create_touch_file
       become: yes
       become_method: sudo
-      file: 
+      file:
         path: /metal/lock/glanceosservicecreate.lock
         state: touch
-      when: glanceosservicecreate.changed          
+      when: glanceosservicecreate.changed
 
     - name: openstack_glance_osendpoint_public_create
       become: yes
@@ -133,10 +133,10 @@
     - name: openstack_glance_osendpoint_public_create_touch_file
       become: yes
       become_method: sudo
-      file: 
+      file:
         path: /metal/lock/glanceosendpointpublic.lock
         state: touch
-      when: glanceosendpointpublic.changed   
+      when: glanceosendpointpublic.changed
 
     - name: openstack_glance_osendpoint_internal_create
       become: yes
@@ -158,10 +158,10 @@
     - name: openstack_glance_osendpoint_internal_create_touch_file
       become: yes
       become_method: sudo
-      file: 
+      file:
         path: /metal/lock/glanceosendpointinternal.lock
         state: touch
-      when: glanceosendpointinternal.changed   
+      when: glanceosendpointinternal.changed
 
     - name: openstack_glance_osendpoint_admin_create
       become: yes
@@ -183,19 +183,19 @@
     - name: openstack_glance_osendpoint_admin_create_touch_file
       become: yes
       become_method: sudo
-      file: 
+      file:
         path: /metal/lock/glanceosendpointadmin.lock
         state: touch
-      when: glanceosendpointadmin.changed   
+      when: glanceosendpointadmin.changed
 
     - name: openstack_glance_template_conf
       become: yes
-      become_method: sudo    
+      become_method: sudo
       template:
         src: glance-api.conf.j2
         dest: /etc/glance/glance-api.conf
       register: glance_conf
-      
+
     - name: openstack_glance_restart
       become: yes
       become_method: sudo
@@ -203,12 +203,12 @@
         name: glance-api
         state: restarted
         enabled: yes
-      when: glance_conf.changed      
-      
+      when: glance_conf.changed
+
       #This is so horrible. Why?
     - name: openstack_glance_db_populate
       become: yes
-      become_method: sudo  
+      become_method: sudo
       shell:  su -s /bin/sh -c "glance-manage db_sync" glance
       args:
         creates: /metal/lock/glancemanagedbsync.lock
@@ -217,11 +217,11 @@
     - name: openstack_glance_db_touch_file
       become: yes
       become_method: sudo
-      file: 
+      file:
         path: /metal/lock/glancemanagedbsync.lock
         state: touch
       when: glancemanagedbsync.changed
-      
+
     - name: openstack_service_restart_apache
       become: yes
       become_method: sudo

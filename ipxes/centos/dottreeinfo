@@ -1,11 +1,11 @@
 ; the .treeinfo file is needed by a variety of Annaconda (+CentOS) PXE (+iPXE)
 ; boot options that are well documented here:
 ; https://anaconda-installer.readthedocs.io/en/latest/boot-options.html
-; in particular, the inst.stage2 needs to be thought out depending on how 
+; in particular, the inst.stage2 needs to be thought out depending on how
 ; custom / handrolled the installer is or if it's an appliance export
 ; from say a virutalization image manager
 
-; this needs to be named `.treeinfo` (wihtout ticks) 
+; this needs to be named `.treeinfo` (wihtout ticks)
 ; and placed in a http exposed directory
 ; likely the same place hosting your ipxe file
 ; the `maininmage` in `[stage2]` is key
@@ -25,4 +25,3 @@ boot.iso = images/boot.iso
 [images-xen]
 kernel = images/pxeboot/vmlinuz
 initrd = images/pxeboot/initrd.img
-

@@ -1,6 +1,6 @@
 # Equinix Metal Demo "Follow-along" Documentation
 
-This document is intended to be used as a resource to "follow along" with while attending a demo of the Equinix Metal platform. 
+This document is intended to be used as a resource to "follow along" with while attending a demo of the Equinix Metal platform.
 
 The aim is to provide additional context and resources that may be of interest as the demo progresses.
 
@@ -42,7 +42,7 @@ The aim is to provide additional context and resources that may be of interest a
 
 ![](https://s3.wasabisys.com/metalstaticassets/interconnect.JPG)
 
-- [Introduction to Interconnect](https://metal.equinix.com/developers/docs/equinix-interconnect/introduction/) 
+- [Introduction to Interconnect](https://metal.equinix.com/developers/docs/equinix-interconnect/introduction/)
 - [Equinix Fabric Product Page](https://www.equinix.com/interconnection-services/equinix-fabric) and [Documentation](https://docs.equinix.com/en-us/Content/Interconnection/Fabric/Fabric-landing-main.htm)
 - [Equinix Network Edge Product Page](https://edgeservices.equinix.com/) and [Documentation](https://docs.equinix.com/en-us/Content/Interconnection/NE/landing-pages/NE-landing-main.htm)
 - [Designing Highly Available Metal Interconnection](https://github.com/dlotterman/metal_code_snippets/blob/main/documentation_stage/virtual_circuit_availability/equinix_metal_fabric_vcs_availability.md)
