@@ -530,6 +530,22 @@ entropy = 3.5
 keywords = [
     "key","api","token","secret","client","passwd","password","auth","access",
 ]
+[[rules]]
+description = "Equinix Metal aggressive check of generic key"
+id = "equinix-metal-generic-apitoken-aggressive-catch"
+regex = '''(?i)([0-9a-zA-Z]{32})'''
+secretGroup = 0
+entropy = 1.1
+
+[[rules]]
+id = "equinix-metal-generic-uuid-aggressive-catch"
+description = "Equinix Metal general UUID catch"
+regex = '''(?i)([0-9a-fA-F]{8}\b-[0-9a-fA-F]{4}\b-[0-9a-fA-F]{4}\b-[0-9a-fA-F]{4}\b-[0-9a-fA-F]{12})'''
+entropy = 2.9
+keywords = [
+    "user","project","projects","devices","incidents","capacity","connections","reservations","ips","ports","market","virtual-networks","metros","api.equinix.com",
+]
+
 [rules.allowlist]
 stopwords= [
     "client",

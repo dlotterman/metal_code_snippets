@@ -20,8 +20,8 @@
         "name": "core",
         "passwordHash": "https://linuxconfig.org/how-to-hash-passwords-on-linux",
         "sshAuthorizedKeys": [
-          "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABgQDnge/Lkpw4",
-          "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAACAQC74G3CW6..."
+          "ssh-rsa AAAAB..",
+          "ssh-rsa AAAAB..."
         ]
       }
     ]

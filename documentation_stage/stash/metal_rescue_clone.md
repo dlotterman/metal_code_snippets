@@ -37,8 +37,8 @@ Wait for the instance to complete provisioning before continuing on, but we will
 - Rescue API call:
 	```
 	curl -s -X POST \
-	--header 'X-Auth-Token: YOURTOKEN' \
-	--header 'Content-Type: application/json' 'https://api.equinix.com/metal/v1/devices/59c2f4e0-6ff7-47c6-b9e9-62af97ac7ca5/actions'  \
+	--header 'X-Auth-Token: $YOURTOKEN' \
+	--header 'Content-Type: application/json' 'https://api.equinix.com/metal/v1/devices/$UUID/actions'  \
 	--data '{"type": "rescue"}'
 	```
 
@@ -151,18 +151,18 @@ Enter same passphrase again:
 Your identification has been saved in /root/.ssh/id_rsa
 Your public key has been saved in /root/.ssh/id_rsa.pub
 The key fingerprint is:
-SHA256:iGOZn5jz2015gHqLQcq4sFEckG7W7y4tXoqCFpj7eIs root@localhost
+SHA256:REDACTED root@localhost
 The key's randomart image is:
 +---[RSA 3072]----+
 |..               |
 |..               |
 |. o              |
-| = o + . .       |
-|+.o B o S .      |
-|oo + O o   o     |
-|+.o O.= . o .    |
-|+Bo+o= = + .     |
-|E+=++.+.o .      |
+|REDAC      .     |
+|REDAC      .     |
+|REDAC      .     |
+|REDAC      ..    |
+|REDAC      .     |
+|REDAC      .     |
 +----[SHA256]-----+
 ```
 
@@ -172,7 +172,7 @@ The file can now be SFTP'ed:
 ```
 # scp /tmp/mount/image01-sv-sdc.dd.lz4 dlotterman@139.178.87.218:
 The authenticity of host '139.178.87.218 (139.178.87.218)' can't be established.
-ED25519 key fingerprint is SHA256:R7J/d0KbdyQshdJRhdyH6AuPsghpva5p1/JIpPYk5xY.
+ED25519 key fingerprint is SHA256:REDAC.
 This key is not known by any other names
 Are you sure you want to continue connecting (yes/no/[fingerprint])? yes
 Warning: Permanently added '139.178.87.218' (ED25519) to the list of known hosts.
@@ -181,7 +181,7 @@ image01-sv-sdc.dd.lz4                                                           
 
 ## Provision the destination instance:
 
-- `metal device create --hostname image02dst-sv --plan c3.medium.x86 --metro sv --operating-system rocky_9 --project-id YOURPROJECTID -t "metalcli"`
+- `metal device create --hostname image02dst-sv --plan c3.medium.x86 --metro sv --operating-system rocky_9 --project-id $YOURPROJECTID -t "metalcli"`
 
 Wait for it to finish provisioning and be marked as "Ready"
 
@@ -256,8 +256,8 @@ Discarding blocks...Done.
 ```
 
 
-`# mkdir /tmp/mount`
-`# mount -t xfs /dev/sda /tmp/mount`
+- `# mkdir /tmp/mount`
+- `# mount -t xfs /dev/sda /tmp/mount`
 
 If using SSH / SFTP to transfer, generate a new SSH key and add the public key to the instance hosting the image.
 
@@ -266,7 +266,7 @@ Copy the file to the destination instance:
 ```
 localhost:~# scp dlotterman@139.178.87.218:image01-sv-sdc.dd.lz4  /tmp/mount/
 The authenticity of host '139.178.87.218 (139.178.87.218)' can't be established.
-ED25519 key fingerprint is SHA256:R7J/d0KbdyQshdJRhdyH6AuPsghpva5p1/JIpPYk5xY.
+ED25519 key fingerprint is SHA256:REDAC.
 This key is not known by any other names
 Are you sure you want to continue connecting (yes/no/[fingerprint])? yes
 Warning: Permanently added '139.178.87.218' (ED25519) to the list of known hosts.
@@ -338,7 +338,7 @@ IT IS POSSIBLE THAT SOMEONE IS DOING SOMETHING NASTY!
 Someone could be eavesdropping on you right now (man-in-the-middle attack)!
 It is also possible that a host key has just been changed.
 The fingerprint for the ECDSA key sent by the remote host is
-SHA256:LEFXYEM+rkpSdInCkqGut5oRSjQH43vUvvgKjaEyba0.
+SHA256:REDAC.
 Please contact your system administrator.
 Add correct host key in C:\\Users\\Daniel Lotterman/.ssh/known_hosts to get rid of this message.
 Offending ECDSA key in C:\\Users\\Daniel Lotterman/.ssh/known_hosts:4

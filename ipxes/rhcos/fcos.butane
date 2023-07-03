@@ -6,10 +6,10 @@ kernel_arguments:
 passwd:
   users:
     - name: core
-      password_hash: "$1$Tsx8Qv-google-generate-password-hash-linux."
+      password_hash: "$YOURPASSWDHASH."
       groups:
         - sudo
       ssh_authorized_keys:
-        - ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABgQDnge/Lkpw4..
-        - ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAACAQC74G3CW6....
+        - ssh-rsa AAAAB...
+        - ssh-rsa AAAAB...
 
