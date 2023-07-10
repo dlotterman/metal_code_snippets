@@ -1,0 +1,4 @@
+curl -s -X PUT \
+--header 'X-Auth-Token: $YOURTOKENHERE' \
+--header 'Content-Type: application/json' 'https://api.equinix.com/metal/v1/devices/$YOURUUIDHERE'  \
+--data '{"always_pxe": "false"}'
