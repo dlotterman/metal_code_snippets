@@ -1,0 +1,1 @@
+metal device create --plan "c3.small.x86" --ipxe-script-url "http://ipxe.dlott.casa/ipxes/stall.ipxe" --operating-system custom_ipxe --hostname ipxetest01 --metro sv -t "metalcli"
