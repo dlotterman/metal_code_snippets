@@ -1,18 +1,25 @@
 # Provising an n3 with "double" internet service
 
-This diagram walks through the provisioning of an [n3.xlarge.x86](https://deploy.equinix.com/product/servers/n3-xlarge/) and assocaited networking needed to plumb the second bond interface (`bond1`) with Internet access in a way that a single daemon can service requests out of both interfaces to achieve 100Gbps of throughput via the Public Internet.
+This guide walks through the provisioning of an [n3.xlarge.x86](https://deploy.equinix.com/product/servers/n3-xlarge/) and assocaited networking needed to plumb the second bond interface (`bond1`) with Internet access in a way that a single daemon can service requests out of both interfaces to achieve 100Gbps of throughput via the Public Internet.
 
 **Assumptions**
 
 This document assumes the operator has a working:
 - [metalcli](https://deploy.equinix.com/developers/docs/metal/libraries/cli/)
-- [bash shell]
+- bash shell environment
 - [jq](https://jqlang.github.io/jq/download/)
 - [Metal SSH Keys setup](https://deploy.equinix.com/developers/docs/metal/accounts/ssh-keys/)
 
 All operations could also be performend via the UI, simply break down the instructions as described in the `metal` commands into relevant UI actions.
 
 ## Prepare the working shell environment
+
+These variables should be the only manual entry needed. The only mandatory field is `METAL_PROJ_ID`, the rest *SHOULD* be updated to your needs but can be left as is.
+
+After this, you should be able to follow the guide simply copy pasting, everything will reference these environment variables.
+
+**IMPORTANT**
+If you loose your shell (ssh timeout), you will need to reset these variables every login, and you will need to rebuild the metadata gathering steps if your work is broken midstream.
 
 - Create the necessary shell env variable
 ```
@@ -99,11 +106,18 @@ metal port vlan -i $HOSTNAME_BOND1 -a $METAL_VLAN
 
 
 ## SSH in the needed config
+
+Note this requires the use of working Metal SSH keys. If your SSH setup is different, make necessary changes.
+
 - Apt update
-`ssh root@$HOSTNAME_IP "apt-get -y update && apt-get -o Dpkg::Options::="--force-confold" --allow-change-held-packages  -y upgrade"`
+```
+ssh root@$HOSTNAME_IP "apt-get -y update && apt-get -o Dpkg::Options::="--force-confold" --allow-change-held-packages  -y upgrade"
+```
 
 - Force kernel upgrade
-`ssh root@$HOSTNAME_IP "apt-get upgrade linux-headers-generic linux-headers-virtual linux-image-virtual linux-virtual -y -o Dpkg::Options::="--force-confold""`
+```
+ssh root@$HOSTNAME_IP "apt-get upgrade linux-headers-generic linux-headers-virtual linux-image-virtual linux-virtual -y -o Dpkg::Options::="--force-confold""
+```
 
 - Interfaces file:
 ```
@@ -196,11 +210,20 @@ EOT"
 ```
 
 - Reload systemd
-`ssh root@$HOSTNAME_IP "systemctl daemon-reload && systemctl enable --now split_route_script.service"`
+```
+ssh root@$HOSTNAME_IP "systemctl daemon-reload && systemctl enable --now split_route_script.service"
+```
+
+## Reboot the system
+
+- It will come back in the correct config:
+```
+ssh root@$HOSTNAME_IP "reboot"
+```
 
 #### Optional Easy Enhancements
 
-- Enable automatic updates for no-ops security
+- Enable automatic updates for easy-ops security
 ```
 ssh root@$HOSTNAME_IP "cat <<EOT > /etc/apt/apt.conf.d/50unattended-upgrades
 Unattended-Upgrade::Allowed-Origins {
@@ -230,4 +253,18 @@ EOT"
 ```
 
 - Enable firewall (requires adding your own hole punches), allows 22 (ssh) with rate limit
-`ssh root@$HOSTNAME_IP "ufw default allow outgoing && ufw default deny incoming && ufw allow ssh && ufw allow from 10.0.0.1/8 && ufw limit ssh && ufw enable"`
+```
+ssh root@$HOSTNAME_IP "ufw default allow outgoing && ufw default deny incoming && ufw allow ssh && ufw allow from 10.0.0.1/8 && ufw limit ssh && ufw enable"
+```
+
+### Validation
+
+How do I validate this?
+
+You should be able to (first install) `iperf3` and then run it with the default `-s`. `iperf3` clients should be able to connect in on both the regular metal IP address, as well as the boxes ElasticIP, at the same time, pushing north of 60Gbps by default, 80-90Gbps with minor tuning. Parralelism is needed.
+
+The ElasticIP of the box can be found with
+
+```
+ssh root@$HOSTNAME_IP "ip a show bond1"
+```
