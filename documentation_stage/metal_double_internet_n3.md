@@ -1,6 +1,10 @@
 # Provising an n3 with "double" internet service
 
-This guide walks through the provisioning of an [n3.xlarge.x86](https://deploy.equinix.com/product/servers/n3-xlarge/) and assocaited networking needed to plumb the second bond interface (`bond1`) with Internet access in a way that a single daemon can service requests out of both interfaces to achieve 100Gbps of throughput via the Public Internet.
+This guide walks through the provisioning of an [n3.xlarge.x86](https://deploy.equinix.com/product/servers/n3-xlarge/) and associated networking needed to plumb the second bond interface (`bond1`) with Internet access in a way that a single daemon can service requests out of both interfaces to achieve 100Gbps of throughput via the Public Internet.
+
+Everything is default Metal + Linux + Glue, and we use a simple linux route table scheme to make both devices available for consumption at the same time.
+
+Default route will still
 
 **Assumptions**
 
@@ -10,7 +14,7 @@ This document assumes the operator has a working:
 - [jq](https://jqlang.github.io/jq/download/)
 - [Metal SSH Keys setup](https://deploy.equinix.com/developers/docs/metal/accounts/ssh-keys/)
 
-All operations could also be performend via the UI, simply break down the instructions as described in the `metal` commands into relevant UI actions.
+All operations could also be performed  via the UI, simply break down the instructions as described in the `metal` commands into relevant UI actions.
 
 ## Prepare the working shell environment
 
