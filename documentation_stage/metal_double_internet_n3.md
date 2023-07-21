@@ -23,6 +23,7 @@ These variables should be the only manual entry needed. The only mandatory field
 After this, you should be able to follow the guide simply copy pasting, everything will reference these environment variables.
 
 **IMPORTANT**
+
 If you loose your shell (ssh timeout), you will need to reset these variables every login, and you will need to rebuild the metadata gathering steps if your work is broken midstream.
 
 - Create the necessary shell env variable
@@ -91,7 +92,7 @@ HOSTNAME_PRIVATE_GATEWAY=$(metal -p $METAL_PROJ_ID device list -o json | jq --ar
 GATEWAY_ID=$(metal gateway get -p $METAL_PROJ_ID -o json | jq --arg METAL_VLAN "$METAL_VLAN" -r '.[] | select(any(.virtual_network[]|tostring; test($METAL_VLAN))) | .id') && \
 GATEWAY_NETWORK=$(metal gateway get -p $METAL_PROJ_ID -o json | jq --arg METAL_VLAN "$METAL_VLAN" -r '.[] | select(any(.virtual_network[]|tostring; test($METAL_VLAN))) | .ip_reservation.network') && \
 GATEWAY_IP=$(metal gateway get -p $METAL_PROJ_ID -o json | jq --arg METAL_VLAN "$METAL_VLAN" -r '.[] | select(any(.virtual_network[]|tostring; test($METAL_VLAN))) | .ip_reservation.gateway') && \
-GATEWAY_CIDR=$(metal gateway get -p $METAL_PROJ_ID -o json | jq --arg METAL_VLAN "$METAL_VLAN" -r '.[] | select(any(.virtual_network[]|tostring; test($METAL_VLAN))) | .ip_reservation.cidr') && \
+GATEWAY_CIDR=$(metal gateway get -p $METAL_PROJ_ID -o json | jq --arg METAL_VLAN "$METAL_VLAN" -r '.[] | select(any(.virtual_network[]|tostring; test($METAL_VLAN))) | .ip_reservation.cidr' | uniq) && \
 BOND1_IP=$(nmap -sL -n "$GATEWAY_NETWORK/$GATEWAY_CIDR" | sed -n 4p | awk '{print$NF}')
 ```
 
