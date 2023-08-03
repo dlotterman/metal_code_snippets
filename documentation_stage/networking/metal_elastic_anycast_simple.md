@@ -20,21 +20,21 @@ For the sake of this walkthrough, we will use:
 **US Group***
 - [ ]
 ```
-metal device create --hostname elastichost-da01 --plan m3.small.x86 --metro da --operating-system rocky_9 --project-id c077ec17-c56a-4a5d-a8c8-55235e
+metal device create --hostname elastichost-da01 --plan m3.small.x86 --metro da --operating-system rocky_9 --project-id $YOURID
 ```
 - [ ]
 ```
-metal device create --hostname elasticclient-sv01 --plan m3.small.x86 --metro sv --operating-system rocky_9 --project-id c077ec17-c56a-4a5d-a8c8-55235e
+metal device create --hostname elasticclient-sv01 --plan m3.small.x86 --metro sv --operating-system rocky_9 --project-id $YOURID
 ```
 
 **European Group***
 - [ ]
 ```
-metal device create --hostname elastichost-am01 --plan m3.small.x86 --metro am --operating-system rocky_9 --project-id c077ec17-c56a-4a5d-a8c8-55235e
+metal device create --hostname elastichost-am01 --plan m3.small.x86 --metro am --operating-system rocky_9 --project-id $YOURID
 ```
 - [ ]
 ```
-metal device create --hostname elasticclient-fr01 --plan m3.small.x86 --metro fr --operating-system rocky_9 --project-id c077ec17-c56a-4a5d-a8c8-55235e
+metal device create --hostname elasticclient-fr01 --plan m3.small.x86 --metro fr --operating-system rocky_9 --project-id $YOURID
 ```
 
 #### Reserve Global Anycast ElasticIP address
