@@ -6,7 +6,7 @@ This folder is not a supported resource, it has no official association with Ent
 
 This documentation expects to be pointed at an unpacked EL ISO (please include hidden files like `.treeinfo` files) that is hosted on a public HTTP endpoint, with hosted iPXE files. The aim is to reduce and document this burden over time. When closer to complete, this folder may move into it's own repo at some point.
 
-The natural starting place is [unified-el.ipxe]{ipxe/unified-el.ipxe}, where following the referenced files should paint the picture for a capable operator.
+Put simply, this should give you one URL to use with the `custom_ipxe` feature that will install to any Metal instance in any hardware state and return a production-like ready instance. The natural starting place is [unified-el.ipxe]{ipxe/unified-el.ipxe}, where following the referenced files should paint the picture for a capable operator.
 
 **Similarities to Metal EL images**
 - Metal `layer-3` [bonded mode supported](https://deploy.equinix.com/developers/docs/metal/networking/server-level-networking/)
