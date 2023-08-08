@@ -6,7 +6,7 @@ This folder is not a supported resource, it has no official association with Ent
 
 This documentation expects to be pointed at an unpacked EL ISO (please include hidden files like `.treeinfo` files) that is hosted on a public HTTP endpoint, with hosted iPXE files. The aim is to reduce and document this burden over time. When closer to complete, this folder may move into it's own repo at some point.
 
-Put simply, this should give you one URL to use with the `custom_ipxe` feature that will install to any Metal instance in any hardware state and return a production-like ready instance. The natural starting place is [unified-el.ipxe]{ipxe/unified-el.ipxe}, where following the referenced files should paint the picture for a capable operator.
+Put simply, this should give you one URL to use with the `custom_ipxe` feature that will install to any Metal instance in any hardware state and return a production-like ready instance. The natural starting place is [unified-el.ipxe](ipxe/unified-el.ipxe), where following the referenced files should paint the picture for a capable operator.
 
 **Similarities to Metal EL images**
 - Metal `layer-3` [bonded mode supported](https://deploy.equinix.com/developers/docs/metal/networking/server-level-networking/)
@@ -29,7 +29,7 @@ Put simply, this should give you one URL to use with the `custom_ipxe` feature t
 - Metal [SSH Keys](https://deploy.equinix.com/developers/docs/metal/accounts/ssh-keys/) for `adminuser`
     - `root` responsibilities and *SSH Keys* moved to `adminuser` with global `sudo` access
 - Instead of `Userdata` or `Cloud-init`, implements a [unified_el_ipxe model](https://gitlab.com/dlotterman/unified_el_ipxe) model
-    - Networking configuration is done as late-stage, AKA after fresh `dnf update -y && reboot`
+    - Networking configuration is done as late-stage as possible, AKA after fresh `dnf update -y && reboot`
         - Avoids as many complicated problems as possible through the simplest, most actrively tested path which is current from vendor in userland
 
 ## Provision Time and validating the install
