@@ -3,8 +3,7 @@
 This is a quick checklist of the easy to forget "shoulds" of an OS install via iPXE to an Equinix Metal instance, where those "shoulds" fall  in line with Equinix Metal image expectations or best practices.
 
 * bonding
-    * lacp mode
-    * fast rate, miimon
+    * lacp mode, fast rate, miimon
     * dynamic from Metadata
 * networking
     * DNS

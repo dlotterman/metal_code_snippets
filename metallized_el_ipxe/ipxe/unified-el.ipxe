@@ -1,0 +1,21 @@
+#!ipxe
+
+set base http://yourinfradomain.com
+dhcp
+
+echo stepping_unified_ipxe
+echo stepping_through_uefi_vs_bios_check
+
+sleep 2
+
+iseq ${platform} efi && goto el_efi || goto el_bios
+
+:el_efi
+        echo in_efi
+        sleep 5
+        chain ${base}/ipxes/el88-ks-uefi.ipxe || shell
+
+:el_bios
+        echo in_bios
+        sleep 5
+        chain ${base}/ipxes/el88-ks-bios.ipxe || shell

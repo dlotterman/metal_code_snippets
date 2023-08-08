@@ -1,0 +1,13 @@
+#!ipxe
+dhcp
+
+set consoleopts console=tty0 console=ttyS1,115200n8
+set base http://yourinfradomain.com
+set elbase ${base}/el88
+set ksbase ${base}/ks
+
+kernel ${elbase}/images/pxeboot/vmlinuz initrd=initrd.img inst.stage2=${elbase}/ ip=dhcp ${consoleopts} inst.waitfornet=15 inst.ks=${ksbase}/el88_uefi.ks kernel.hung_task_timeout_secs=35 systemd.default_timeout_start_sec=35
+
+initrd ${elbase}/images/pxeboot/initrd.img
+
+boot || shell
