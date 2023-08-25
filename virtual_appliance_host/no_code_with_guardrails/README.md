@@ -17,7 +17,9 @@ This resource is intended to provide a documented "short but safe path" to runni
     - IP Configuration dynamic based on hostname, e.g a host launched as bn-am-22 will use `22` as it's inside IP for all networks
     - Forward DNS in guest network (via hijack of libvirt's dnsmasq)
     - Reverse DNS in guest network (via hijack of libvirt's dnsmasq)
-        - ```dig -x 192.168.122.55 @192.168.122.1
+        -
+        ```
+        dig -x 192.168.122.55 @192.168.122.1
         ...
         ;; ANSWER SECTION:
         55.122.168.192.in-addr.arpa. 0  IN      PTR     host-55.inside.em.com.
@@ -31,7 +33,8 @@ This resource is intended to provide a documented "short but safe path" to runni
 
 - [Provision an instance with](https://deploy.equinix.com/developers/docs/metal/server-metadata/user-data/) the [el9_no_code_safety_first_appliance.yaml](cloud-inits/el9_no_code_safety_first_appliance.yaml) in the `cloud-init` directory in this folder.
     - To provision an instance with the [Equinix Metal CLI](https://deploy.equinix.com/developers/docs/metal/libraries/cli/)
-        - ```metal device create --hostname bn-gw-sv-11 --plan n2.xlarge.x86 --metro sv --operating-system alma_9 --userdata-file ~/metal_code_snippets/virtual_appliance_host/no_code_with_guardrails/cloud_inits/el9_no_code_safety_first_appliance_host.mime --project-id $YOURPROJID -t "metalcli"
+        -
+        ```metal device create --hostname bn-gw-sv-11 --plan n2.xlarge.x86 --metro sv --operating-system alma_9 --userdata-file ~/metal_code_snippets/virtual_appliance_host/no_code_with_guardrails/cloud_inits/el9_no_code_safety_first_appliance_host.mime --project-id $YOURPROJID -t "metalcli"
         ```
 - The instance will provision as normal
 - `adminuser` will replace normal use of `root`, where `root`'s password and SSH keys are copied to `adminuser`
