@@ -28,6 +28,7 @@ This resource is intended to provide a documented "short but safe path" to runni
 - HTTP endpoint via NGINX
     - Public Internet exposed HTTP endpoint (port `80`)
     - Private (Backend Transfer + VLAN only, port `81`) exposed HTTP endpoint (Not open to internet)
+- Should work with entire Equinix Metal instance catalogue (including 4x port boxes and s3.xlarge)
 
 ## Quick Walkthrough
 
