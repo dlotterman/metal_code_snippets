@@ -13,7 +13,7 @@ This resource is intended to provide a documented "short but safe path" to runni
 - Mounts largest non-HDD disk to `/mnt/util/`
 - Network Management and pre-plumbing
     - Maintains the Equinix Metal bond
-    - DHCP in guest network
+    - DHCP + NAT in guest network
     - IP Configuration dynamic based on hostname, e.g a host launched as bn-am-22 will use `22` as it's inside IP for all networks
     - Forward DNS in guest network (via hijack of libvirt's dnsmasq)
     - Reverse DNS in guest network (via hijack of libvirt's dnsmasq)
