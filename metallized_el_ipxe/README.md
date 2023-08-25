@@ -19,6 +19,7 @@ Put simply, this should give you one URL to use with the `custom_ipxe` feature t
 - Metal [SOS / OOB](https://deploy.equinix.com/developers/docs/metal/resilience-recovery/serial-over-ssh/) output configured
 - Pulls configuration from `https://metadata.platformequinix.com/metadata`
 - Broad hardware coverage
+    - Good option for Custom Hardware not supported by traditional Metal EL images. Should automagic work.
 
 **Differences from Metal EL images**
 - RAID-1 Boot (via mdadm)
@@ -31,6 +32,7 @@ Put simply, this should give you one URL to use with the `custom_ipxe` feature t
 - Instead of `Userdata` or `Cloud-init`, implements a [unified_el_ipxe model](https://gitlab.com/dlotterman/unified_el_ipxe) model
     - Networking configuration is done as late-stage as possible, AKA after fresh `dnf update -y && reboot`
         - Avoids as many complicated problems as possible through the simplest, most actrively tested path which is current from vendor in userland
+- Provides vector for (not yet documented here) Driver Update Disk (DUD/DUP) usage
 
 ## Provision Time and validating the install
 
@@ -43,4 +45,6 @@ The provision is considered complete when the `unified_el_init` *systemd* servic
 - Normalize kickstart
     - Should start with UEFI v BIOS and re-join a single KS afterwards
 - Clean shellisms
+- [Document](https://github.com/rhinstaller/anaconda/blob/master/dracut/README-driver-updates.md) [Driver](https://access.redhat.com/solutions/6078541) [Update](https://access.redhat.com/documentation/en-us/red_hat_enterprise_linux/9/html-single/performing_an_advanced_rhel_9_installation/index#updating-drivers-during-installation_installing-rhel-as-an-experienced-user) Disks
+  - Document iPXE "more than one binary presented to [booted kernel with namespace secret superpower feature](https://ipxe.org/cmd/imgfetch#notes)"
 - Write a container file that provided an ISO file, unpacks and glues this repo together for a targetable endpoint
