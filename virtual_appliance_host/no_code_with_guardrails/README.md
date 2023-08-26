@@ -1,69 +1,60 @@
-# "No Code" + "Safe" Virtual Appliance Host for Equinix Metal
+# "No Code" + "Safe First" + "Bastion" + "Virtual Appliance Host" for Equinix Metal
 
-When evaluating or working with Equinix Metal, operators often want a "fastest" path to running an application or device inside of the Equinix Metal platform, where the learning curve of the Equinix Metal platform may make that a "more toil involved" task than is desired.
+Or **NCSFBVAHfEM** for short... Just kiding, shorten it to *no_code_bastion* or `ncb` for really short.
 
-The idea being an operator should be able to copy the cloud-init from this resource, and without having to modify anything, should receive a `rocky_9`, `alma_9` or `rhel_9` instance with these configurations applied and immediately ready for use.
+When evaluating or working with Equinix Metal, operators often want a "fastest path to running an application or device inside of the Equinix", where the bootstrap curve of the Equinix Metal is such that often the hardest part is figuring out where to start.
 
-This resource is intended to provide a documented "short but safe path" to running a "bastion" role on an Equinix Metal instance that provides:
-- Management UI via Cockpit
-- VM hosting via KVM
-- Container hosting via podman
-- Automatic Updates via dnf-Automatic
-- Basic securitization (root -> adminuser, firewall, user-lockout etc)
-- Mounts largest non-HDD disk to `/mnt/util/`
-- Network Management and pre-plumbing
-    - Maintains the Equinix Metal bond
-    - DHCP + NAT in guest network
-    - IP Configuration dynamic based on hostname, e.g a host launched as bn-am-22 will use `22` as it's inside IP for all networks
-    - Forward DNS in guest network (via hijack of libvirt's dnsmasq)
+*no_code_bastion*, aims to minimize the amount of toil needed to quickly and safely establish a familiar operational beachead inside of Equinix Metal for operators looking to get going quickly and safely-ish (or atleast, more so than without this resource).
+
+By "Ctrl + C" & "Ctrl + V"'ing this [cloud-init](cloud_inits/el9_no_code_safety_first_appliance_host.yaml) into the [Userdata](https://deploy.equinix.com/developers/docs/metal/server-metadata/user-data/) field when provisioning an [Equinix Metal instance](https://deploy.equinix.com/product/bare-metal/servers/), an Operator should be returned a useable, working `no_code_bastion` instance, ready for brush clearing.
+
+Please note, as with anything in this reposistory, this resource is not supported by **ANYONE**. It is meant solely and exclusively as a reference resource. That being said, as of summer 2023, the owner is still looking to improve this resource and fix any quick wins.
+
+**Quick Bullet Points of Toils Solved:**
+
+- [Management UI](https://access.redhat.com/documentation/en-us/red_hat_enterprise_linux/9/html/managing_systems_using_the_rhel_9_web_console/index) ([Cockpit](https://cockpit-project.org/) via self-signed HTTPS over [Metal Internet](https://deploy.equinix.com/developers/docs/metal/networking/ip-addresses/#public-ipv4-subnet))
+- VM hosting via [libvirt](https://libvirt.org/) (accesible in [Cockpit](https://access.redhat.com/documentation/en-us/red_hat_enterprise_linux/9/html/managing_systems_using_the_rhel_9_web_console/managing-virtual-machines-in-the-web-console_system-management-using-the-rhel-9-web-console))
+- Container hosting via [podman](https://podman.io/) (accesible in [Cockpit](https://github.com/cockpit-project/cockpit-podman))
+- Automatic Updates configured via [dnf-automatic](https://dnf.readthedocs.io/en/latest/automatic.html)
+- Basic securitization (`root` -> `adminuser`, firewall up, user-lockout etc)
+- Mounts largest non-HDD free disk to `/mnt/util/`
+    - Adds it as storage volume to `libvirt`
+- Network
+    - Replaces stock Metal networking with `eth0/1` -> `bond0` -> `bridge` -> `VLAN` model allowing guests access to the native VLAN (carrying EM's [Layer-3 network](https://deploy.equinix.com/developers/docs/metal/networking/ip-addresses/)) + [tagged VLAN](https://deploy.equinix.com/developers/docs/metal/layer2-networking/overview/)s while persisting the desired [Equinix Metal LACP bonding](https://deploy.equinix.com/developers/docs/metal/networking/server-level-networking/#your-servers-lacp-bonding) configuration.
+        - This allows the instance and it's guests to acces [Interconnection](https://deploy.equinix.com/developers/docs/metal/interconnections/introduction/)
+    - DHCP + NAT in guest network via relatively stock [libvirt](https://wiki.libvirt.org/VirtualNetworking.html)
+    - Inside VLAN Layer-3 configuration dynamic based on hostname, e.g a host launched as `bn-am-55` will use `55` as it's inside IP for all networks (e.g `172.16.100.55`), a host launched with `bn-am-33` would then be assigned `33` (e.g `172.16.100.33`), and they would be able to ping each other inside VLAN `3880` when assigned that VLAN from the Metal platform.
+    - Forward DNS in guest network (via hijack of libvirt's dnsmasq with Metal's DNS as next forward hop)
     - Reverse DNS in guest network (via hijack of libvirt's dnsmasq)
-        -
         ```
         dig -x 192.168.122.55 @192.168.122.1
         ...
         ;; ANSWER SECTION:
         55.122.168.192.in-addr.arpa. 0  IN      PTR     host-55.inside.em.com.
         ```
-    - Automatic inclusion in pre-defined networks
+            - Note the generic `host-55.inside.em.com.`
+    - Automatic inclusion in [EM SA Network Schema networks](https://github.com/dlotterman/metal_code_snippets/tree/main/virtual_appliance_host/no_code_with_guardrails#em-sa-network-schema), simply apply VLANs from the Metal UI / CLI in [Hybrid Bonded](https://deploy.equinix.com/developers/docs/metal/layer2-networking/hybrid-bonded-mode/) mode
 - HTTP endpoint via NGINX
-    - Public Internet exposed HTTP endpoint (port `80`)
-    - Private (Backend Transfer + VLAN only, port `81`) exposed HTTP endpoint (Not open to internet)
-- Should work with entire Equinix Metal instance catalogue (including 4x port boxes and s3.xlarge)
+    - Public Internet exposed HTTP endpoint (port `80` on Metal Instance's [Public IP](https://deploy.equinix.com/developers/docs/metal/networking/ip-addresses/#public-ipv4-subnet))
+    - Private ([Backend Transfer](https://deploy.equinix.com/developers/docs/metal/networking/backend-transfer/) + VLAN only, port `81`) exposed HTTP endpoint (not open to internet)
+- Should work with broadly with [Equinix Metal hardware](https://deploy.equinix.com/developers/docs/metal/hardware/standard-servers/) (including [4x port boxes](https://deploy.equinix.com/product/servers/n3-xlarge/) and the [s3.xlarge](https://deploy.equinix.com/product/servers/s3-xlarge/)
 
-## Quick Walkthrough
+## Documentation
 
-- [Provision an instance with](https://deploy.equinix.com/developers/docs/metal/server-metadata/user-data/) the [el9_no_code_safety_first_appliance.yaml](cloud-inits/el9_no_code_safety_first_appliance.yaml) in the `cloud-init` directory in this folder.
-    - To provision an instance with the [Equinix Metal CLI](https://deploy.equinix.com/developers/docs/metal/libraries/cli/)
-        -
-        ```
-        metal device create --hostname bn-gw-sv-11 --plan n2.xlarge.x86 --metro sv --operating-system alma_9 --userdata-file ~/metal_code_snippets/virtual_appliance_host/no_code_with_guardrails/cloud_inits/el9_no_code_safety_first_appliance_host.mime --project-id $YOURPROJID -t "metalcli"
-        ```
-- The instance will provision as normal
-- `adminuser` will replace normal use of `root`, where `root`'s password and SSH keys are copied to `adminuser`
-- The instance will update itself to current (equivalent of `dnf upgrade -y && reboot`
-- The instance will install packages
-- The instance will turnup the firewall
-    - This includes watching port `22` for aggressive connection sources and blocking them
-- The instance will begin to lockdown `SSH`
-- The instance will configure user lockout
-- The instance will apply automatic updates
-- The instance will mount it's largest non-HHD drive to `/mnt/util/`
-- The instance will tear down the pre-configured networking
-- The instance will re-build network with a traditional linux bridge on the bond
-    - This is done before applying addressing, allowing the bond + bridge to expose native + VLANs
-    - The instance will apply pre-configured networking according to the EM SA Network Schema (below)
-- The instance will mangle some `libvirt` configuration to make it ready to consume
-    - This includes Forward / Reverse DNS
-- The instance will configure NGINX for public and private endpoints
+1. [TLDR on how this works](docs/tldr.md)
+2. [Provisioning](docs/provisioning.md)
+3. [Video adding a VM](docs/vm.md)
+4. [Video adding a new Metal VLAN network)()
 
 ## EM SA Network Schema:
-| Purpose      | VLAN      | Default Layer-3    |
-|--------------|-----------|--------------------|
-| `mgmt_a`     | `3880`    | `172.16.100.0/24`  |
-| `mgmt_b`     | `3780`    | `192.168.101.0/24` |
-| `storage_a`  | `3870`    | `172.16.253.0/24`  |
-| `storage_b`  | `3770`    | `192.168.252.0/24` |
-| `local_a`    | `3860`    | `172.16.251.0/24`  |
-| `local_b`    | `3760`    | `192.168.250.0/24` |
-| `inter_a`    | `3850`    | `172.16.249.0/24`  |
-| `inter_b`    | `3750`    | `192.168.248.0/24` |
+| Role            | VLAN      | Default Layer-3         |
+|-----------------|-----------|-------------------------|
+| `mgmt_a`        | `3880`    | `172.16.100.0/24`       |
+| `mgmt_b`        | `3780`    | `192.168.101.0/24`      |
+| `storage_a`     | `3870`    | `172.16.253.0/24`       |
+| `storage_b`     | `3770`    | `192.168.252.0/24`      |
+| `local_a`       | `3860`    | `172.16.251.0/24`       |
+| `local_b`       | `3760`    | `192.168.250.0/24`      |
+| `inter_a`       | `3850`    | `172.16.249.0/24`       |
+| `inter_b`       | `3750`    | `192.168.248.0/24`      |
+| `libvirt/guest` | `4`       | `DHCP 192.168.122.0/24` |

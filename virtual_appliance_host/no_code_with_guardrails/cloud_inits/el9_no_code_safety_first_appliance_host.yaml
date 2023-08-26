@@ -82,6 +82,16 @@ runcmd:
   - [ nft, 'add set ip SSHWATCH denylist { type ipv4_addr ; flags dynamic, timeout ; timeout 5m ; }']
   - [ nft, 'add rule ip SSHWATCH input tcp dport 22 ip protocol tcp ct state new, untracked limit rate over 10/minute add @denylist { ip saddr } log prefix "CLOUD-INIT MANAGED NFT dropping:"']
   - [ nft, 'add rule ip SSHWATCH input ip saddr @denylist drop']
+  - [ nft, add, table, ip, SSHWATCH ]
+  - [ nft, 'add chain ip SSHWATCH input { type filter hook input priority 0 ; }']
+  - [ nft, 'add set ip SSHWATCH denylist { type ipv4_addr ; flags dynamic, timeout ; timeout 5m ; }']
+  - [ nft, 'add rule ip SSHWATCH input tcp dport 22 ip protocol tcp ct state new, untracked limit rate over 10/minute add @denylist { ip saddr } log prefix "CLOUD-INIT MANAGED NFT dropping:"']
+  - [ nft, 'add rule ip SSHWATCH input ip saddr @denylist drop']
+  - [ nft, add, table, ip, COCKPITWATCH ]
+  - [ nft, 'add chain ip COCKPITWATCH input { type filter hook input priority 0 ; }']
+  - [ nft, 'add set ip COCKPITWATCH denylist { type ipv4_addr ; flags dynamic, timeout ; timeout 5m ; }']
+  - [ nft, 'add rule ip COCKPITWATCH input tcp dport 9090 ip protocol tcp ct state new, untracked limit rate over 200/minute add @denylist { ip saddr } log prefix "CLOUD-INIT MANAGED NFT dropping:"']
+  - [ nft, 'add rule ip COCKPITWATCH input ip saddr @denylist drop']
   - [ authselect, select, minimal, with-faillock, --force ]
   - [ modprobe, 8021q ]
   - [ rsync, -av, "/root/.ssh", /home/adminuser/ ]
@@ -158,8 +168,10 @@ write_files:
       HOST_IP=$(hostname | awk -F "-" '{print$NF}' | sed 's/^0*//')
       PRI_IP=$(jq -r '.network.addresses[] | select((.public==false) and .address_family==4) | .address' /tmp/metadata)
       cp -r /usr/share/nginx/html /usr/share/nginx/private_html
+      mkdir /usr/share/nginx/private_html/autoindex
       rm /usr/share/nginx/private_html/index.html
       echo "private network" > /usr/share/nginx/private_html/index.html
+      echo "private network" > /usr/share/nginx/private_html/autoindex/index.html
       cat > /etc/nginx/conf.d/metalprivate.conf << EOL
         server {
             listen       $PRI_IP:81;
@@ -184,6 +196,11 @@ write_files:
 
             error_page 500 502 503 504 /50x.html;
             location = /50x.html {
+            }
+            location = /autoindex {
+                root /usr/share/nginx/private_html/autoindex
+                index index.html;
+                autoindex on;
             }
         }
       EOL
@@ -379,6 +396,12 @@ write_files:
         sed -i "/net.ipv4.ip_forward=1/ s/# *//" /etc/sysctl.conf
         sed -i "/net.ipv6.conf.all.forwarding=1/ s/# *//" /etc/sysctl.conf
         sysctl -p
+
+        if [[ "$HOST_IP" == 1 ]]; then
+            nmcli con add type vlan con-name bond0.4 ifname bond0.4 dev bond0 id 4
+            nmcli con modify bond0.4 master virbr0 slave-type bridge 802-3-ethernet.mtu 1500
+            nmcli con up bond0.4
+        fi
 
         chmod 0400 /var/tmp/metal_network_mangle.sh
     permissions: '0644'
