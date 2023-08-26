@@ -3,17 +3,20 @@
 Or **NCSFBVAHfEM** for short... Just kiding, shorten it to *no_code_bastion* or `ncb` for really short.
 
 <p float="middle">
-  <img src="docs/assets/dashboard.PNG" width="32%" />
   <img src="docs/assets/diagram.jpg" width="32%" />
 </p>
 
-When evaluating or working with Equinix Metal, operators often want a "fastest path to running an application or device inside of the Equinix", where the bootstrap curve of the Equinix Metal is such that often the hardest part is figuring out where to start.
+When evaluating or working with [Equinix Metal](https://deploy.equinix.com/product/bare-metal/), operators often want a "fastest path to running an application or device inside of the Equinix", where the bootstrap curve of the Equinix Metal is such that often the hardest part is figuring out where to start.
+
+<p float="middle">
+  <img src="docs/assets/diagram.jpg" width="32%" />
+</p>
 
 *no_code_bastion* aims to minimize the amount of toil needed to quickly and safely establish a familiar operational beachead inside of Equinix Metal for operators looking to get going quickly and safely-ish (or atleast, more so than without this resource) with their project.
 
 By "Ctrl + C" & "Ctrl + V"'ing this [cloud-init](cloud_inits/el9_no_code_safety_first_appliance_host.yaml) into the [Userdata](https://deploy.equinix.com/developers/docs/metal/server-metadata/user-data/) field when provisioning an [Equinix Metal instance](https://deploy.equinix.com/product/bare-metal/servers/), an Operator should be returned a useable, working `no_code_bastion` instance, ready for brush clearing.
 
-Please note, as with anything in this reposistory, this resource is not supported by **ANYONE**. It is meant solely and exclusively as a reference resource. That being said, as of summer 2023, the owner is still looking to improve this resource and fix any quick wins.
+Please note, as with anything in this reposistory, this resource is not supported by **ANYONE**. It is meant solely and exclusively as a reference resource. That being said, as of summer 2023, the owner is still looking to improve this resource and fix any quick wins. If anything about this perks you interest, get in contact with your [Equinix Metal sales team](https://deploy.equinix.com/get-started/).
 
 **Quick Bullet Points of Toils Solved:**
 
@@ -23,11 +26,11 @@ Please note, as with anything in this reposistory, this resource is not supporte
 - Automatic Updates configured via [dnf-automatic](https://dnf.readthedocs.io/en/latest/automatic.html)
 - Basic securitization (`root` -> `adminuser`, firewall up, user-lockout etc)
 - Mounts largest non-HDD free disk to `/mnt/util/`
-    - Adds it as storage volume to `libvirt`
+  - Adds it as storage volume to `libvirt`
 - Network
     - Replaces stock Metal networking with `eth0/1` -> `bond0` -> `bridge` -> `VLAN` model allowing guests access to the native VLAN (carrying EM's [Layer-3 network](https://deploy.equinix.com/developers/docs/metal/networking/ip-addresses/)) + [tagged VLAN](https://deploy.equinix.com/developers/docs/metal/layer2-networking/overview/)s while persisting the desired [Equinix Metal LACP bonding](https://deploy.equinix.com/developers/docs/metal/networking/server-level-networking/#your-servers-lacp-bonding) configuration.
         - This allows the instance and it's guests to acces [Interconnection](https://deploy.equinix.com/developers/docs/metal/interconnections/introduction/)
-    - DHCP + NAT in guest network via relatively stock [libvirt](https://wiki.libvirt.org/VirtualNetworking.html)
+    - DHCP + NAT Internet in guest network via relatively stock [libvirt](https://wiki.libvirt.org/VirtualNetworking.html)
     - Inside VLAN Layer-3 configuration dynamic based on hostname, e.g a host launched as `bn-am-55` will use `55` as it's inside IP for all networks (e.g `172.16.100.55`), a host launched with `bn-am-33` would then be assigned `33` (e.g `172.16.100.33`), and they would be able to ping each other inside VLAN `3880` when assigned that VLAN from the Metal platform.
     - Forward DNS in guest network (via hijack of libvirt's dnsmasq with Metal's DNS as next forward hop)
     - Reverse DNS in guest network (via hijack of libvirt's dnsmasq)
@@ -48,8 +51,9 @@ Please note, as with anything in this reposistory, this resource is not supporte
 
 1. [TLDR on how this works](docs/tldr.md)
 2. [Provisioning](docs/provisioning.md)
+  - [Privisioning video](https://equinixinc-my.sharepoint.com/:v:/g/personal/dlotterman_equinix_com/EWDXuOfNxCNDoZGRYgbz8JEBnQkky7fWD1Th4Eg5O41WLA?nav=eyJyZWZlcnJhbEluZm8iOnsicmVmZXJyYWxBcHAiOiJPbmVEcml2ZUZvckJ1c2luZXNzIiwicmVmZXJyYWxBcHBQbGF0Zm9ybSI6IldlYiIsInJlZmVycmFsTW9kZSI6InZpZXciLCJyZWZlcnJhbFZpZXciOiJNeUZpbGVzTGlua0RpcmVjdCJ9fQ&e=aYpY6H)
 3. [Video adding a VM](docs/vm.md)
-4. [Video adding a new Metal VLAN network)()
+4. [Video adding a new Metal VLAN network](standin)
 
 ## EM SA Network Schema:
 | Role            | VLAN      | Default Layer-3         |
