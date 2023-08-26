@@ -193,7 +193,6 @@ write_files:
             location = /50x.html {
             }
             location = /autoindex {
-                root /usr/share/nginx/private_html/autoindex
                 index index.html;
                 autoindex on;
             }
