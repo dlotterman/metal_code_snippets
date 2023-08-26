@@ -2,9 +2,9 @@
 
 Or **NCSFBVAHfEM** for short... Just kiding, shorten it to *no_code_bastion* or `ncb` for really short.
 
-<p float="left">
-  <img src="docs/assets/dashboard.PNG" width="100" />
-  <img src="docs/assets/diagram.jpg" width="100" />
+<p float="middle">
+  <img src="docs/assets/dashboard.PNG" width="32%" />
+  <img src="docs/assets/diagram.jpg" width="32%" />
 </p>
 
 When evaluating or working with Equinix Metal, operators often want a "fastest path to running an application or device inside of the Equinix", where the bootstrap curve of the Equinix Metal is such that often the hardest part is figuring out where to start.
