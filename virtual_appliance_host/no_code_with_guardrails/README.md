@@ -9,7 +9,7 @@ Or **NCSFBVAHfEM** for short... Just kiding, shorten it to *no_code_bastion* or 
 When evaluating or working with [Equinix Metal](https://deploy.equinix.com/product/bare-metal/), operators often want a "fastest path to running an application or device inside of the Equinix", where the bootstrap curve of the Equinix Metal is such that often the hardest part is figuring out where to start.
 
 <p float="middle">
-  <img src="docs/assets/dashboard.png" width="32%" />
+  <img src="docs/assets/dashboard.PNG" width="32%" />
 </p>
 
 *no_code_bastion* aims to minimize the amount of toil needed to quickly and safely establish a familiar operational beachead inside of Equinix Metal for operators looking to get going quickly and safely-ish (or atleast, more so than without this resource) with their project.
