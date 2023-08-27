@@ -57,6 +57,19 @@ Please note, as with anything in this reposistory, this resource is not supporte
 
 The video links are links to Equinix's 0365 Sharepoint (sharepoint.com), and they are just hosted MP4's. The public share may expire from time to time, my apologies, corporate policy.
 
+### Tools you will want
+
+- A well setup SSH toolchain including a public key associated with your user in Equinix Metal
+  - This includes the use of SSH based Interconnection
+    - [SOCKS](https://github.com/dlotterman/metal_code_snippets/blob/main/documentation_stage/operator_documentation/bastion_socks_tunnel_guide.md#configuring-ssh-with-socks)
+	- With a correctly configured SOCKs proxy, you can naviate *"inside"* or private resources like ESXi interfaces, storage interfaces, or Interconnection attached resources, easily from a single point. It is often easiest to "Dedicate a browser to the function", [Firefox Portable](https://support.mozilla.org/en-US/questions/1286588) makes this easy and supports tunneled DNS.
+    - [Local / Remote Port Forwading](https://linuxize.com/post/how-to-setup-ssh-tunneling/)
+	- This makes things like RDP'ing to a hosted VM *trivially* simple and fast. No fiddling with VPN's, no dangerous exposed ports to the internet. Everything gets encrypted, everything stays private.
+- A VNC client
+  - The author promotes [TigerVNC](https://github.com/TigerVNC/tigervnc)
+    - [VNC over SSH](https://sscf.ucsd.edu/self-help-guides/tutorials/linux/vnc-with-ssh-tunnel)
+
+
 ## EM SA Network Schema:
 [Reference link](https://github.com/dlotterman/metal_code_snippets/blob/main/documentation_stage/em_sa_network_schema.md)
 | Role            | VLAN      | Default Layer-3         |
