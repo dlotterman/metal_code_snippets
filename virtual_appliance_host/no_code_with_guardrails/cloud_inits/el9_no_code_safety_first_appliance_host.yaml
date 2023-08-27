@@ -239,15 +239,19 @@ write_files:
       virsh net-define /var/tmp/metal_libvirt_network_dnsmasq.xml
       virsh net-start --network default
       mkdir -p /mnt/util/vms
+      virsh pool-destroy default
+      virsh pool-undefine default
       cat > /var/tmp/metal_storage_pool.xml << EOL
         <pool type="dir">
-            <name>metal-storage-pool</name>
+            <name>default</name>
             <target>
                   <path>/mnt/util/vms</path>
             </target>
         </pool>
       EOL
       virsh pool-define /var/tmp/metal_storage_pool.xml
+      virsh pool-autostart default
+      virsh pool-start default
       chmod 0400 /var/tmp/metal_libvirt_mangle.sh
     permissions: '0644'
 
