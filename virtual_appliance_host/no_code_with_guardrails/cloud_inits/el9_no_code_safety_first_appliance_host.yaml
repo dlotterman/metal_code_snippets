@@ -212,7 +212,6 @@ write_files:
             }
         }
       EOL
-      systemctl enable --now fcgiwrap@nginx.socket
       systemctl enable --now nginx
       systemctl restart nginx
       chmod 0400 /var/tmp/metal_nginx_mangle.sh
