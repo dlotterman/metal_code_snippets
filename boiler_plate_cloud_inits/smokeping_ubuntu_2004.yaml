@@ -52,8 +52,8 @@ datasource:
 
 # keep sshd disabled till everything is done at the end of runcmd
 bootcmd:
-  - [ cloud-init-per, instance, systemctl, start, ssh ]
-  - [ cloud-init-per, instance, systemctl, enable, ssh ]
+  - [ cloud-init-per, instance, systemctl, stop, ssh ]
+  - [ cloud-init-per, instance, systemctl, disable, ssh ]
 
 runcmd:
   - yes | unminimize  &
@@ -80,8 +80,7 @@ runcmd:
   - chown -R adminuser:cloud-users /home/adminuser/.ssh
   - sed -i -e '/^#PermitRootLogin/s/^.*$/PermitRootLogin no/' /etc/ssh/sshd_config
   - echo "DebianBanner no" >> /etc/ssh/sshd_config
-  - systemctl enable ssh
-  - systemctl start ssh
+  - systemctl enable --now ssh
   - curl --silent --retry 5 -o /tmp/metal_smoke_instance.sh https://raw.githubusercontent.com/dlotterman/metal_code_snippets/main/smokeping/metal_smoke_instance.sh
   - chmod 0750 /tmp/metal_smoke_instance.sh
   - bash /tmp/metal_smoke_instance.sh

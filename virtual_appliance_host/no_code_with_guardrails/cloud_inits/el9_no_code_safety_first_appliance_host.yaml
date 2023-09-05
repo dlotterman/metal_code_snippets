@@ -66,6 +66,7 @@ runcmd:
   - [ firewall-cmd, --permanent, --zone=public, --add-service=ssh ]
   - [ firewall-cmd, --permanent, --zone=public, --add-service=http ]
   - [ firewall-cmd, --permanent, --zone=public, --add-port=81/tcp ]
+  - [ firewall-cmd, --permanent, --zone=public, --add-port=82/tcp ]
   - [ firewall-cmd, --permanent, --zone=public, --add-service=cockpit ]
   - [ firewall-cmd, --permanent, --zone=trusted, --add-source=10.0.0.0/8 ]
   - [ firewall-cmd, --permanent, --zone=trusted, --add-source=172.16.100.0/24 ]
@@ -105,6 +106,8 @@ runcmd:
   - [ systemctl, enable, --now, libvirtd ]
   - [ bash, /var/tmp/metal_libvirt_mangle.sh ]
   - [ bash, /var/tmp/metal_nginx_mangle.sh ]
+  - [ bash, /var/tmp/metal_epel_mangle.sh ]
+  - [ bash, /var/tmp/metal_smokeping_mangle.sh ]
 
 
 write_files:
@@ -154,6 +157,267 @@ write_files:
       chmod 0400 /var/tmp/metal_adminuser_mangle.sh
     permissions: '0644'
 
+  - path: "/var/tmp/metal_epel_mangle.sh"
+    owner: root:root
+    append: false
+    content: |
+      logger "running /var/tmp/metal_epel_mangle.sh"
+      dnf config-manager --set-enabled crb
+      dnf install -y epel-release
+      dnf update -y
+      chmod 0400 /var/tmp/metal_epel_mangle.sh
+    permissions: '0644'
+
+  - path: "/var/tmp/metal_smokeping_mangle.sh"
+    owner: root:root
+    append: false
+    content: |
+      logger "running /var/tmp/metal_smokeping_mangle.sh"
+      dnf -y install perl httpd httpd-devel mod_fcgid rrdtool perl-CGI-SpeedyCGI fping rrdtool-perl perl-Sys-Syslog fcgiwrap openssl-devel smokeping
+      curl -s --retry 5 https://metadata.platformequinix.com/metadata -o /tmp/metadata
+      METAL_PUBLIC_IP=$(jq -r '.network.addresses[] | select((.public==true) and .address_family==4) | .address' /tmp/metadata)
+      METAL_PUBLIC_GW=$(jq -r '.network.addresses[] | select((.public==true) and .address_family==4) | .gateway' /tmp/metadata)
+      METAL_PRIVATE_GW=$(jq -r '.network.addresses[] | select((.public==false) and .address_family==4) | .gateway' /tmp/metadata)
+      METAL_ROUTER_IPS=('136.144.56.179' '145.40.125.17' '145.40.75.3' '147.75.87.3' '145.40.73.1' '145.40.113.3' '145.40.105.1' '147.28.133.1' '147.75.199.23' '136.144.55.31' '145.40.77.1' '145.40.93.77' '145.40.71.21' '145.40.109.1' '136.144.60.195' '147.75.92.5' '136.144.50.171' '145.40.87.43' '145.40.121.9' '139.178.82.17' '147.75.70.17' '147.75.66.143' '147.75.94.153' '147.75.33.169')
+
+        # http://ec2-reachability.amazonaws.com/
+      AWS_ENDPOINTS=('3.80.0.0' '68.66.113.112' '15.181.176.161' '15.181.192.183' '72.41.10.180' '15.181.98.141' '64.187.131.1' '15.181.144.146' '3.12.0.0' '18.252.0.253' '13.52.0.0' '18.236.0.0' '15.181.17.111' '15.253.0.254' '3.32.0.253' '3.96.0.0' '15.228.0.0' '3.248.0.0' '3.64.0.0' '3.8.0.0' '15.160.0.0' '13.36.0.0' '13.48.0.0' '13.245.0.253' '15.184.0.253' '3.112.0.0' '3.34.0.0' '13.208.32.253' '3.0.0.9' '3.24.0.0' '3.6.0.0' '16.162.0.253' '52.80.5.207' '52.82.0.253')
+
+        # https://github.com/GoogleCloudPlatform/gcping/blob/main/internal/config/endpoints.go
+      GCP_ENDPOINTS=('asia-east1-5tkroniexa-de.a.run.app' 'asia-east2-5tkroniexa-df.a.run.app' 'asia-northeast1-5tkroniexa-an.a.run.app' 'asia-northeast2-5tkroniexa-dt.a.run.app' 'asia-northeast3-5tkroniexa-du.a.run.app' 'asia-south1-5tkroniexa-el.a.run.app' 'asia-south2-5tkroniexa-em.a.run.app' 'asia-southeast1-5tkroniexa-as.a.run.app' 'asia-southeast2-5tkroniexa-et.a.run.app' 'australia-southeast1-5tkroniexa-ts.a.run.app' 'australia-southeast2-5tkroniexa-km.a.run.app' 'europe-central2-5tkroniexa-lm.a.run.app' 'europe-north1-5tkroniexa-lz.a.run.app' 'europe-west1-5tkroniexa-ew.a.run.app' 'europe-west2-5tkroniexa-nw.a.run.app' 'europe-west3-5tkroniexa-ey.a.run.app' 'europe-west4-5tkroniexa-ez.a.run.app' 'europe-west6-5tkroniexa-oa.a.run.app' 'northamerica-northeast1-5tkroniexa-nn.a.run.app' 'northamerica-northeast2-5tkroniexa-pd.a.run.app' 'southamerica-east1-5tkroniexa-rj.a.run.app' 'us-central1-5tkroniexa-uc.a.run.app' 'us-east1-5tkroniexa-ue.a.run.app' 'us-east4-5tkroniexa-uk.a.run.app' 'us-west1-5tkroniexa-uw.a.run.app' 'us-west2-5tkroniexa-wl.a.run.app' 'us-west3-5tkroniexa-wm.a.run.app' 'us-west4-5tkroniexa-wn.a.run.app')
+
+        # DNS carriers + https://www.dotcom-monitor.com/blog/technical-tools/network-location-ip-addresses/
+      RANDOM_ENDPOINTS=('208.67.222.222' '208.67.220.220' '1.1.1.1' '1.0.0.1' '8.8.8.8' '8.8.4.4' '139.130.4.5' '69.162.81.155' '192.199.248.75' '162.254.206.227' '207.250.234.100' '184.107.126.165' '206.71.50.230' '65.49.22.66' '23.81.0.59' '207.228.238.7')
+
+      mkdir -p /var/cache/smokeping/images
+      chown root:nginx /var/cache/smokeping/images
+
+      mkdir -p /var/lib/smokeping/__cgi
+      chown -R root:nginx /var/lib/smokeping/__cgi
+
+
+      mkdir -p /var/tmp/smokeping
+      chown -R root:nginx /var/tmp/smokeping
+
+      cat > /etc/nginx/conf.d/smokeping.conf << EOL
+      server {
+          listen 82 default_server;
+          listen [::]:82 default_server;
+          server_name _;
+          include /etc/nginx/default.d/*.conf;
+          root /usr/share/smokeping/htdocs;
+          index smokeping.cgi;
+
+          location ~ \.cgi$ {
+              fastcgi_intercept_errors on;
+              root /usr/lib;
+              include /etc/nginx/fastcgi_params;
+              fastcgi_param SCRIPT_FILENAME /usr/share/smokeping/cgi/smokeping.fcgi;
+              fastcgi_pass unix:/run/fcgiwrap/fcgiwrap-nginx.sock;
+          }
+
+          location / {
+                  return 301 /smokeping.cgi;
+          }
+      }
+      EOL
+
+      mkdir -p /etc/smokeping/config.d/
+      chown -R root:nginx /etc/smokeping
+      chmod -R 0765 /etc/smokeping/config.d
+      sudo cat > /etc/smokeping/config << EOL
+      *** General ***
+
+      owner    = metal_smokeping
+      contact  = root@localhost
+      mailhost = localhost
+      cgiurl   = http://$METAL_PUBLIC_IP/smokeping/smokeping.cgi
+      # specify this to get syslog logging
+      syslogfacility = local0
+      # each probe is now run in its own process
+      # disable this to revert to the old behaviour
+         # concurrentprobes = no
+      imgcache = /var/cache/smokeping/images
+      imgurl = ../images
+      datadir = /var/tmp/smokeping
+      piddir = /run/smokeping
+      smokemail = /etc/smokeping/smokemail
+      tmail = /etc/smokeping/tmail
+      dyndir = /var/lib/smokeping/__cgi
+
+      @include /etc/smokeping/config.d/Probes
+      @include /etc/smokeping/config.d/Targets
+      @include /etc/smokeping/config.d/Database
+      @include /etc/smokeping/config.d/Presentation
+      EOL
+
+      sudo cat > /etc/smokeping/config.d/Database << EOL
+      *** Database ***
+
+      step = 15
+      pings = 15
+
+      # consfn mrhb steps total
+
+      AVERAGE 0.5 1 1008
+      AVERAGE 0.5 12 4320
+      MIN 0.5 12 4320
+      MAX 0.5 12 4320
+      AVERAGE 0.5 144 720
+      MAX 0.5 144 720
+      MIN 0.5 144 720
+      EOL
+
+      sudo cat > /etc/smokeping/config.d/Presentation << EOL
+      *** Presentation ***
+
+      template = /etc/smokeping/basepage.html
+      charset = utf-8
+      htmltitle = yes
+      graphborders = no
+
+      + charts
+
+      menu = Charts
+      title = The most interesting destinations
+
+      ++ stddev
+      sorter = StdDev(entries=>4)
+      title = Top Standard Deviation
+      menu = Std Deviation
+      format = Standard Deviation %f
+
+      ++
+      max
+      sorter = Max(entries=>5)
+      title = Top Max Roundtrip Time
+      menu = by Max
+      format = Max Roundtrip Time %f seconds
+
+      ++ loss
+      sorter = Loss(entries=>5)
+      title = Top Packet Loss
+      menu = Loss
+      format = Packets Lost %f
+
+      ++ median
+      sorter = Median(entries=>5)
+      title = Top Median Roundtrip Time
+      menu = by Median
+      format = Median RTT %f seconds
+
+      + overview
+
+      width = 1000
+      height = 50
+      range = 10h
+
+      + detail
+
+      width = 1000
+      height = 200
+      unison_tolerance = 2
+
+      "Last 3 Hours" 3h
+      "Last 30 Hours" 30h
+      "Last 10 Days" 10d
+      "Last 360 Days" 360d
+      EOL
+
+      sudo cat > /etc/smokeping/config.d/Probes << EOL
+      *** Probes ***
+
+      + FPing
+
+      binary = /sbin/fping
+
+      +Curl
+
+      binary = /usr/bin/curl
+      forks = 5
+      offset = 50%
+      step = 300
+      follow_redirects = yes
+      include_redirects = yes
+      insecure_ssl = 1
+      pings = 5
+      timeout = 20
+      urlformat = http://%host%/
+      EOL
+      sudo cat > /tmp/smokeping_targets_gw << EOL
+      *** Targets ***
+      probe = FPing
+      menu = Top
+      title = Metal Network Latency Grapher
+      remark = Welcome to this Metal Smokeping Instance
+
+
+      + local_gateways
+      menu = local_gateways
+      title = local_gateways
+
+      ++ public_gateway
+      probe = FPing
+      host = $METAL_PUBLIC_GW
+      title = public_gateway
+
+      ++ private_gateway
+      probe = FPing
+      host = $METAL_PRIVATE_GW
+      title = private_gateway
+      EOL
+      echo "+ global_metal_routers" >> /tmp/smokeping_targets_gw
+      echo "menu = global_metal_routers" >> /tmp/smokeping_targets_gw
+      echo "title = global_metal_routers" >> /tmp/smokeping_targets_gw
+      for ROUTER in "${METAL_ROUTER_IPS[@]}"; do
+          echo "++ $(echo "$ROUTER" | tr -d ".")" >> /tmp/smokeping_targets_gw
+          echo "probe = FPing" >> /tmp/smokeping_targets_gw
+          echo "host = $ROUTER" >> /tmp/smokeping_targets_gw
+          echo "title = metal_router_$(echo $ROUTER | tr -d ".")" >> /tmp/smokeping_targets_gw
+      done
+
+      echo "+ global_aws_endpoints" >> /tmp/smokeping_targets_gw
+      echo "menu = global_aws_endpoints" >> /tmp/smokeping_targets_gw
+      echo "title = global_aws_endpoints" >> /tmp/smokeping_targets_gw
+      for ENDPOINT in "${AWS_ENDPOINTS[@]}"; do
+          echo "++ $(echo "$ENDPOINT" | tr -d ".")" >> /tmp/smokeping_targets_gw
+          echo "probe = FPing" >> /tmp/smokeping_targets_gw
+          echo "host = $ENDPOINT" >> /tmp/smokeping_targets_gw
+          echo "title = aws_endpoint_$(echo $ENDPOINT | tr -d ".")" >> /tmp/smokeping_targets_gw
+      done
+
+      echo "+ global_gcp_endpoints" >> /tmp/smokeping_targets_gw
+      echo "menu = global_gcp_endpoints" >> /tmp/smokeping_targets_gw
+      echo "title = global_gcp_endpoints" >> /tmp/smokeping_targets_gw
+      for ENDPOINT in "${GCP_ENDPOINTS[@]}"; do
+        echo "++ $(echo $ENDPOINT | tr -d ".")" >> /tmp/smokeping_targets_gw
+        echo "probe = Curl" >> /tmp/smokeping_targets_gw
+        echo "host = $ENDPOINT" >> /tmp/smokeping_targets_gw
+        echo "title = gcp_endpoint_$(echo $ENDPOINT | tr -d ".")" >> /tmp/smokeping_targets_gw
+      done
+      echo "+ random_endpoints" >> /tmp/smokeping_targets_gw
+      echo "menu = random_endpoints" >> /tmp/smokeping_targets_gw
+      echo "title = random_endpoints" >> /tmp/smokeping_targets_gw
+      for ENDPOINT in "${RANDOM_ENDPOINTS[@]}"; do
+        echo "++ $(echo "$ENDPOINT" | tr -d ".")" >> /tmp/smokeping_targets_gw
+        echo "probe = FPing" >> /tmp/smokeping_targets_gw
+        echo "host = $ENDPOINT" >> /tmp/smokeping_targets_gw
+        echo "title = random_endpoint_$(echo $ENDPOINT | tr -d ".")" >> /tmp/smokeping_targets_gw
+      done
+
+      sudo cp -f /tmp/smokeping_targets_gw /etc/smokeping/config.d/Targets
+      chown -R root:nginx /etc/smokeping/config.d/Probes
+      chown -R root:nginx /etc/smokeping/config.d/Targets
+      chown -R root:nginx /etc/smokeping/config.d/Database
+      chown -R root:nginx /etc/smokeping/config.d/Presentation
+      chown -R root:nginx /etc/smokeping/config.d/pathnames
+
+      systemctl stop smokeping
+      systemctl enable --now smokeping
+
+      chmod 0400 /var/tmp/metal_smokeping_mangle.sh
+    permissions: '0644'
+
   - path: "/var/tmp/metal_nginx_mangle.sh"
     owner: root:root
     append: false
@@ -198,8 +462,9 @@ write_files:
             }
         }
       EOL
-
+      systemctl enable --now fcgiwrap@nginx.socket
       systemctl enable --now nginx
+      systemctl restart nginx
       chmod 0400 /var/tmp/metal_nginx_mangle.sh
     permissions: '0644'
 
@@ -208,6 +473,8 @@ write_files:
     append: false
     content: |
       logger "running /var/tmp/metal_libvirt_mangle.sh"
+      curl -s https://metadata.platformequinix.com/metadata -o /tmp/metadata
+      HOST_IP=$(hostname | awk -F "-" '{print$NF}' | sed 's/^0*//')
       cat > /var/tmp/metal_libvirt_network_dnsmasq.xml << EOL
         <network xmlns:dnsmasq='http://libvirt.org/schemas/network/dnsmasq/1.0'>
           <name>default</name>
@@ -225,10 +492,12 @@ write_files:
             </dhcp>
           </ip>
           <dnsmasq:options>
-            <dnsmasq:option value='listen-address=::1,192.168.122.1'/>
+            <dnsmasq:option value='listen-address=::1,192.168.122.1,172.16.100.$HOST_IP,172.16.101.$HOST_IP'/>
             <dnsmasq:option value='server=147.75.207.207'/>
             <dnsmasq:option value='server=147.75.208.208'/>
-            <dnsmasq:option value='synth-domain=inside.em.com,192.168.122.0/24,host-*'/>
+            <dnsmasq:option value='synth-domain=libvirt.gtst.local,192.168.122.0/24,host-*'/>
+            <dnsmasq:option value='synth-domain=mgmta.gtst.local,172.16.100.0/24,host-*'/>
+            <dnsmasq:option value='synth-domain=mgmtb.gtst.local,172.16.101.0/24,host-*'/>
           </dnsmasq:options>
         </network>
       EOL
