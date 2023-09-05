@@ -27,6 +27,8 @@ Please note, as with anything in this reposistory, this resource is not supporte
 - Basic securitization (`root` -> `adminuser`, firewall up, user-lockout etc)
 - Mounts largest non-HDD free disk to `/mnt/util/`
   - Adds it as storage volume to `libvirt`
+  - Exposed via private network HTTP (via `nginx` below)
+  - Exposed via private network NFS (via `nfs-server`
 - Network
     - Replaces stock Metal networking with `eth0/1` -> `bond0` -> `bridge` -> `VLAN` model allowing guests access to the native VLAN (carrying EM's [Layer-3 network](https://deploy.equinix.com/developers/docs/metal/networking/ip-addresses/)) + [tagged VLAN](https://deploy.equinix.com/developers/docs/metal/layer2-networking/overview/)s while persisting the desired [Equinix Metal LACP bonding](https://deploy.equinix.com/developers/docs/metal/networking/server-level-networking/#your-servers-lacp-bonding) configuration.
         - This allows the instance and it's guests to acces [Interconnection](https://deploy.equinix.com/developers/docs/metal/interconnections/introduction/)
@@ -35,16 +37,34 @@ Please note, as with anything in this reposistory, this resource is not supporte
     - Forward DNS in guest network (via hijack of libvirt's dnsmasq with Metal's DNS as next forward hop)
     - Reverse DNS in guest network (via hijack of libvirt's dnsmasq)
         ```
-        dig -x 192.168.122.55 @192.168.122.1
-        ...
+        [adminuser@ncb-sv-04 ~]$ dig -x 172.16.101.5 @172.16.100.4
+
+        ; <<>> DiG 9.16.23-RH <<>> -x 172.16.101.5 @172.16.100.4
+        ;; global options: +cmd
+        ;; Got answer:
+        ;; ->>HEADER<<- opcode: QUERY, status: NOERROR, id: 41917
+        ;; flags: qr aa rd ra; QUERY: 1, ANSWER: 1, AUTHORITY: 0, ADDITIONAL: 1
+
+        ;; OPT PSEUDOSECTION:
+        ; EDNS: version: 0, flags:; udp: 4096
+        ;; QUESTION SECTION:
+        ;5.101.16.172.in-addr.arpa.     IN      PTR
+
         ;; ANSWER SECTION:
-        55.122.168.192.in-addr.arpa. 0  IN      PTR     host-55.inside.em.com.
+        5.101.16.172.in-addr.arpa. 0    IN      PTR     host-5.mgmtb.gtst.local.
+
+        ;; Query time: 0 msec
+        ;; SERVER: 172.16.100.4#53(172.16.100.4)
+        ;; WHEN: Tue Sep 05 22:58:12 UTC 2023
+        ;; MSG SIZE  rcvd: 91
         ```
-        - Note the generic `host-55.inside.em.com.`
+        - Note the generic `host-5.mgmtb.gtst.local.`
     - Automatic inclusion in [EM SA Network Schema networks](https://github.com/dlotterman/metal_code_snippets/tree/main/virtual_appliance_host/no_code_with_guardrails#em-sa-network-schema), simply apply VLANs from the Metal UI / CLI in [Hybrid Bonded](https://deploy.equinix.com/developers/docs/metal/layer2-networking/hybrid-bonded-mode/) mode
 - HTTP endpoint via NGINX
     - Public Internet exposed HTTP endpoint (port `80` on Metal Instance's [Public IP](https://deploy.equinix.com/developers/docs/metal/networking/ip-addresses/#public-ipv4-subnet))
     - Private ([Backend Transfer](https://deploy.equinix.com/developers/docs/metal/networking/backend-transfer/) + VLAN only, port `81`) exposed HTTP endpoint (not open to internet)
+- NFS / NAS via linux
+    - Exposes largest non-HDD drive via NFS to private networks, including Metal's Backend Transfer network
 - Should work with broadly with [Equinix Metal hardware](https://deploy.equinix.com/developers/docs/metal/hardware/standard-servers/) (including [4x port boxes](https://deploy.equinix.com/product/servers/n3-xlarge/) and the [s3.xlarge](https://deploy.equinix.com/product/servers/s3-xlarge/)
 
 ## Documentation
