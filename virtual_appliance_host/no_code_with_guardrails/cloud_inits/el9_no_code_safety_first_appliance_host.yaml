@@ -23,6 +23,7 @@ packages:
   - vim
   - nc
   - git
+  - nfs-utils
   - dnf-automatic
   - dnf-plugins-core
   - unzip
@@ -66,6 +67,7 @@ runcmd:
   - [ firewall-cmd, --permanent, --zone=public, --add-service=ssh ]
   - [ firewall-cmd, --permanent, --zone=public, --add-service=http ]
   - [ firewall-cmd, --permanent, --zone=public, --add-port=81/tcp ]
+  - [ firewall-cmd, --permanent, --zone=public, --add-port=82/tcp ]
   - [ firewall-cmd, --permanent, --zone=public, --add-service=cockpit ]
   - [ firewall-cmd, --permanent, --zone=trusted, --add-source=10.0.0.0/8 ]
   - [ firewall-cmd, --permanent, --zone=trusted, --add-source=172.16.100.0/24 ]
@@ -103,6 +105,7 @@ runcmd:
   - [ systemctl, enable, --now, podman ]
   - [ systemctl, enable, --now, cockpit ]
   - [ systemctl, enable, --now, libvirtd ]
+  - [ systemctl, enable, --now, nfs-server ]
   - [ bash, /var/tmp/metal_libvirt_mangle.sh ]
   - [ bash, /var/tmp/metal_nginx_mangle.sh ]
 
@@ -122,6 +125,17 @@ write_files:
     content: |
       max_parallel_downloads=10
       fastestmirror=True
+
+  - path: "/etc/exports"
+    permissions: "0644"
+    owner: "root:root"
+    append: false
+    content: |
+      /mnt/util 10.0.0.0/8(rw,async,no_subtree_check)
+      /mnt/util 172.16.100.0/24(rw,async,no_subtree_check)
+      /mnt/util 172.16.101.0/24(rw,async,no_subtree_check)
+      /mnt/util 172.16.253.0/24(rw,async,no_subtree_check)
+      /mnt/util 192.168.252.0/24(rw,async,no_subtree_check)
 
   - path: "/etc/security/faillock.conf"
     permissions: "0644"
@@ -198,8 +212,8 @@ write_files:
             }
         }
       EOL
-
       systemctl enable --now nginx
+      systemctl restart nginx
       chmod 0400 /var/tmp/metal_nginx_mangle.sh
     permissions: '0644'
 
@@ -208,6 +222,8 @@ write_files:
     append: false
     content: |
       logger "running /var/tmp/metal_libvirt_mangle.sh"
+      curl -s https://metadata.platformequinix.com/metadata -o /tmp/metadata
+      HOST_IP=$(hostname | awk -F "-" '{print$NF}' | sed 's/^0*//')
       cat > /var/tmp/metal_libvirt_network_dnsmasq.xml << EOL
         <network xmlns:dnsmasq='http://libvirt.org/schemas/network/dnsmasq/1.0'>
           <name>default</name>
@@ -225,10 +241,12 @@ write_files:
             </dhcp>
           </ip>
           <dnsmasq:options>
-            <dnsmasq:option value='listen-address=::1,192.168.122.1'/>
+            <dnsmasq:option value='listen-address=::1,192.168.122.1,172.16.100.$HOST_IP,172.16.101.$HOST_IP'/>
             <dnsmasq:option value='server=147.75.207.207'/>
             <dnsmasq:option value='server=147.75.208.208'/>
-            <dnsmasq:option value='synth-domain=inside.em.com,192.168.122.0/24,host-*'/>
+            <dnsmasq:option value='synth-domain=libvirt.gtst.local,192.168.122.0/24,host-*'/>
+            <dnsmasq:option value='synth-domain=mgmta.gtst.local,172.16.100.0/24,host-*'/>
+            <dnsmasq:option value='synth-domain=mgmtb.gtst.local,172.16.101.0/24,host-*'/>
           </dnsmasq:options>
         </network>
       EOL
@@ -275,7 +293,7 @@ write_files:
       Description=metal-mount-util-drive (/mnt/util)
       DefaultDependencies=no
       Conflicts=umount.target
-      Before=local-fs.target umount.target
+      Before=local-fs.target umount.target nfs-server
       After=swap.target
       [Mount]
       What=/dev/disk/by-uuid/$DRIVE_UUID
