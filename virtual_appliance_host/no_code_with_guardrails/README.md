@@ -28,7 +28,7 @@ Please note, as with anything in this reposistory, this resource is not supporte
 - Mounts largest non-HDD free disk to `/mnt/util/`
   - Adds it as storage volume to `libvirt`
   - Exposed via private network HTTP (via `nginx` below)
-  - Exposed via private network NFS (via `nfs-server`
+  - Exposed via private network NFS (via `nfs-server`)
 - Network
     - Replaces stock Metal networking with `eth0/1` -> `bond0` -> `bridge` -> `VLAN` model allowing guests access to the native VLAN (carrying EM's [Layer-3 network](https://deploy.equinix.com/developers/docs/metal/networking/ip-addresses/)) + [tagged VLAN](https://deploy.equinix.com/developers/docs/metal/layer2-networking/overview/)s while persisting the desired [Equinix Metal LACP bonding](https://deploy.equinix.com/developers/docs/metal/networking/server-level-networking/#your-servers-lacp-bonding) configuration.
         - This allows the instance and it's guests to acces [Interconnection](https://deploy.equinix.com/developers/docs/metal/interconnections/introduction/)
