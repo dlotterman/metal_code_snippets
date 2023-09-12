@@ -183,20 +183,13 @@ How the linux Firewall interacts with virtualziation can be confusing, especiall
   - [ firewall-cmd, --permanent, --zone=trusted, --add-source=192.168.248.0/24 ]
   - [ firewall-cmd, --reload ]
 ```
-We use nftables to set a second (third really) lock on the SSH and Cockpit door.
+We use nftables to set a second (third really) lock on the SSH door.
 ```
   - [ nft, add, table, ip, SSHWATCH ]
   - [ nft, 'add chain ip SSHWATCH input { type filter hook input priority 0 ; }']
   - [ nft, 'add set ip SSHWATCH denylist { type ipv4_addr ; flags dynamic, timeout ; timeout 5m ; }']
   - [ nft, 'add rule ip SSHWATCH input tcp dport 22 ip protocol tcp ct state new, untracked limit rate over 10/minute add @denylist { ip saddr } log prefix "CLOUD-INIT MANAGED NFT dropping:"']
   - [ nft, 'add rule ip SSHWATCH input ip saddr @denylist drop']
-```
-```
-  - [ nft, add, table, ip, COCKPITWATCH ]
-  - [ nft, 'add chain ip COCKPITWATCH input { type filter hook input priority 0 ; }']
-  - [ nft, 'add set ip COCKPITWATCH denylist { type ipv4_addr ; flags dynamic, timeout ; timeout 5m ; }']
-  - [ nft, 'add rule ip COCKPITWATCH input tcp dport 9090 ip protocol tcp ct state new, untracked limit rate over 200/minute add @denylist { ip saddr } log prefix "CLOUD-INIT MANAGED NFT dropping:"']
-  - [ nft, 'add rule ip COCKPITWATCH input ip saddr @denylist drop']
 ```
 
 ## nginx

@@ -1,12 +1,5 @@
 #cloud-config
 
-# Install packages needed for Cockpit + KVM
-# Add user "adminuser" and copy SSH key's from root for SSH user and lock down some root access
-# Turn up firewall
-# Use NFT as ssh brute force protection (fail2ban lite)
-# Setup PAM faillock to protect cockpit UI and SOS console
-# Enable automatic DNF updates
-
 package_upgrade: true
 package_reboot_if_required: true
 
@@ -273,9 +266,6 @@ write_files:
     append: false
     content: |
       logger "running /var/tmp/metal_disk_mangle.sh"
-      curl -s https://metadata.platformequinix.com/metadata -o /tmp/metadata
-      mkdir /mnt/util
-      PLAN=$(jq -r .plan /tmp/metadata)
       DRIVE=$(lsblk --bytes -o name,rota,type,size |  grep -v "zram" | grep -v " 1 " | grep disk | awk '{print$4,$1}' | sort -r -n  | head -1 | awk '{print$2}')
       sgdisk --zap-all /dev/$DRIVE
       mkfs.xfs -f /dev/$DRIVE

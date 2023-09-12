@@ -26,7 +26,7 @@ METAL_PLAN="c3.medium.x86"
 
 - Provision the instance (using *mime* format cloud-init file)
 ```
-metal device create --hostname $METAL_HOSTNAME --plan $METAL_PLAN --metro sv --operating-system alma_9 --userdata-file metal_code_snippets/virtual_appliance_host/no_code_with_guardrails/cloud_inits/el9_no_code_safety_first_appliance_host.mime -t "metalcli,ncb"
+metal device create --hostname $METAL_HOSTNAME --plan $METAL_PLAN --metro $METAL_METRO --operating-system alma_9 --userdata-file metal_code_snippets/virtual_appliance_host/no_code_with_guardrails/cloud_inits/el9_no_code_safety_first_appliance_host.mime -t "metalcli,ncb"
 ```
 
 - Provision vlans and attach, do so only for needed vlans
