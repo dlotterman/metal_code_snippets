@@ -266,6 +266,7 @@ write_files:
     append: false
     content: |
       logger "running /var/tmp/metal_disk_mangle.sh"
+      mkdir /mnt/util
       DRIVE=$(lsblk --bytes -o name,rota,type,size |  grep -v "zram" | grep -v " 1 " | grep disk | awk '{print$4,$1}' | sort -r -n  | head -1 | awk '{print$2}')
       sgdisk --zap-all /dev/$DRIVE
       mkfs.xfs -f /dev/$DRIVE
