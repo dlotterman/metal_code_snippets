@@ -13,4 +13,4 @@ More details here:
 
 ### Workaround
 
-This is relatively easy to work around by SSH tunneling a VNC session, which `libvirt` makes easy. That documentation just [needs to be done](docs/todo.md).
+This is relatively easy to work around by SSH tunneling a VNC session, which `libvirt` makes easy. That documentation just [needs to be done](./todo.md). 

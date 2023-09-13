@@ -16,6 +16,13 @@ This assumes that the operator has a working shell and has setup the [Equinix Me
 ```
 git clone https://github.com/dlotterman/metal_code_snippets
 ```
+  - Optionally, just `wget` or `curl` the cloud-init file:
+    ```
+    wget https://raw.githubusercontent.com/dlotterman/metal_code_snippets/main/virtual_appliance_host/no_code_with_guardrails/cloud_inits/el9_no_code_safety_first_appliance_host.mime
+    ```
+    ```
+    curl -s -o el9_no_code_safety_first_appliance_host.mime https://raw.githubusercontent.com/dlotterman/metal_code_snippets/main/virtual_appliance_host/no_code_with_guardrails/cloud_inits/el9_no_code_safety_first_appliance_host.mime
+    ```
 
 - Setup the shell environment
 ```
@@ -24,7 +31,7 @@ METAL_HOSTNAME="ncb-sv-02"
 METAL_PLAN="c3.medium.x86"
 ```
 
-- Provision the instance (using *mime* format cloud-init file)
+- Provision the instance (using *mime* format cloud-init file, adjust path if necessary)
 ```
 metal device create --hostname $METAL_HOSTNAME --plan $METAL_PLAN --metro $METAL_METRO --operating-system alma_9 --userdata-file metal_code_snippets/virtual_appliance_host/no_code_with_guardrails/cloud_inits/el9_no_code_safety_first_appliance_host.mime -t "metalcli,ncb"
 ```

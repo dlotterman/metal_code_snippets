@@ -9,3 +9,22 @@
 - Prometheus
     - Network auto-discover
     - VMWare https://github.com/pryorda/vmware_exporter
+- Inteconnection
+    - Pre-bake AWS / GCP / Azure ready FRR configs
+        - Do not turn them on by default, but just pre-render the hard stuff
+- Storage
+    - RAID
+        - Low hanging fruit is to RAID data
+    - Encrypt
+        - If anything just to show the example of how
+    - smartctl
+    - create iSCSI endpoint
+- Docs
+    - VNC tunnel via SSH to VM
+    - RDP tunnel via SSH to Bare Metal Windows
+    - Interconnection to Hyperscaler
+    - not_ipmi_to_metal example
+    - Show backing up an instance to `ncb` so that labs can spin up / spin down. 
+    - Nutanix turnup
+    - CLI based VCSA turnup
+    - Windows VM deployment
