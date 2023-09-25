@@ -87,8 +87,6 @@ runcmd:
   - [ systemctl, restart, sshd ]
   - [ sed, -i, -e, '/^apply_updates/s/^.*$/apply_updates = yes/', /etc/dnf/automatic.conf ]
 # https://access.redhat.com/solutions/7006710
-  - [ setcap, cap_setuid+ep, /usr/bin/newuidmap ]
-  - [ setcap, cap_setuid+ep, /usr/bin/newgidmap ]
   - [ bash, /var/tmp/metal_adminuser_mangle.sh ]
   - [ bash, /var/tmp/metal_network_mangle.sh ]
   - [ bash, /var/tmp/metal_disk_mangle.sh ]
