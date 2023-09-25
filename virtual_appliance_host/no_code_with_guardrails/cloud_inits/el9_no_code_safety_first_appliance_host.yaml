@@ -88,7 +88,7 @@ runcmd:
   - [ sed, -i, -e, '/^apply_updates/s/^.*$/apply_updates = yes/', /etc/dnf/automatic.conf ]
 # https://access.redhat.com/solutions/7006710
   - [ setcap, cap_setuid+ep, /usr/bin/newuidmap ]
-  - [ setcap, cap_setuid+ep, /usr/bin/newgidmap ]  
+  - [ setcap, cap_setuid+ep, /usr/bin/newgidmap ]
   - [ bash, /var/tmp/metal_adminuser_mangle.sh ]
   - [ bash, /var/tmp/metal_network_mangle.sh ]
   - [ bash, /var/tmp/metal_disk_mangle.sh ]
@@ -99,9 +99,8 @@ runcmd:
   - [ systemctl, enable, --now, libvirtd ]
   - [ systemctl, enable, --now, nfs-server ]
   - [ systemctl, enable, --now, ncb_podman_setcap_fix ]
-  - [ bash, /var/tmp/metal_libvirt_mangle.sh ]  
-  - [ bash, /var/tmp/metal_nginx_mangle.sh ] 
-
+  - [ bash, /var/tmp/metal_libvirt_mangle.sh ]
+  - [ bash, /var/tmp/metal_nginx_mangle.sh ]
 
 write_files:
   - path: "/etc/modules-load.d/networking.conf"
@@ -329,7 +328,6 @@ write_files:
             FIRST_INTERFACE=$(ip link list up | grep SLAVE | grep BROADCAST | grep -v "enp0s20f0u9" | awk 'NR==1' | awk '{print$2}' | tr -d "\:")
             SECOND_INTERFACE=$(ip link list up | grep SLAVE | grep BROADCAST | grep -v "enp0s20f0u9" | awk 'NR==2' | awk '{print$2}' | tr -d "\:")
         fi
-
 
         nmcli connection delete bond0
         nmcli connection delete "System $FIRST_INTERFACE"
