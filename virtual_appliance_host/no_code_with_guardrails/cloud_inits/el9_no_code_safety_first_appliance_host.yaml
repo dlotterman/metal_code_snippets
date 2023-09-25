@@ -86,6 +86,9 @@ runcmd:
   - [ sed, -i, -e, '/^X11Forwarding/s/^.*$/X11Forwarding no/', /etc/ssh/sshd_config ]
   - [ systemctl, restart, sshd ]
   - [ sed, -i, -e, '/^apply_updates/s/^.*$/apply_updates = yes/', /etc/dnf/automatic.conf ]
+# https://access.redhat.com/solutions/7006710
+  - [ setcap, cap_setuid+ep, /usr/bin/newuidmap ]
+  - [ setcap, cap_setuid+ep, /usr/bin/newgidmap ]  
   - [ bash, /var/tmp/metal_adminuser_mangle.sh ]
   - [ bash, /var/tmp/metal_network_mangle.sh ]
   - [ bash, /var/tmp/metal_disk_mangle.sh ]
@@ -93,8 +96,8 @@ runcmd:
   - [ systemctl, enable, --now, podman ]
   - [ systemctl, enable, --now, cockpit ]
   - [ systemctl, enable, --now, libvirtd ]
-  - [ systemctl, enable, --now, nfs-server ]
-  - [ bash, /var/tmp/metal_libvirt_mangle.sh ]
+  - [ systemctl, enable, --now, nfs-server ]  
+  - [ bash, /var/tmp/metal_libvirt_mangle.sh ]  
   - [ bash, /var/tmp/metal_nginx_mangle.sh ]
 
 

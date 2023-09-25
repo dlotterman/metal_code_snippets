@@ -1,10 +1,10 @@
 This example tears down a Metal instance's networking, adds SR-IOV VFs, uses one VF for LACP, and another VF for the same hosts networking but on a different bonded interface, here in active-backup.
 
-The intent of this being that the LACP talker of a Metal instance can be moved from the host itself, into a VM / VNF, without loosing host level networking / access to Metal Layer-3. 
+The intent of this being that the LACP talker of a Metal instance can be moved from the host itself, into a VM / VNF, without loosing host level networking / access to Metal Layer-3.
 
 Note that current testing via this method discovered difficulty with `balance-alb` / `tlb` though that still needs to be poked with.
 
-While `active-backup` looses the throughput benifit of LACP during normal scenarios, it maintains it's survival characteristics. Mode 0/2 may also work. 
+While `active-backup` looses the throughput benifit of LACP during normal scenarios, it maintains it's survival characteristics. Mode 0/2 may also work.
 
 ```
 echo 4 > /sys/class/net/enp65s0f0/device/sriov_numvfs

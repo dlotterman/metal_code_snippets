@@ -24,7 +24,7 @@
     - RDP tunnel via SSH to Bare Metal Windows
     - Interconnection to Hyperscaler
     - not_ipmi_to_metal example
-    - Show backing up an instance to `ncb` so that labs can spin up / spin down. 
+    - Show backing up an instance to `ncb` so that labs can spin up / spin down.
     - Nutanix turnup
     - CLI based VCSA turnup
     - Windows VM deployment
