@@ -92,13 +92,15 @@ runcmd:
   - [ bash, /var/tmp/metal_adminuser_mangle.sh ]
   - [ bash, /var/tmp/metal_network_mangle.sh ]
   - [ bash, /var/tmp/metal_disk_mangle.sh ]
+  - [ systemctl, daemon-reload ]
   - [ systemctl, enable, --now, dnf-automatic.timer ]
   - [ systemctl, enable, --now, podman ]
   - [ systemctl, enable, --now, cockpit ]
   - [ systemctl, enable, --now, libvirtd ]
-  - [ systemctl, enable, --now, nfs-server ]  
+  - [ systemctl, enable, --now, nfs-server ]
+  - [ systemctl, enable, --now, ncb_podman_setcap_fix ]
   - [ bash, /var/tmp/metal_libvirt_mangle.sh ]  
-  - [ bash, /var/tmp/metal_nginx_mangle.sh ]
+  - [ bash, /var/tmp/metal_nginx_mangle.sh ] 
 
 
 write_files:
@@ -158,6 +160,18 @@ write_files:
       sudo usermod -p "$pwhash" adminuser
       chmod 0400 /var/tmp/metal_adminuser_mangle.sh
     permissions: '0644'
+
+  - path: "/etc/systemd/system/ncb_podman_setcap_fix.service"
+    owner: root:root
+    append: false
+    content: |
+      [Unit]
+      Description=ncb_podman_setcap_fix
+      After=multi-user.target
+      [Service]
+      Type=idle
+      ExecStart=/bin/bash -c "setcap cap_setuid+ep /usr/bin/newuidmap && setcap cap_setgid+ep /usr/bin/newgidmap"
+    permissions: '0655'
 
   - path: "/var/tmp/metal_nginx_mangle.sh"
     owner: root:root
