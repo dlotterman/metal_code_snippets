@@ -62,6 +62,7 @@ runcmd:
   - [ firewall-cmd, --permanent, --zone=public, --add-port=81/tcp ]
   - [ firewall-cmd, --permanent, --zone=public, --add-port=82/tcp ]
   - [ firewall-cmd, --permanent, --zone=public, --add-service=cockpit ]
+  - [ firewall-cmd, --permanent, --zone=trusted, --add-port=83/tcp]
   - [ firewall-cmd, --permanent, --zone=trusted, --add-source=10.0.0.0/8 ]
   - [ firewall-cmd, --permanent, --zone=trusted, --add-source=172.16.100.0/24 ]
   - [ firewall-cmd, --permanent, --zone=trusted, --add-source=192.168.101.0/24 ]
@@ -214,6 +215,25 @@ write_files:
             }
         }
       EOL
+      cat > /etc/nginx/conf.d/metal_http_forward_proxy.conf << EOL
+        server {
+            listen       $PRI_IP:83;
+            listen       localhost:83;
+            listen       172.16.100.$HOST_IP:83;
+            listen       192.168.101.$HOST_IP:83;
+            listen       172.16.253.$HOST_IP:83;
+            listen       192.168.252.$HOST_IP:83;
+            listen       172.16.251.$HOST_IP:83;
+            listen       192.168.250.$HOST_IP:83;
+            listen       172.16.249.$HOST_IP:83;
+            listen       192.168.248.$HOST_IP:83;
+            server_name  _;
+      	    location / {
+                resolver 147.75.207.207;
+                proxy_pass http://$http_host$uri$is_args$args;
+            }
+        }
+      EOL
       systemctl enable --now nginx
       systemctl restart nginx
       chmod 0400 /var/tmp/metal_nginx_mangle.sh
@@ -281,7 +301,8 @@ write_files:
     content: |
       logger "running /var/tmp/metal_disk_mangle.sh"
       mkdir /mnt/util
-      DRIVE=$(lsblk --bytes -o name,rota,type,size |  grep -v "zram" | grep -v " 1 " | grep disk | awk '{print$4,$1}' | sort -r -n  | head -1 | awk '{print$2}')
+      BOOT_DRIVE=$(cat /proc/mounts | grep "/dev/sd" | awk '{print$1}' | awk -F "/dev/" '{print$2}' | cut -c 1-3)
+      DRIVE=$(lsblk --bytes -o name,rota,type,size | grep -v "$BOOT_DRIVE" | grep -v "zram" | grep -v " 1 " | grep disk | awk '{print$4,$1}' | sort -r -n  | head -1 | awk '{print$2}')
       sgdisk --zap-all /dev/$DRIVE
       mkfs.xfs -f /dev/$DRIVE
       sync

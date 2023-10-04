@@ -63,6 +63,8 @@ Please note, as with anything in this reposistory, this resource is not supporte
 - HTTP endpoint via NGINX
     - Public Internet exposed HTTP endpoint (port `80` on Metal Instance's [Public IP](https://deploy.equinix.com/developers/docs/metal/networking/ip-addresses/#public-ipv4-subnet))
     - Private ([Backend Transfer](https://deploy.equinix.com/developers/docs/metal/networking/backend-transfer/) + VLAN only, port `81`) exposed HTTP endpoint (not open to internet)
+- Forward HTTP proxy via NGINX
+    - Allows servers on private networks to use `ncb` as a simple HTTP proxy on port 83
 - NFS / NAS via linux
     - Exposes largest non-HDD drive via NFS to private networks, including Metal's Backend Transfer network
 - Should work with broadly with [Equinix Metal hardware](https://deploy.equinix.com/developers/docs/metal/hardware/standard-servers/) (including [4x port boxes](https://deploy.equinix.com/product/servers/n3-xlarge/) and the [s3.xlarge](https://deploy.equinix.com/product/servers/s3-xlarge/)
