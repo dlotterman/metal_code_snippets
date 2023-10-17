@@ -2,6 +2,40 @@
 
 This document can only start by saying the Operator is the only party that can be responsible for security. The tooling and glue in this resource may be useful in *securing* relative to not using it in the first place, but it cannot produce *secured* outputs on it's own. That requires and can only be an output of the Operator themselves.
 
+## Build sources / where does this software come from?
+
+`ncb` intentionally does not collect install artifacts or "shell out" to outside, unknown or untrusted platforms or networks. It receives it's initial install filesystem from the Equinix Metal managed image. It then updates itself from vendor upstream sources (If launched with Alma for example, the host will update itself directly from Alma repositories:
+```
+# cat /etc/yum.repos.d/almalinux-baseos.repo
+[baseos]
+name=AlmaLinux $releasever - BaseOS
+mirrorlist=https://mirrors.almalinux.org/mirrorlist/$releasever/baseos
+# baseurl=https://repo.almalinux.org/almalinux/$releasever/BaseOS/$basearch/os/
+enabled=1
+gpgcheck=1
+countme=1
+gpgkey=file:///etc/pki/rpm-gpg/RPM-GPG-KEY-AlmaLinux-9
+metadata_expire=86400
+enabled_metadata=1
+```
+
+`ncb` doesn't download scripts from the internet, it writes them all itself from the code seen in the `cloud-init` itself, it doesn't clone random repositories from Github, it doesn't `curl | bash`, it doesn't even install `EPEL`.
+
+Everything installed and managed comes from vanilla upstream enterprise linux.
+
+## Outside in vectors
+
+`ncb` is intentional in trying to reduce the number of outside in vectors to the public internet, while still preserving public Internet as a valid access and control plane network for `ncb` based deployments.
+
+After a provision, nmap should reveal only two ports active to an `ncb` host from the public internet:
+```
+Host is up (0.039s latency).
+Not shown: 65533 filtered ports
+PORT     STATE SERVICE         VERSION                                                                                                             22/tcp   open  ssh             OpenSSH 8.7 (protocol 2.0)                                                                                          80/tcp   open  http            nginx 1.20.1                                                                                                        | http-methods:                                                                                                                                    |_  Supported Methods: GET HEAD                                                                                                                    |_http-server-header: nginx/1.20.1                                                                                                                 |_http-title: Test Page for the HTTP Server on AlmaLinux                                                                                           9090/tcp open  ssl/zeus-admin?
+```
+
+Where port `80` is a correctly configured and up to date NGINX daemon with no POST / write access, and `22` is a correctly configured and up to date openssh daemon. No other ports or access should be publically accessible.
+
 ## Users, Authorization and Authentication from outside <-> inside
 
 `no_code_bastion` relies heavily on the SSH ecosystem and toolkit. This is a natural starting place as Equinix Metal itself is well tooled / conceived in that [SSH ecosystem](https://deploy.equinix.com/developers/docs/metal/accounts/ssh-keys/) as well.
@@ -36,6 +70,26 @@ If the tooling is well done, this security should come in for format of ***conve
 This logic is not without gaps, and is certainly not advised for production deployments or deployments that may store sensitive data.
 
 But for PoC / lab / brush clearing work, not only is this resource a significant improvement from the Equinix Metal defaults, it's a significant improvement from other potential "quick path steps" that likely leave a significantly more vulnerable footprint exposed.
+
+## Removing Cockpit as an outside in vector
+
+Some Operators may not be comfortable with Cockpit being open to the broader Internet. For production purposes, this would be a correct best practices.
+
+For PoC or exploratory purposes, the security profile of Cockpit is now so well understood, and is managed here with extra steps like user lockout, that the value Cockpit brings is enough to overcome the security burden of public exposure for it to be turned on by default.
+
+For those Operators who would still prefer to disable outside in access via Cockpit, that can be easily achieved immediately after provisioning:
+```
+sudo firewall-cmd --permanent --zone=external --remove-service=cockpit
+sudo firewall-cmd --permanent --zone=public --remove-service=cockpit
+sudo firewall-cmd --reload
+```
+Cockpit is now still running, but only accesible through tunneling via SSH.
+
+# /dev/shm/forget
+
+Because it's likely that an `ncb` host will be used as a "DevOps" workstation that will need certain credentials of varying sensitivity, `ncb` creates a folder in `/dev/shm` called `forget` specifically intended for writing sensitive credentials without writing them to disk.
+
+There is a daily cronjob that is scheduled to `rm -rf /dev/shm/forget/*`, the idea being that will catch accidentally left over credentials from the days PoC work.
 
 ### TODO
 

@@ -1,4 +1,5 @@
-#cloud-config
+---
+# cloud-config
 
 package_upgrade: true
 package_reboot_if_required: true
@@ -41,65 +42,79 @@ packages:
   - cockpit-packagekit
 
 groups:
- - cloud-users
+  - cloud-users
+  - export-users
+  - sudo
 
 users:
   - name: adminuser
     primary_group: cloud-users
-    sudo: ALL=(ALL) NOPASSWD:ALL
-    groups: [cloud-users, sudo]
+    groups: [cloud-users, wheel, sudo, export-users]
     shell: /bin/bash
+    # sudo: ALL=(ALL) NOPASSWD:ALL
 
 bootcmd:
-  - systemctl stop kdump || true
-  - systemctl disable kdump || true
+  - systemctl disable --now kdump || true
+  - systemctl disable --now sshd || true
+  - systemctl mask sshd || true
+  - mkdir -p /var/tmp/ncb/etc
+  - mkdir /var/tmp/ncb/bin
+  - mkdir /var/tmp/ncb/tmp
 
 runcmd:
-  - [ systemctl, enable, --now, firewalld ]
-  - [ firewall-cmd, --permanent, --zone=public, --set-target=DROP ]
-  - [ firewall-cmd, --permanent, --zone=public, --add-service=ssh ]
-  - [ firewall-cmd, --permanent, --zone=public, --add-service=http ]
-  - [ firewall-cmd, --permanent, --zone=public, --add-port=81/tcp ]
-  - [ firewall-cmd, --permanent, --zone=public, --add-port=82/tcp ]
-  - [ firewall-cmd, --permanent, --zone=public, --add-service=cockpit ]
-  - [ firewall-cmd, --permanent, --zone=trusted, --add-port=83/tcp]
-  - [ firewall-cmd, --permanent, --zone=trusted, --add-source=10.0.0.0/8 ]
-  - [ firewall-cmd, --permanent, --zone=trusted, --add-source=172.16.100.0/24 ]
-  - [ firewall-cmd, --permanent, --zone=trusted, --add-source=192.168.101.0/24 ]
-  - [ firewall-cmd, --permanent, --zone=trusted, --add-source=172.16.253.0/24 ]
-  - [ firewall-cmd, --permanent, --zone=trusted, --add-source=192.168.252.0/24 ]
-  - [ firewall-cmd, --permanent, --zone=trusted, --add-source=172.16.251.0/24 ]
-  - [ firewall-cmd, --permanent, --zone=trusted, --add-source=192.168.250.0/24 ]
-  - [ firewall-cmd, --permanent, --zone=trusted, --add-source=172.16.249.0/24 ]
-  - [ firewall-cmd, --permanent, --zone=trusted, --add-source=192.168.248.0/24 ]
-  - [ firewall-cmd, --reload ]
-  - [ nft, add, table, ip, SSHWATCH ]
-  - [ nft, 'add chain ip SSHWATCH input { type filter hook input priority 0 ; }']
-  - [ nft, 'add set ip SSHWATCH denylist { type ipv4_addr ; flags dynamic, timeout ; timeout 5m ; }']
-  - [ nft, 'add rule ip SSHWATCH input tcp dport 22 ip protocol tcp ct state new, untracked limit rate over 10/minute add @denylist { ip saddr } log prefix "CLOUD-INIT MANAGED NFT dropping:"']
-  - [ nft, 'add rule ip SSHWATCH input ip saddr @denylist drop']
-  - [ authselect, select, minimal, with-faillock, --force ]
-  - [ modprobe, 8021q ]
-  - [ rsync, -av, "/root/.ssh", /home/adminuser/ ]
-  - [ chown, -R, "adminuser:cloud-users", "/home/adminuser/.ssh" ]
-  - [ sed, -i, -e, '/^#PermitRootLogin/s/^.*$/PermitRootLogin no/', /etc/ssh/sshd_config ]
-  - [ sed, -i, -e, '/^#MaxAuthTries/s/^.*$/MaxAuthTries 5/', /etc/ssh/sshd_config ]
-  - [ sed, -i, -e, '/^X11Forwarding/s/^.*$/X11Forwarding no/', /etc/ssh/sshd_config ]
-  - [ systemctl, restart, sshd ]
-  - [ sed, -i, -e, '/^apply_updates/s/^.*$/apply_updates = yes/', /etc/dnf/automatic.conf ]
-# https://access.redhat.com/solutions/7006710
-  - [ bash, /var/tmp/metal_adminuser_mangle.sh ]
-  - [ bash, /var/tmp/metal_network_mangle.sh ]
-  - [ bash, /var/tmp/metal_disk_mangle.sh ]
-  - [ systemctl, daemon-reload ]
-  - [ systemctl, enable, --now, dnf-automatic.timer ]
-  - [ systemctl, enable, --now, podman ]
-  - [ systemctl, enable, --now, cockpit ]
-  - [ systemctl, enable, --now, libvirtd ]
-  - [ systemctl, enable, --now, nfs-server ]
-  - [ systemctl, enable, --now, ncb_podman_setcap_fix ]
-  - [ bash, /var/tmp/metal_libvirt_mangle.sh ]
-  - [ bash, /var/tmp/metal_nginx_mangle.sh ]
+  - [systemctl, enable, --now, firewalld]
+  - [firewall-cmd, --permanent, --zone=public, --set-target=DROP]
+  - [firewall-cmd, --permanent, --zone=public, --add-service=ssh]
+  - [firewall-cmd, --permanent, --zone=public, --add-service=http]
+  - [firewall-cmd, --permanent, --zone=public, --add-service=cockpit]
+  - [firewall-cmd, --permanent, --zone=external, --add-service=ssh]
+  - [firewall-cmd, --permanent, --zone=external, --add-service=http]
+  - [firewall-cmd, --permanent, --zone=external, --add-service=cockpit]
+  - [firewall-cmd, --permanent, --zone=trusted, --add-source=10.0.0.0/8]
+  - [firewall-cmd, --permanent, --zone=trusted, --add-source=172.16.100.0/24]
+  - [firewall-cmd, --permanent, --zone=trusted, --add-source=192.168.101.0/24]
+  - [firewall-cmd, --permanent, --zone=trusted, --add-port=81/tcp]
+  - [firewall-cmd, --permanent, --zone=trusted, --add-port=83/tcp]
+  - [firewall-cmd, --permanent, --zone=internal, --add-port=82/tcp]
+  - [firewall-cmd, --permanent, --zone=internal, --add-source=172.16.253.0/24]
+  - [firewall-cmd, --permanent, --zone=internal, --add-source=192.168.252.0/24]
+  - [firewall-cmd, --permanent, --zone=internal, --add-source=172.16.251.0/24]
+  - [firewall-cmd, --permanent, --zone=internal, --add-source=192.168.250.0/24]
+  - [firewall-cmd, --permanent, --zone=internal, --add-source=172.16.249.0/24]
+  - [firewall-cmd, --permanent, --zone=internal, --add-source=192.168.248.0/24]
+  - [firewall-cmd, --permanent, --new-policy, trustedNAT2external]
+  - [firewall-cmd, --permanent, --policy, trustedNAT2external, --add-ingress-zone, trusted]
+  - [firewall-cmd, --permanent, --policy, trustedNAT2external, --add-egress-zone, external]
+  - [firewall-cmd, --permanent, --policy, trustedNAT2external, --set-target, accept]
+  # More firewalld mangling below in ncb_network_mangle
+  - [firewall-cmd, --reload]
+  - [authselect, select, minimal, with-faillock, --force]
+  - [modprobe, 8021q]
+  - [rsync, -av, "/root/.ssh", /home/adminuser/]
+  - [chown, -R, "adminuser:cloud-users", "/home/adminuser/.ssh"]
+  - [sed, -i, -e, '/^#PermitRootLogin/s/^.*$/PermitRootLogin no/', /etc/ssh/sshd_config]
+  - [sed, -i, -e, '/^#MaxAuthTries/s/^.*$/MaxAuthTries 5/', /etc/ssh/sshd_config]
+  - [sed, -i, -e, '/^X11Forwarding/s/^.*$/X11Forwarding no/', /etc/ssh/sshd_config]
+  - [sed, -i, -e, '/^apply_updates/s/^.*$/apply_updates = yes/', /etc/dnf/automatic.conf]
+  # https://access.redhat.com/solutions/7006710
+  - [bash, /var/tmp/ncb/bin/ncb_adminuser_mangle.sh]
+  - [bash, /var/tmp/ncb/bin/ncb_build_env_file.sh]
+  - [bash, /var/tmp/ncb/bin/ncb_network_mangle.sh]
+  - [bash, /var/tmp/ncb/bin/ncb_disk_mangle.sh]
+  - [bash, /var/tmp/ncb/bin/ncb_dnsmasq_mangle.sh]
+  - [bash, /var/tmp/ncb/bin/ncb_nginx_mangle.sh]
+  - [systemctl, daemon-reload]
+  - [systemctl, enable, --now, dnf-automatic.timer]
+  - [systemctl, enable, --now, podman]
+  - [systemctl, enable, --now, libvirtd]
+  - [systemctl, enable, --now, nfs-server]
+  - [systemctl, enable, --now, pmlogger.service]
+  - [systemctl, enable, --now, ncb_podman_setcap_fix]
+  - [systemctl, enable, --now, ncb_dev_shm_forget]
+  - [systemctl, enable, --now, cockpit]
+  - [bash, /var/tmp/ncb/bin/ncb_libvirt_mangle.sh]
+  - [systemctl, unmask, sshd]
+  - [systemctl, enable, --now, sshd]
 
 write_files:
   - path: "/etc/modules-load.d/networking.conf"
@@ -116,17 +131,6 @@ write_files:
     content: |
       max_parallel_downloads=10
       fastestmirror=True
-
-  - path: "/etc/exports"
-    permissions: "0644"
-    owner: "root:root"
-    append: false
-    content: |
-      /mnt/util 10.0.0.0/8(rw,async,no_subtree_check)
-      /mnt/util 172.16.100.0/24(rw,async,no_subtree_check)
-      /mnt/util 172.16.101.0/24(rw,async,no_subtree_check)
-      /mnt/util 172.16.253.0/24(rw,async,no_subtree_check)
-      /mnt/util 192.168.252.0/24(rw,async,no_subtree_check)
 
   - path: "/etc/security/faillock.conf"
     permissions: "0644"
@@ -147,16 +151,127 @@ write_files:
       10 11 * * * root systemctl restart cockpit.service
       15 11 * * * root systemctl restart serial-getty@ttyS1.service
       20 11 * * * root systemctl restart getty@tty1.service
+      20 11 * * * root systemctl restart nginx.service
+      25 11 * * * root rm -rf /dev/shm/forget/*
     permissions: '0644'
 
-  - path: "/var/tmp/metal_adminuser_mangle.sh"
+  - path: "/etc/exports"
+    permissions: "0644"
+    owner: "root:root"
+    append: false
+    content: |
+      /mnt/util/export/ 10.0.0.0/8(rw,async,no_subtree_check)
+      /mnt/util/export/ 172.16.100.0/24(rw,async,no_subtree_check)
+      /mnt/util/export/ 192.168.101.0/24(rw,async,no_subtree_check)
+      /mnt/util/export/nfs1 172.16.253.0/24(rw,async,no_subtree_check)
+      /mnt/util/export/nfs1 192.168.252.0/24(rw,async,no_subtree_check)
+      /mnt/util/export/tftp 172.16.100.0/24(rw,async,no_subtree_check,no_root_squash)
+
+  - path: "/var/tmp/ncb/etc/ncb_raw.env"
+    permissions: "0644"
+    owner: "root:root"
+    append: false
+    content: |
+      export M_JSON=/tmp/metadata
+      export M_DNS1=147.75.207.207
+      export M_DNS2=147.75.208.208
+      export MGMT_A_VLANID=3880
+      export MGMT_A_NET=172.16.100.0
+      export MGMT_A_CIDR=/24
+      export MGMT_B_VLANID=3780
+      export MGMT_B_NET=192.168.101.0
+      export MGMT_B_CIDR=/24
+      export STOR_A_VLANID=3870
+      export STOR_A_NET=172.16.253.0
+      export STOR_A_CIDR=/24
+      export STOR_B_VLANID=3770
+      export STOR_B_NET=192.168.252.0
+      export STOR_B_CIDR=/24
+      export LOCA_A_VLANID=3860
+      export LOCA_A_NET=172.16.251.0
+      export LOCA_A_CIDR=/24
+      export LOCA_B_VLANID=3760
+      export LOCA_B_NET=192.168.250.0
+      export LOCA_B_CIDR=/24
+      export INTE_A_VLANID=3850
+      export INTE_A_NET=172.16.249.0
+      export INTE_A_CIDR=/24
+      export INTE_B_VLANID=3750
+      export INTE_B_NET=192.168.248.0
+      export INTE_B_CIDR=/24
+
+  - path: "/var/tmp/ncb/bin/ncb_build_env_file.sh"
     owner: root:root
     append: false
     content: |
-      logger "running /var/tmp/metal_adminuser_mangle.sh"
+      logger "running /var/tmp/ncb/bin/ncb_build_env_file.sh"
+      source /var/tmp/ncb/etc/ncb_raw.env
+      cp -f /var/tmp/ncb/etc/ncb_raw.env /var/tmp/ncb/etc/ncb.env
+
+      HOST_IP_END=$(hostname | awk -F "-" '{print$NF}' | sed 's/^0*//')
+
+      echo "#HOST_IP_END is how this host will end networks like 172.16.100.$HOST_IP_END" >> /var/tmp/ncb/etc/ncb.env
+      echo "export HOST_IP_END=$HOST_IP_END" >> /var/tmp/ncb/etc/ncb.env
+
+      curl -s https://metadata.platformequinix.com/metadata -o /tmp/metadata
+
+      M_PUBL_IP=$(jq -r '.network.addresses[] | select((.public==true) and .address_family==4) | .address' /tmp/metadata)
+      M_PUBL_CIDR=$(jq -r '.network.addresses[] | select((.public==true) and .address_family==4) | "\/"+(.cidr|tostring)' /tmp/metadata)
+      M_PUBL_GW=$(jq -r '.network.addresses[] | select((.public==true) and .address_family==4) | .gateway' /tmp/metadata)
+      echo "export M_PUBL_IP=$M_PUBL_IP" >> /var/tmp/ncb/etc/ncb.env
+      echo "export M_PUBL_CIDR=$M_PUBL_CIDR" >> /var/tmp/ncb/etc/ncb.env
+      echo "export M_PUBL_GW=$M_PUBL_GW" >> /var/tmp/ncb/etc/ncb.env
+
+      M_PRIV_IP=$(jq -r '.network.addresses[] | select((.public==false) and .address_family==4) | .address' /tmp/metadata)
+      M_PRIV_CIDR=$(jq -r '.network.addresses[] | select((.public==false) and .address_family==4) | "\/"+(.cidr|tostring)' /tmp/metadata)
+      M_PRIV_GW=$(jq -r '.network.addresses[] | select((.public==false) and .address_family==4) | .gateway' /tmp/metadata)
+      echo "export M_PRIV_IP=$M_PRIV_IP" >> /var/tmp/ncb/etc/ncb.env
+      echo "export M_PRIV_CIDR=$M_PRIV_CIDR" >> /var/tmp/ncb/etc/ncb.env
+      echo "export M_PRIV_GW=$M_PRIV_GW" >> /var/tmp/ncb/etc/ncb.env
+
+      STRING_SCRATCH=$(echo $MGMT_A_NET | awk -F '.' '{print$1"."$2"."$3"."}')
+      echo "export MGMT_A_NET_STRIP=$STRING_SCRATCH" >> /var/tmp/ncb/etc/ncb.env
+      echo "export HOST_IP_MGMT_A=$STRING_SCRATCH$HOST_IP_END" >> /var/tmp/ncb/etc/ncb.env
+
+      STRING_SCRATCH=$(echo $MGMT_B_NET | awk -F '.' '{print$1"."$2"."$3"."}')
+      echo "export MGMT_B_NET_STRIP=$STRING_SCRATCH" >> /var/tmp/ncb/etc/ncb.env
+      echo "export HOST_IP_MGMT_B=$STRING_SCRATCH$HOST_IP_END" >> /var/tmp/ncb/etc/ncb.env
+
+      STRING_SCRATCH=$(echo $STOR_A_NET | awk -F '.' '{print$1"."$2"."$3"."}')
+      echo "export STOR_A_NET_STRIP=$STRING_SCRATCH" >> /var/tmp/ncb/etc/ncb.env
+      echo "export HOST_IP_STOR_A=$STRING_SCRATCH$HOST_IP_END" >> /var/tmp/ncb/etc/ncb.env
+
+      STRING_SCRATCH=$(echo $STOR_B_NET | awk -F '.' '{print$1"."$2"."$3"."}')
+      echo "export STOR_B_NET_STRIP=$STRING_SCRATCH" >> /var/tmp/ncb/etc/ncb.env
+      echo "export HOST_IP_STOR_B=$STRING_SCRATCH$HOST_IP_END" >> /var/tmp/ncb/etc/ncb.env
+
+      STRING_SCRATCH=$(echo $LOCA_A_NET | awk -F '.' '{print$1"."$2"."$3"."}')
+      echo "export LOCA_A_NET_STRIP=$STRING_SCRATCH" >> /var/tmp/ncb/etc/ncb.env
+      echo "export HOST_IP_LOCA_A=$STRING_SCRATCH$HOST_IP_END" >> /var/tmp/ncb/etc/ncb.env
+
+      STRING_SCRATCH=$(echo $LOCA_B_NET | awk -F '.' '{print$1"."$2"."$3"."}')
+      echo "export LOCA_B_NET_STRIP=$STRING_SCRATCH" >> /var/tmp/ncb/etc/ncb.env
+      echo "export HOST_IP_LOCA_B=$STRING_SCRATCH$HOST_IP_END" >> /var/tmp/ncb/etc/ncb.env
+
+      STRING_SCRATCH=$(echo $INTE_A_NET | awk -F '.' '{print$1"."$2"."$3"."}')
+      echo "export INTE_A_NET_STRIP=$STRING_SCRATCH" >> /var/tmp/ncb/etc/ncb.env
+      echo "export HOST_IP_INTE_A=$STRING_SCRATCH$HOST_IP_END" >> /var/tmp/ncb/etc/ncb.env
+
+      STRING_SCRATCH=$(echo $INTE_B_NET | awk -F '.' '{print$1"."$2"."$3"."}')
+      echo "export INTE_B_NET_STRIP=$STRING_SCRATCH" >> /var/tmp/ncb/etc/ncb.env
+      echo "export HOST_IP_INTE_B=$STRING_SCRATCH$HOST_IP_END" >> /var/tmp/ncb/etc/ncb.env
+
+      chmod 0400 /var/tmp/ncb/bin/ncb_build_env_file.sh
+
+  - path: "/var/tmp/ncb/bin/ncb_adminuser_mangle.sh"
+    owner: root:root
+    append: false
+    content: |
+      logger "running /var/tmp/ncb/bin/metal_adminuser_mangle.sh"
       pwhash=$(sudo getent shadow root | cut -d: -f2)
-      sudo usermod -p "$pwhash" adminuser
-      chmod 0400 /var/tmp/metal_adminuser_mangle.sh
+      sudo usermod -p $pwhash adminuser
+      usermod -a -G export-users root
+      chmod 0400 /var/tmp/ncb/bin/ncb_adminuser_mangle.sh
     permissions: '0644'
 
   - path: "/etc/systemd/system/ncb_podman_setcap_fix.service"
@@ -171,82 +286,176 @@ write_files:
       ExecStart=/bin/bash -c "setcap cap_setuid+ep /usr/bin/newuidmap && setcap cap_setgid+ep /usr/bin/newgidmap"
     permissions: '0655'
 
-  - path: "/var/tmp/metal_nginx_mangle.sh"
+  - path: "/etc/systemd/system/ncb_dev_shm_forget.service"
     owner: root:root
     append: false
     content: |
-      logger "running /var/tmp/metal_nginx_mangle.sh"
+      [Unit]
+      Description=ncb_dev_shm_forget
+      After=multi-user.target
+      [Service]
+      Type=idle
+      ExecStart=/bin/bash -c "mkdir /dev/shm/forget && chown adminuser:cloud-users /dev/shm/forget"
+    permissions: '0655'
+
+  - path: "/var/tmp/ncb/bin/ncb_dnsmasq_mangle.sh"
+    owner: root:root
+    append: false
+    content: |
+      logger "running /var/tmp/ncb/bin/ncb_dnsmasq_mangle.sh"
+      mkdir -p mkdir /var/tmp/ncb/etc/dnsmasq.d/hostsdir
+      source /var/tmp/ncb/etc/ncb.env
+      cat > /etc/dnsmasq.conf << EOL
+      expand-hosts
+      domain-needed
+      bogus-priv
+      dns-forward-max=150
+      cache-size=19968
+      neg-ttl=60
+      no-poll
+      log-queries
+      log-dhcp
+      log-facility=/var/log/dnsmasq.log
+      server=192.168.122.1
+      server=$M_DNS1
+      server=$M_DNS2
+
+      domain=mgmta.gtst.local,$MGMT_A_NET$MGMT_A_CIDR
+      synth-domain=mgmta.gtst.local,$MGMT_A_NET$MGMT_A_CIDR,host-*
+      synth-domain=mgmtb.gtst.local,$MGMT_B_NET$MGMT_B_CIDR,host-*
+
+      address=/$HOSTNAME.mgmta.gtst.local/$HOST_IP_MGMT_A
+      address=/$HOSTNAME.mgmta.gtst.local/$HOST_IP_MGMT_B
+
+      interface=mbr0.mgmt_a
+      interface=mbr0.mgmt_b
+      bind-interfaces
+      listen-address=$HOST_IP_MGMT_A
+      listen-address=$HOST_IP_MGMT_B
+      listen-address=127.0.0.1
+      listen-address=$M_PRIV_IP
+      conf-dir=/etc/dnsmasq.d/
+      log-debug
+
+
+      EOL
+
+      if [[ "$HOST_IP_END" == 1 ]]; then
+      cat > /etc/dnsmasq.d/dhcp_dnsmasq.conf << EOL
+      no-dhcp-interface=bond0
+      no-dhcp-interface=mbr0.mgmt_b
+      dhcp-authoritative
+      dhcp-leasefile=/var/lib/dnsmasq/dnsmasq.leases
+
+      dhcp-range=${MGMT_A_NET_STRIP}140,${MGMT_A_NET_STRIP}220,365d
+      dhcp-option=option:router,$HOST_IP_MGMT_A
+      dhcp-option=option:dns-server,$HOST_IP_MGMT_A
+      dhcp-option=option:domain-name,mgmta.gtst.local
+      dhcp-option=option:domain-search,mgmta.gtst.local
+      dhcp-option=option:mtu,9000
+      dhcp-option=2,0
+
+      dhcp-hostsdir=/var/tmp/ncb/etc/dnsmasq.d/hostsdir
+
+      dhcp-boot=tag:pxeinstall,tftptarget.file,$HOST_IP_MGMT_A
+      dhcp-option=tag:pxeinstall,option:root-path,"tftp://$HOST_IP_MGMT_A/"
+
+      # Expiremental, catching UEFI HTTP boot
+      # dhcp-vendorclass=set:httpclient,HTTPClient
+      # dhcp-option=tag:httpclient,option:bootfile-name,"http://172.16.100.31:81/loader.efi">
+
+      tftp-no-blocksize
+      tftp-no-fail
+      tftp-mtu=1200
+      enable-tftp
+      tftp-root=/mnt/util/export/tftp
+      EOL
+      fi
+
+      systemctl enable --now dnsmasq.service
+      nmcli connection modify mbr0 ipv4.dns "127.0.0.1,$M_PRIV_IP,$HOST_IP_MGMT_A"
+      nmcli con up mbr0
+      chmod 0400 /var/tmp/ncb/bin/ncb_dnsmasq_mangle.sh
+    permissions: '0655'
+
+  - path: "/var/tmp/ncb/bin/ncb_nginx_mangle.sh"
+    owner: root:root
+    append: false
+    content: |
+      logger "running /var/tmp/ncb/bin/ncb_nginx_mangle.sh"
+      usermod -a -G export-users nginx
+      source /var/tmp/ncb/etc/ncb.env
       curl -s https://metadata.platformequinix.com/metadata -o /tmp/metadata
-      HOST_IP=$(hostname | awk -F "-" '{print$NF}' | sed 's/^0*//')
-      PRI_IP=$(jq -r '.network.addresses[] | select((.public==false) and .address_family==4) | .address' /tmp/metadata)
-      cp -r /usr/share/nginx/html /usr/share/nginx/private_html
-      mkdir /usr/share/nginx/private_html/autoindex
-      rm /usr/share/nginx/private_html/index.html
-      echo "private network" > /usr/share/nginx/private_html/index.html
-      echo "private network" > /usr/share/nginx/private_html/autoindex/index.html
-      cat > /etc/nginx/conf.d/metalprivate.conf << EOL
+
+      mkdir -p /mnt/util/export/html/autoindex
+      echo "private network" > /mnt/util/export/index.html
+      echo "private network html audotindex" > /mnt/util/export/html/index.html
+      cat > /etc/nginx/conf.d/ncb_private.conf << EOL
         server {
-            listen       $PRI_IP:81;
+            listen       $M_PRIV_IP:81;
             listen       localhost:81;
-            listen       172.16.100.$HOST_IP:81;
-            listen       192.168.101.$HOST_IP:81;
-            listen       172.16.253.$HOST_IP:81;
-            listen       192.168.252.$HOST_IP:81;
-            listen       172.16.251.$HOST_IP:81;
-            listen       192.168.250.$HOST_IP:81;
-            listen       172.16.249.$HOST_IP:81;
-            listen       192.168.248.$HOST_IP:81;
+            listen       $HOST_IP_MGMT_A:81;
+            listen       $HOST_IP_MGMT_B:81;
             server_name  _;
-            root         /usr/share/nginx/private_html;
+            root         /mnt/util/export/;
 
             # Load configuration files for the default server block.
             include /etc/nginx/default.d/*.conf;
 
-            error_page 404 /404.html;
-            location = /404.html {
-            }
-
-            error_page 500 502 503 504 /50x.html;
-            location = /50x.html {
-            }
-            location = /autoindex {
+            location = / {
                 index index.html;
-                autoindex on;
+            }
+        }
+        server {
+            listen       $M_PRIV_IP:82;
+            listen       localhost:82;
+            listen       $HOST_IP_MGMT_A:82;
+            listen       $HOST_IP_MGMT_B:82;
+            listen       $HOST_IP_STOR_A:82;
+            listen       $HOST_IP_STOR_B:82;
+            listen       $HOST_IP_LOCA_A:82;
+            listen       $HOST_IP_LOCA_B:82;
+            listen       $HOST_IP_INTE_A:82;
+            listen       $HOST_IP_INTE_B:82;
+            server_name  _;
+            root         /mnt/util/export/html/;
+
+            # Load configuration files for the default server block.
+            include /etc/nginx/default.d/*.conf;
+
+            location = / {
+                index index.html;
+            }
+            location ~ /autoindex/(.*) {
+              autoindex on;
             }
         }
       EOL
-      cat > /etc/nginx/conf.d/metal_http_forward_proxy.conf << EOL
+      cat > /etc/nginx/conf.d/ncb_http_forward_proxy.conf << EOL
         server {
-            listen       $PRI_IP:83;
+            listen       $M_PRIV_IP:83;
             listen       localhost:83;
-            listen       172.16.100.$HOST_IP:83;
-            listen       192.168.101.$HOST_IP:83;
-            listen       172.16.253.$HOST_IP:83;
-            listen       192.168.252.$HOST_IP:83;
-            listen       172.16.251.$HOST_IP:83;
-            listen       192.168.250.$HOST_IP:83;
-            listen       172.16.249.$HOST_IP:83;
-            listen       192.168.248.$HOST_IP:83;
+            listen       $HOST_IP_MGMT_A:83;
+            listen       $HOST_IP_MGMT_B:83;
             server_name  _;
       	    location / {
-                resolver 147.75.207.207;
+                resolver $M_DNS1;
                 proxy_pass http://\$http_host\$uri\$is_args\$args;
             }
         }
       EOL
       systemctl enable --now nginx
       systemctl restart nginx
-      chmod 0400 /var/tmp/metal_nginx_mangle.sh
+      chmod 0400 /var/tmp/ncb/bin/ncb_nginx_mangle.sh
     permissions: '0644'
 
-  - path: "/var/tmp/metal_libvirt_mangle.sh"
+  - path: "/var/tmp/ncb/bin/ncb_libvirt_mangle.sh"
     owner: root:root
     append: false
     content: |
-      logger "running /var/tmp/metal_libvirt_mangle.sh"
-      curl -s https://metadata.platformequinix.com/metadata -o /tmp/metadata
-      HOST_IP=$(hostname | awk -F "-" '{print$NF}' | sed 's/^0*//')
-      cat > /var/tmp/metal_libvirt_network_dnsmasq.xml << EOL
+      logger "running /var/tmp/ncb/bin/ncb_libvirt_mangle.sh"
+      source /var/tmp/ncb/etc/ncb.env
+      cat > /var/tmp/ncb/tmp/metal_libvirt_network_dnsmasq.xml << EOL
         <network xmlns:dnsmasq='http://libvirt.org/schemas/network/dnsmasq/1.0'>
           <name>default</name>
           <uuid>38a47335-4455-4c57-8eab-73e84bc6b409</uuid>
@@ -263,12 +472,11 @@ write_files:
             </dhcp>
           </ip>
           <dnsmasq:options>
-            <dnsmasq:option value='listen-address=::1,192.168.122.1,172.16.100.$HOST_IP,172.16.101.$HOST_IP'/>
-            <dnsmasq:option value='server=147.75.207.207'/>
-            <dnsmasq:option value='server=147.75.208.208'/>
-            <dnsmasq:option value='synth-domain=dmz.gtst.local,192.168.122.0/24,host-*'/>
-            <dnsmasq:option value='synth-domain=mgmta.gtst.local,172.16.100.0/24,host-*'/>
-            <dnsmasq:option value='synth-domain=mgmtb.gtst.local,172.16.101.0/24,host-*'/>
+            <dnsmasq:option value='listen-address=192.168.122.1'/>
+            <dnsmasq:option value='synth-domain=libvirt.gtst.local,192.168.122.0/24,host-*'/>
+            <dnsmasq:option value='domain=libvirt.gtst.local,192.168.122.0/24'/>
+            <dnsmasq:option value='interface=virbr0'/>
+            <dnsmasq:option value='server=127.0.0.1'/>
           </dnsmasq:options>
         </network>
       EOL
@@ -276,12 +484,12 @@ write_files:
       virsh net-undefine default
       sleep 1
       sync
-      virsh net-define /var/tmp/metal_libvirt_network_dnsmasq.xml
+      virsh net-define /var/tmp/ncb/tmp/metal_libvirt_network_dnsmasq.xml
       virsh net-start --network default
       mkdir -p /mnt/util/vms
       virsh pool-destroy default
       virsh pool-undefine default
-      cat > /var/tmp/metal_storage_pool.xml << EOL
+      cat > /var/tmp/ncb/tmp/metal_storage_pool.xml << EOL
         <pool type="dir">
             <name>default</name>
             <target>
@@ -289,18 +497,18 @@ write_files:
             </target>
         </pool>
       EOL
-      virsh pool-define /var/tmp/metal_storage_pool.xml
+      virsh pool-define /var/tmp/ncb/tmp/metal_storage_pool.xml
       virsh pool-autostart default
       virsh pool-start default
-      chmod 0400 /var/tmp/metal_libvirt_mangle.sh
+      chmod 0400 /var/tmp/ncb/bin/ncb_libvirt_mangle.sh
     permissions: '0644'
 
-  - path: "/var/tmp/metal_disk_mangle.sh"
+  - path: "/var/tmp/ncb/bin/ncb_disk_mangle.sh"
     owner: root:root
     append: false
     content: |
-      logger "running /var/tmp/metal_disk_mangle.sh"
-      mkdir /mnt/util
+      logger "running /var/tmp/ncb/bin/ncb_disk_mangle.sh"
+      mkdir -p /mnt/util
       BOOT_DRIVE=$(cat /proc/mounts | grep "/dev/sd" | awk '{print$1}' | awk -F "/dev/" '{print$2}' | cut -c 1-3)
       DRIVE=$(lsblk --bytes -o name,rota,type,size | grep -v "$BOOT_DRIVE" | grep -v "zram" | grep -v " 1 " | grep disk | awk '{print$4,$1}' | sort -r -n  | head -1 | awk '{print$2}')
       sgdisk --zap-all /dev/$DRIVE
@@ -311,10 +519,10 @@ write_files:
       DRIVE_UUID=$(ls -al /dev/disk/by-uuid/ | grep $DRIVE | awk '{print$9}')
       cat > /etc/systemd/system/mnt-util.mount << EOL
       [Unit]
-      Description=metal-mount-util-drive (/mnt/util)
+      Description=ncb-mount-util-drive (/mnt/util)
       DefaultDependencies=no
       Conflicts=umount.target
-      Before=local-fs.target umount.target nfs-server
+      Before=local-fs.target umount.target nfs-server.service
       After=swap.target
       [Mount]
       What=/dev/disk/by-uuid/$DRIVE_UUID
@@ -328,15 +536,21 @@ write_files:
 
       systemctl daemon-reload
       systemctl start mnt-util.mount
-      chmod 0400 /var/tmp/metal_disk_mangle.sh
+      sync
+      sleep 1
+      mkdir -p /mnt/util/export/nfs1
+      mkdir /mnt/util/export/tftp
+      chown -R adminuser:export-users /mnt/util/export
+      chmod -R 755 /mnt/util/export/tftp
+      chmod 0400 /var/tmp/ncb/bin/ncb_disk_mangle.sh
     permissions: '0644'
 
-  - path: "/var/tmp/metal_network_mangle.sh"
+  - path: "/var/tmp/ncb/bin/ncb_network_mangle.sh"
     owner: root:root
     append: false
     content: |
-        logger "running /var/tmp/metal_network_mangle.sh"
-        curl -s https://metadata.platformequinix.com/metadata -o /tmp/metadata
+        logger "running /var/tmp/ncb/bin/ncb_network_mangle.sh"
+        source /var/tmp/ncb/etc/ncb.env
 
         NUM_INTERFACES=$(ip link list up | grep SLAVE | grep BROADCAST | wc -l)
 
@@ -355,20 +569,11 @@ write_files:
         nmcli connection delete "eth0"
         rm -rf /etc/sysconfig/network-scripts/*
 
-        PUB_IP=$(jq -r '.network.addresses[] | select((.public==true) and .address_family==4) | .address' /tmp/metadata)
-        PUB_CIDR=$(jq -r '.network.addresses[] | select((.public==true) and .address_family==4) | "\/"+(.cidr|tostring)' /tmp/metadata)
-        PUB_GW=$(jq -r '.network.addresses[] | select((.public==true) and .address_family==4) | .gateway' /tmp/metadata)
-        PRI_IP=$(jq -r '.network.addresses[] | select((.public==false) and .address_family==4) | .address' /tmp/metadata)
-        PRI_CIDR=$(jq -r '.network.addresses[] | select((.public==false) and .address_family==4) | "\/"+(.cidr|tostring)' /tmp/metadata)
-        PRI_GW=$(jq -r '.network.addresses[] | select((.public==false) and .address_family==4) | .gateway' /tmp/metadata)
+        nmcli connection add type bridge ifname mbr0 con-name mbr0 ipv4.method manual ipv4.never-default true  ipv4.addresses $M_PUBL_IP$M_PUBL_CIDR ipv4.gateway $M_PUBL_GW ipv4.dns '147.75.207.207,147.75.207.208,127.0.0.1'  ipv6.method ignore ipv6.never-default true 802-3-ethernet.mtu 9000 bridge.stp no
 
-        HOST_IP=$(hostname | awk -F "-" '{print$NF}' | sed 's/^0*//')
-
-        nmcli connection add type bridge ifname mbr0 con-name mbr0 ipv4.method manual ipv4.never-default true  ipv4.addresses $PUB_IP$PUB_CIDR ipv4.gateway $PUB_GW ipv4.dns '147.75.207.207,147.75.207.208'  ipv6.method ignore ipv6.never-default true 802-3-ethernet.mtu 9000 bridge.stp no
-
-        nmcli connection modify mbr0 +ipv4.addresses $PRI_IP$PRI_CIDR
-        nmcli connection modify mbr0 +ipv4.routes "$PRI_GW$PRI_CIDR $PRI_GW"
-        nmcli connection modify mbr0 +ipv4.routes "10.0.0.0/8 $PRI_GW"
+        nmcli connection modify mbr0 +ipv4.addresses $M_PRIV_IP$M_PRIV_CIDR
+        nmcli connection modify mbr0 +ipv4.routes "$M_PRIV_GW$M_PRIV_CIDR $M_PRIV_GW"
+        nmcli connection modify mbr0 +ipv4.routes "10.0.0.0/8 $M_PRIV_GW"
 
         nmcli connection add type bond ifname bond0 con-name bond0 bond.options  "mode=802.3ad,miimon=100,lacp_rate=slow,updelay=5000,xmit_hash_policy=layer3+4" ipv4.method disabled  ipv4.never-default true ipv6.method ignore ipv6.never-default true 802-3-ethernet.mtu 9000
 
@@ -376,68 +581,79 @@ write_files:
         nmcli connection add type ethernet slave-type bond con-name bond0-port0 ifname $FIRST_INTERFACE master bond0 802-3-ethernet.mtu 9000
         nmcli connection add type ethernet slave-type bond con-name bond0-port1 ifname $SECOND_INTERFACE master bond0 802-3-ethernet.mtu 9000
 
+        nmcli connection modify mbr0 connection.zone external
+
         nmcli con up bond0
         sleep 2
         nmcli con up mbr0
         sleep 2
 
-        nmcli connection add type bridge ifname mbr0.3880 con-name mbr0.3880 ipv4.method manual ipv4.never-default true ipv4.addresses 172.16.100."$HOST_IP"/24 ipv6.method ignore ipv6.never-default true 802-3-ethernet.mtu 9000 bridge.stp no
-        nmcli con up mbr0.3880
-        nmcli con add type vlan con-name bond0.3880 ifname bond0.3880 dev bond0 id 3880
-        nmcli con modify bond0.3880 master mbr0.3880 slave-type bridge 802-3-ethernet.mtu 9000
-        nmcli con up bond0.3880
+        nmcli connection add type bridge ifname mbr0.mgmt_a con-name mbr0.mgmt_a ipv4.method manual ipv4.never-default true ipv4.addresses $HOST_IP_MGMT_A$MGMT_A_CIDR ipv6.method ignore ipv6.never-default true 802-3-ethernet.mtu 9000 bridge.stp no
+        nmcli con up mbr0.mgmt_a
+        nmcli con add type vlan con-name bond0.$MGMT_A_VLANID ifname bond0.$MGMT_A_VLANID dev bond0 id $MGMT_A_VLANID
+        nmcli con modify bond0.$MGMT_A_VLANID master mbr0.mgmt_a slave-type bridge 802-3-ethernet.mtu 9000
+        nmcli connection modify bond0.$MGMT_A_VLANID connection.zone trusted
+        nmcli connection modify mbr0.mgmt_a connection.zone trusted
+        nmcli con up bond0.$MGMT_A_VLANID
 
-        nmcli connection add type bridge ifname mbr0.3780 con-name mbr0.3780 ipv4.method manual ipv4.never-default true ipv4.addresses 192.168.101."$HOST_IP"/24 ipv6.method ignore ipv6.never-default true 802-3-ethernet.mtu 9000 bridge.stp no
-        nmcli con up mbr0.3780
-        nmcli con add type vlan con-name bond0.3780 ifname bond0.3780 dev bond0 id 3780
-        nmcli con modify bond0.3780 master mbr0.3780 slave-type bridge 802-3-ethernet.mtu 9000
-        nmcli con up bond0.3780
+        nmcli connection add type bridge ifname mbr0.mgmt_b con-name mbr0.mgmt_b ipv4.method manual ipv4.never-default true ipv4.addresses $HOST_IP_MGMT_B$MGMT_B_CIDR ipv6.method ignore ipv6.never-default true 802-3-ethernet.mtu 9000 bridge.stp no
+        nmcli con up mbr0.mgmt_b
+        nmcli con add type vlan con-name bond0.$MGMT_B_VLANID ifname bond0.$MGMT_B_VLANID dev bond0 id $MGMT_B_VLANID
+        nmcli con modify bond0.$MGMT_B_VLANID master mbr0.mgmt_b slave-type bridge 802-3-ethernet.mtu 9000
+        nmcli connection modify bond0.$MGMT_B_VLANID connection.zone trusted
+        nmcli connection modify mbr0.mgmt_b connection.zone trusted
+        nmcli con up bond0.$MGMT_B_VLANID
 
-        nmcli connection add type bridge ifname mbr0.3870 con-name mbr0.3870 ipv4.method manual ipv4.never-default true ipv4.addresses 172.16.253."$HOST_IP"/24 ipv6.method ignore ipv6.never-default true 802-3-ethernet.mtu 9000 bridge.stp no
-        nmcli con up mbr0.3870
-        nmcli con add type vlan con-name bond0.3870 ifname bond0.3870 dev bond0 id 3870
-        nmcli con modify bond0.3870 master mbr0.3870 slave-type bridge 802-3-ethernet.mtu 9000
-        nmcli con up bond0.3870
+        nmcli connection add type bridge ifname mbr0.stor_a con-name mbr0.stor_a ipv4.method manual ipv4.never-default true ipv4.addresses $HOST_IP_STOR_A$STOR_A_CIDR ipv6.method ignore ipv6.never-default true 802-3-ethernet.mtu 9000 bridge.stp no
+        nmcli con up mbr0.stor_a
+        nmcli con add type vlan con-name bond0.$STOR_A_VLANID ifname bond0.$STOR_A_VLANID dev bond0 id $STOR_A_VLANID
+        nmcli con modify bond0.$STOR_A_VLANID master mbr0.stor_a slave-type bridge 802-3-ethernet.mtu 9000
+        nmcli connection modify mbr0.stor_a connection.zone internal
+        nmcli con up bond0.$STOR_A_VLANID
 
-        nmcli connection add type bridge ifname mbr0.3770 con-name mbr0.3770 ipv4.method manual ipv4.never-default true ipv4.addresses 192.168.252."$HOST_IP"/24 ipv6.method ignore ipv6.never-default true 802-3-ethernet.mtu 9000 bridge.stp no
-        nmcli con up mbr0.3770
-        nmcli con add type vlan con-name bond0.3770 ifname bond0.3770 dev bond0 id 3770
-        nmcli con modify bond0.3770 master mbr0.3770 slave-type bridge 802-3-ethernet.mtu 9000
-        nmcli con up bond0.3770
+        nmcli connection add type bridge ifname mbr0.stor_b con-name mbr0.stor_b ipv4.method manual ipv4.never-default true ipv4.addresses $HOST_IP_STOR_B$STOR_B_CIDR ipv6.method ignore ipv6.never-default true 802-3-ethernet.mtu 9000 bridge.stp no
+        nmcli con up mbr0.stor_b
+        nmcli con add type vlan con-name bond0.$STOR_B_VLANID ifname bond0.$STOR_B_VLANID dev bond0 id $STOR_B_VLANID
+        nmcli con modify bond0.$STOR_B_VLANID master mbr0.stor_b slave-type bridge 802-3-ethernet.mtu 9000
+        nmcli connection modify mbr0.stor_b connection.zone internal
+        nmcli con up bond0.$STOR_B_VLANID
 
-        nmcli connection add type bridge ifname mbr0.3860 con-name mbr0.3860 ipv4.method manual ipv4.never-default true ipv4.addresses 172.16.251."$HOST_IP"/24 ipv6.method ignore ipv6.never-default true 802-3-ethernet.mtu 9000 bridge.stp no
-        nmcli con up mbr0.3860
-        nmcli con add type vlan con-name bond0.3860 ifname bond0.3860 dev bond0 id 3860
-        nmcli con modify bond0.3860 master mbr0.3860 slave-type bridge 802-3-ethernet.mtu 9000
-        nmcli con up bond0.3860
+        nmcli connection add type bridge ifname mbr0.loca_a con-name mbr0.loca_a ipv4.method manual ipv4.never-default true ipv4.addresses $HOST_IP_LOCA_A$LOCA_A_CIDR ipv6.method ignore ipv6.never-default true 802-3-ethernet.mtu 9000 bridge.stp no
+        nmcli con up mbr0.loca_a
+        nmcli con add type vlan con-name bond0.$LOCA_A_VLANID ifname bond0.$LOCA_A_VLANID dev bond0 id $LOCA_A_VLANID
+        nmcli con modify bond0.$LOCA_A_VLANID master mbr0.loca_a slave-type bridge 802-3-ethernet.mtu 9000
+        nmcli connection modify mbr0.loca_a connection.zone internal
+        nmcli con up bond0.$LOCA_A_VLANID
 
-        nmcli connection add type bridge ifname mbr0.3760 con-name mbr0.3760 ipv4.method manual ipv4.never-default true ipv4.addresses 192.168.250."$HOST_IP"/24 ipv6.method ignore ipv6.never-default true 802-3-ethernet.mtu 9000 bridge.stp no
-        nmcli con up mbr0.3760
-        nmcli con add type vlan con-name bond0.3760 ifname bond0.3760 dev bond0 id 3760
-        nmcli con modify bond0.3760 master mbr0.3760 slave-type bridge 802-3-ethernet.mtu 9000
-        nmcli con up bond0.3760
+        nmcli connection add type bridge ifname mbr0.loca_b con-name mbr0.loca_b ipv4.method manual ipv4.never-default true ipv4.addresses $HOST_IP_LOCA_B$LOCA_B_CIDR ipv6.method ignore ipv6.never-default true 802-3-ethernet.mtu 9000 bridge.stp no
+        nmcli con up mbr0.loca_b
+        nmcli con add type vlan con-name bond0.$LOCA_B_VLANID ifname bond0.$LOCA_B_VLANID dev bond0 id $LOCA_B_VLANID
+        nmcli con modify bond0.$LOCA_B_VLANID master mbr0.loca_b slave-type bridge 802-3-ethernet.mtu 9000
+        nmcli connection modify mbr0.loca_b connection.zone internal
+        nmcli con up bond0.$LOCA_B_VLANID
 
-        nmcli connection add type bridge ifname mbr0.3850 con-name mbr0.3850 ipv4.method manual ipv4.never-default true ipv4.addresses 172.16.249."$HOST_IP"/24 ipv6.method ignore ipv6.never-default true 802-3-ethernet.mtu 9000 bridge.stp no
-        nmcli con up mbr0.3850
-        nmcli con add type vlan con-name bond0.3850 ifname bond0.3850 dev bond0 id 3850
-        nmcli con modify bond0.3850 master mbr0.3850 slave-type bridge 802-3-ethernet.mtu 9000
-        nmcli con up bond0.3850
+        nmcli connection add type bridge ifname mbr0.inte_a con-name mbr0.inte_a ipv4.method manual ipv4.never-default true ipv4.addresses $HOST_IP_INTE_A$INTE_A_CIDR ipv6.method ignore ipv6.never-default true 802-3-ethernet.mtu 9000 bridge.stp no
+        nmcli con up mbr0.inte_a
+        nmcli con add type vlan con-name bond0.$INTE_A_VLANID ifname bond0.$INTE_A_VLANID dev bond0 id $INTE_A_VLANID
+        nmcli con modify bond0.$INTE_A_VLANID master mbr0.inte_a slave-type bridge 802-3-ethernet.mtu 9000
+        nmcli connection modify mbr0.inte_a connection.zone internal
+        nmcli con up bond0.$INTE_A_VLANID
 
-        nmcli connection add type bridge ifname mbr0.3750 con-name mbr0.3750 ipv4.method manual ipv4.never-default true ipv4.addresses 192.168.248."$HOST_IP"/24 ipv6.method ignore ipv6.never-default true 802-3-ethernet.mtu 9000 bridge.stp no
-        nmcli con up mbr0.3750
-        nmcli con add type vlan con-name bond0.3750 ifname bond0.3750 dev bond0 id 3750
-        nmcli con modify bond0.3750 master mbr0.3750 slave-type bridge 802-3-ethernet.mtu 9000
-        nmcli con up bond0.3750
+        nmcli connection add type bridge ifname mbr0.inte_b con-name mbr0.inte_b ipv4.method manual ipv4.never-default true ipv4.addresses $HOST_IP_INTE_B$INTE_B_CIDR ipv6.method ignore ipv6.never-default true 802-3-ethernet.mtu 9000 bridge.stp no
+        nmcli con up mbr0.inte_b
+        nmcli con add type vlan con-name bond0.$INTE_B_VLANID ifname bond0.$INTE_B_VLANID dev bond0 id $INTE_B_VLANID
+        nmcli con modify bond0.$INTE_B_VLANID master mbr0.inte_b slave-type bridge 802-3-ethernet.mtu 9000
+        nmcli connection modify mbr0.inte_b connection.zone internal
+        nmcli con up bond0.$INTE_B_VLANID
 
         sed -i "/net.ipv4.ip_forward=1/ s/# *//" /etc/sysctl.conf
-        sed -i "/net.ipv6.conf.all.forwarding=1/ s/# *//" /etc/sysctl.conf
+        #sed -i "/net.ipv6.conf.all.forwarding=1/ s/# *//" /etc/sysctl.conf
         sysctl -p
 
-        if [[ "$HOST_IP" == 1 ]]; then
-            nmcli con add type vlan con-name bond0.4 ifname bond0.4 dev bond0 id 4
-            nmcli con modify bond0.4 master virbr0 slave-type bridge bridge.stp yes bridge.priority '$HOST_IP' bridge.forward-delay 20 bridge.hello-time 1 802-3-ethernet.mtu 1500
-            nmcli con up bond0.4
-        fi
+        firewall-cmd --permanent --add-rich-rule 'rule service name="ssh" accept limit value="20/m"'
+        #firewall-cmd --permanent --add-rich-rule 'rule service name="cockpit" accept limit value="2000/m"'
+        firewall-cmd --reload
 
-        chmod 0400 /var/tmp/metal_network_mangle.sh
+
+        chmod 0400 /var/tmp/ncb/bin/ncb_network_mangle.sh
     permissions: '0644'

@@ -24,6 +24,7 @@ Please note, as with anything in this reposistory, this resource is not supporte
 - VM hosting via [libvirt](https://libvirt.org/) (accesible in [Cockpit](https://access.redhat.com/documentation/en-us/red_hat_enterprise_linux/9/html/managing_systems_using_the_rhel_9_web_console/managing-virtual-machines-in-the-web-console_system-management-using-the-rhel-9-web-console))
 - Container hosting via [podman](https://podman.io/) (accesible in [Cockpit](https://github.com/cockpit-project/cockpit-podman))
 - Automatic Updates configured via [dnf-automatic](https://dnf.readthedocs.io/en/latest/automatic.html)
+    - Security updates are automatically applied.
 - Basic securitization (`root` -> `adminuser`, firewall up, user-lockout etc)
 - Mounts largest non-HDD free disk to `/mnt/util/`
   - Adds it as storage volume to `libvirt`
@@ -32,10 +33,11 @@ Please note, as with anything in this reposistory, this resource is not supporte
 - Network
     - Replaces stock Metal networking with `eth0/1` -> `bond0` -> `bridge` -> `VLAN` model allowing guests access to the native VLAN (carrying EM's [Layer-3 network](https://deploy.equinix.com/developers/docs/metal/networking/ip-addresses/)) + [tagged VLAN](https://deploy.equinix.com/developers/docs/metal/layer2-networking/overview/)s while persisting the desired [Equinix Metal LACP bonding](https://deploy.equinix.com/developers/docs/metal/networking/server-level-networking/#your-servers-lacp-bonding) configuration.
         - This allows the instance and it's guests to acces [Interconnection](https://deploy.equinix.com/developers/docs/metal/interconnections/introduction/)
-    - DHCP + NAT Internet in guest network via relatively stock [libvirt](https://wiki.libvirt.org/VirtualNetworking.html)
+    + NAT'ed Internet for `mgmt_a` network
+    - DHCP for mgmt_a network via hostname ending in `-01`, for example `ncb-sv-01`
     - Inside VLAN Layer-3 configuration dynamic based on hostname, e.g a host launched as `bn-am-55` will use `55` as it's inside IP for all networks (e.g `172.16.100.55`), a host launched with `bn-am-33` would then be assigned `33` (e.g `172.16.100.33`), and they would be able to ping each other inside VLAN `3880` when assigned that VLAN from the Metal platform.
-    - Forward DNS in guest network (via hijack of libvirt's dnsmasq with Metal's DNS as next forward hop)
-    - Reverse DNS in guest network (via hijack of libvirt's dnsmasq)
+    - Forward DNS in management networks
+    - Reverse DNS in management networks
         ```
         [adminuser@ncb-sv-04 ~]$ dig -x 172.16.101.5 @172.16.100.4
 
@@ -67,6 +69,8 @@ Please note, as with anything in this reposistory, this resource is not supporte
     - Allows servers on private networks to use `ncb` as a simple HTTP proxy on port 83
 - NFS / NAS via linux
     - Exposes largest non-HDD drive via NFS to private networks, including Metal's Backend Transfer network
+- TFTP server via dnsmasq in `mgmt_a` network via hostname ending in `-01`, for example `ncb-sv-01`
+    - Enables quick paths for `DHCP` + `PXE` + `TFTP` + `HTTP/NFS` BYO-OS install paths
 - Should work with broadly with [Equinix Metal hardware](https://deploy.equinix.com/developers/docs/metal/hardware/standard-servers/) (including [4x port boxes](https://deploy.equinix.com/product/servers/n3-xlarge/) and the [s3.xlarge](https://deploy.equinix.com/product/servers/s3-xlarge/)
 
 ## Documentation
@@ -81,6 +85,7 @@ Please note, as with anything in this reposistory, this resource is not supporte
 - [Security TLDR (WIP)](docs/security_tldr.md)
 - [TODO](docs/todo.md)
 - [Known Issues](docs/known_issues.md)
+- [BYO-OS](docs/byo_os.md)
 
 The video links are links to Equinix's 0365 Sharepoint (sharepoint.com), and they are just hosted MP4's. The public share may expire from time to time, my apologies, corporate policy.
 

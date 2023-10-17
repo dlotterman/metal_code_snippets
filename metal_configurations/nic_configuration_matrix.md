@@ -1,0 +1,17 @@
+- c3.medium
+    - Intel 710 and variants (`i40e`)
+    - Intel E810 and variants (`ice`)
+- c3.small
+    - Intel 710 and variants (`i40e)
+    - Mellanox Connect 4/5x (`MLNX OFED')
+- m3.small
+    - Intel E810 and variants
+    - Mellanox Connect 5x (`MLNX OFED')
+- m3.large
+    - Intel 710 and variants (`i40e`)
+    - Intel E810 and variants (`ice`)
+    - Broadcom BCM574414 NextTrem-E variants
+- n3.xlarge.x86
+    - Intel E810 and variants (`ice`)
+- s3.xlarge
+    - Mellanox Connect 4/5x (`MLNX OFED')
