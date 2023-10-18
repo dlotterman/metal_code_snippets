@@ -267,7 +267,7 @@ write_files:
     owner: root:root
     append: false
     content: |
-      logger "running /var/tmp/ncb/bin/metal_adminuser_mangle.sh"
+      logger "running /var/tmp/ncb/bin/ncb_adminuser_mangle.sh"
       pwhash=$(sudo getent shadow root | cut -d: -f2)
       sudo usermod -p $pwhash adminuser
       usermod -a -G export-users root

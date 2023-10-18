@@ -35,7 +35,7 @@ Please note, as with anything in this reposistory, this resource is not supporte
         - This allows the instance and it's guests to acces [Interconnection](https://deploy.equinix.com/developers/docs/metal/interconnections/introduction/)
     + NAT'ed Internet for `mgmt_a` network
     - DHCP for mgmt_a network via hostname ending in `-01`, for example `ncb-sv-01`
-    - Inside VLAN Layer-3 configuration dynamic based on hostname, e.g a host launched as `bn-am-55` will use `55` as it's inside IP for all networks (e.g `172.16.100.55`), a host launched with `bn-am-33` would then be assigned `33` (e.g `172.16.100.33`), and they would be able to ping each other inside VLAN `3880` when assigned that VLAN from the Metal platform.
+    - Inside VLAN Layer-3 configuration dynamic based on hostname, e.g a host launched as `ncb-am-55` will use `55` as it's inside IP for all networks (e.g `172.16.100.55`), a host launched with `ncb-am-33` would then be assigned `33` (e.g `172.16.100.33`), and they would be able to ping each other inside VLAN `3880` when assigned that VLAN from the Metal platform.
     - Forward DNS in management networks
     - Reverse DNS in management networks
         ```
@@ -67,6 +67,7 @@ Please note, as with anything in this reposistory, this resource is not supporte
     - Private ([Backend Transfer](https://deploy.equinix.com/developers/docs/metal/networking/backend-transfer/) + VLAN only, port `81`) exposed HTTP endpoint (not open to internet)
 - Forward HTTP proxy via NGINX
     - Allows servers on private networks to use `ncb` as a simple HTTP proxy on port 83
+    - This allows for easy "no public internet" installs for things that can HTTP proxy on the private management network, like [Harvester](https://docs.harvesterhci.io/v1.1/install/harvester-configuration/#example-9) or [OpenShift](https://docs.openshift.com/container-platform/4.12/networking/enable-cluster-wide-proxy.html).
 - NFS / NAS via linux
     - Exposes largest non-HDD drive via NFS to private networks, including Metal's Backend Transfer network
 - TFTP server via dnsmasq in `mgmt_a` network via hostname ending in `-01`, for example `ncb-sv-01`

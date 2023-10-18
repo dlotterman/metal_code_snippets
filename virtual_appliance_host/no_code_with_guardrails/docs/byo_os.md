@@ -83,7 +83,7 @@ METAL_VLAN=3880
 METAL_METRO=sv
 ```
 ```
-metal device create --config $METAL_CONFIG --hostname $METAL_HOSTNAME --plan m3.small.x86 --metro sv --operating-system alma_9 --project-id $METAL_PROJ_ID -t "metalcli,byo-os" --operating-system custom_ipxe --ipxe-script-url "http://HOST/ipxes/stall.ipxe"
+metal device create --config $METAL_CONFIG --hostname $METAL_HOSTNAME --plan m3.small.x86 --metro sv --project-id $METAL_PROJ_ID -t "metalcli,byo-os" --operating-system custom_ipxe --ipxe-script-url "http://HOST/ipxes/stall.ipxe"
 ```
 - Watch for the instance to go "green" or "state: active":
   - User `Ctrl + c` to cancel the watch command
