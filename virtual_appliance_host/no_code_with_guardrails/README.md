@@ -16,6 +16,11 @@ When evaluating or working with [Equinix Metal](https://deploy.equinix.com/produ
 
 By "Ctrl + C" & "Ctrl + V"'ing this [cloud-init](cloud_inits/el9_no_code_safety_first_appliance_host.yaml) into the [Userdata](https://deploy.equinix.com/developers/docs/metal/server-metadata/user-data/) field when provisioning an [Equinix Metal instance](https://deploy.equinix.com/product/bare-metal/servers/), an Operator should be returned a useable, working `no_code_bastion` instance, ready for brush clearing.
 
+***For best experience, use the `.mime` encoded file***
+This minimzes browser / user input inconsistencies. Simply copy the [text from the mime encoded file](https://raw.githubusercontent.com/dlotterman/metal_code_snippets/main/virtual_appliance_host/no_code_with_guardrails/cloud_inits/el9_no_code_safety_first_appliance_host.yaml) and paste it into the user data section of the Metal instance provisoning page.
+
+The `mime` encoded file is simply the output of `cloud-init devel make-mime` run on the `yaml` file in the same directory.
+
 Please note, as with anything in this reposistory, this resource is not supported by **ANYONE**. It is meant solely and exclusively as a reference resource. That being said, as of summer 2023, the owner is still looking to improve this resource and fix any quick wins. If anything about this perks you interest, get in contact with your [Equinix Metal sales team](https://deploy.equinix.com/get-started/).
 
 **Quick Bullet Points of Toils Solved:**

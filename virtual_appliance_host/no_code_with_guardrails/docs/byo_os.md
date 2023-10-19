@@ -15,7 +15,6 @@ TLDR walkthrough:
     - Configure instance with other network services
         - DNS
         - NAT
-
     - This is all provided for free with `ncb`, so we will use `ncb`
 - Configure bootstrap instance with install environment
 - Provision instance that will be target for BYO-OS
@@ -33,7 +32,7 @@ TLDR walkthrough:
 
 ## Credentials needed
 
-- [] Metal Read / Write API key
+- [ ] Metal Read / Write API key
      - Project or Personal should work
 
 # 1) Provision an NCB instance
