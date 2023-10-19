@@ -5,6 +5,9 @@ datasource:
   Ec2:
     apply_full_imds_network_config: false
     strict_id: false
+ssh:
+  emit_keys_to_console: false
+no_ssh_fingerprints: false
 packages:
   - iperf3
   - tmux
@@ -52,7 +55,6 @@ users:
 bootcmd:
   - systemctl disable --now kdump || true
   - systemctl disable --now sshd || true
-  - systemctl mask sshd || true
   - mkdir -p /var/tmp/ncb/etc
   - mkdir /var/tmp/ncb/bin
   - mkdir /var/tmp/ncb/tmp
