@@ -673,63 +673,36 @@ write_files:
       cat > /etc/dnsmasq.conf << EOL
 
       expand-hosts
-
       domain-needed
-
       bogus-priv
-
       dns-forward-max=150
-
       cache-size=19968
-
       neg-ttl=60
-
       no-poll
-
       log-queries
-
       log-dhcp
-
       log-facility=/var/log/dnsmasq.log
-
       server=192.168.122.1
-
       server=$M_DNS1
-
       server=$M_DNS2
 
-
       domain=mgmta.gtst.local,$MGMT_A_NET$MGMT_A_CIDR,local
-
       synth-domain=mgmta.gtst.local,$MGMT_A_NET$MGMT_A_CIDR,host-*
-
       synth-domain=mgmtb.gtst.local,$MGMT_B_NET$MGMT_B_CIDR,host-*
 
-
       address=/$HOSTNAME.mgmta.gtst.local/$HOST_IP_MGMT_A
-
       address=/$HOSTNAME.mgmta.gtst.local/$HOST_IP_MGMT_B
 
 
       interface=mbr0.mgmt_a
-
       interface=mbr0.mgmt_b
-
       bind-interfaces
-
       listen-address=$HOST_IP_MGMT_A
-
       listen-address=$HOST_IP_MGMT_B
-
       listen-address=127.0.0.1
-
       listen-address=$M_PRIV_IP
-
       conf-dir=/etc/dnsmasq.d/
-
       log-debug
-
-
 
       EOL
 
@@ -739,58 +712,34 @@ write_files:
       cat > /etc/dnsmasq.d/dhcp_dnsmasq.conf << EOL
 
       no-dhcp-interface=bond0
-
       no-dhcp-interface=mbr0.mgmt_b
-
       dhcp-authoritative
-
       dhcp-leasefile=/var/lib/dnsmasq/dnsmasq.leases
-
-
       dhcp-range=${MGMT_A_NET_STRIP}140,${MGMT_A_NET_STRIP}220,365d
-
       dhcp-option=option:router,$HOST_IP_MGMT_A
-
       dhcp-option=option:dns-server,$HOST_IP_MGMT_A
-
       dhcp-option=option:domain-name,mgmta.gtst.local
-
       dhcp-option=option:domain-search,mgmta.gtst.local
-
       dhcp-option=option:mtu,9000
-
       dhcp-option=2,0
-
 
       dhcp-hostsdir=/var/tmp/ncb/etc/dnsmasq.d/hostsdir
 
-
       dhcp-boot=tag:pxeinstall,tftptarget.file,$HOST_IP_MGMT_A
-
       dhcp-option=tag:pxeinstall,option:root-path,"tftp://$HOST_IP_MGMT_A/"
 
-
       # Expiremental, catching UEFI HTTP boot
-
       # dhcp-vendorclass=set:httpclient,HTTPClient
-
       # dhcp-option=tag:httpclient,option:bootfile-name,"http://172.16.100.31:81/loader.efi">
-
-
       tftp-no-blocksize
-
       tftp-no-fail
-
       tftp-mtu=1200
-
       enable-tftp
-
       tftp-root=/mnt/util/export/tftp
 
       EOL
 
       fi
-
 
       systemctl enable --now dnsmasq.service
 
@@ -897,7 +846,7 @@ write_files:
           <dnsmasq:options>
             <dnsmasq:option value='listen-address=192.168.122.1'/>
             <dnsmasq:option value='synth-domain=libvirt.gtst.local,192.168.122.0/24,host-*'/>
-            <dnsmasq:option value='domain=libvirt.gtst.local,192.168.122.0/24',local/>
+            <dnsmasq:option value='domain=libvirt.gtst.local,192.168.122.0/24,local/'>
             <dnsmasq:option value='interface=virbr0'/>
             <dnsmasq:option value='server=127.0.0.1'/>
           </dnsmasq:options>
