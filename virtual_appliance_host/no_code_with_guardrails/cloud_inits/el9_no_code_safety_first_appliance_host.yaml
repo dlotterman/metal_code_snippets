@@ -51,6 +51,7 @@ users:
       - wheel
       - sudo
       - export-users
+    #sudo: ALL=(ALL) NOPASSWD:ALL
     shell: /bin/bash
 bootcmd:
   - systemctl disable --now kdump || true
@@ -142,25 +143,25 @@ runcmd:
   - - firewall-cmd
     - --permanent
     - --new-policy
-    - trustedNAT2external
+    - trust2NAT
   - - firewall-cmd
     - --permanent
     - --policy
-    - trustedNAT2external
+    - trust2NAT
     - --add-ingress-zone
     - trusted
   - - firewall-cmd
     - --permanent
     - --policy
-    - trustedNAT2external
+    - trust2NAT
     - --add-egress-zone
     - external
   - - firewall-cmd
     - --permanent
     - --policy
-    - trustedNAT2external
+    - trust2NAT
     - --set-target
-    - accept
+    - ACCEPT
   - - firewall-cmd
     - --reload
   - - authselect
@@ -240,6 +241,10 @@ runcmd:
     - enable
     - --now
     - ncb_dev_shm_forget
+  - - systemctl
+    - enable
+    - --now
+    - ncb_update_ncb_extended_env.timer
   - - systemctl
     - enable
     - --now
@@ -383,6 +388,10 @@ write_files:
 
       echo "export M_PRIV_GW=$M_PRIV_GW" >> /var/tmp/ncb/etc/ncb.env
 
+      echo "export HTTP_PROXY=${M_PRIV_IP}:83" >> /var/tmp/ncb/etc/ncb.env
+
+      echo "NO_PROXY=127.0.0.0/8,10.0.0.0/8,172.16.0.0/12,192.168.0.0/16" >> /var/tmp/ncb/etc/ncb.env
+
 
       STRING_SCRATCH=$(echo $MGMT_A_NET | awk -F '.' '{print$1"."$2"."$3"."}')
 
@@ -449,6 +458,8 @@ write_files:
       pwhash=$(sudo getent shadow root | cut -d: -f2)
       sudo usermod -p $pwhash adminuser
       usermod -a -G export-users root
+      mkdir /home/adminuser/bin
+      chown -R adminuser:cloud-users /home/adminuser/bin
       chmod 0400 /var/tmp/ncb/bin/ncb_adminuser_mangle.sh
     permissions: "0644"
   - path: /etc/systemd/system/ncb_podman_setcap_fix.service
@@ -482,6 +493,172 @@ write_files:
       Type=idle
 
       ExecStart=/bin/bash -c "mkdir /dev/shm/forget && chown adminuser:cloud-users /dev/shm/forget"
+  - path: /etc/systemd/system/ncb_update_ncb_extended_env.service
+    owner: root:root
+    append: false
+    content: >
+      [Unit]
+
+      Description=ncb_update_ncb_extended_env
+
+      After=multi-user.target
+
+      [Service]
+
+      Type=idle
+
+      ExecStart=/bin/bash /var/tmp/ncb/bin/ncb_update_ncb_extended_env.sh
+      [Install]
+      WantedBy=timers.target
+  - path: /etc/systemd/system/ncb_update_ncb_extended_env.timer
+    owner: root:root
+    append: false
+    content: |
+      [Unit]
+
+      Description=run every 2 miutes ncb_update_ncb_extended_env
+
+      [Timer]
+      OnBootSec=2min
+      OnUnitActiveSec=2min
+      Persistent=true
+
+      [Install]
+      WantedBy=timers.target
+  - path: /var/tmp/ncb/bin/ncb_update_ncb_extended_env.sh
+    owner: root:root
+    append: false
+    content: |
+      #!/bin/bash
+
+      logger "starting /var/tmp/ncb/bin/ncb_update_ncv_extended_env.sh"
+
+      curl -s https://metadata.platformequinix.com/metadata -o /tmp/.metadata_update
+      rm /tmp/.ncb_extended.env
+      touch /tmp/.ncb_extended.env
+
+      TAGS=$(jq -r '.tags[]' /tmp/.metadata_update)
+      for TAG in $TAGS; do
+          echo $TAG
+          echo "export TAG_"${TAG}"=PRESENT" >> /tmp/.ncb_extended.env
+          if [ "$TAG" = "ncb_k3s" ]; then
+            if test ! -f /var/tmp/ncb/tmp/ncb_k3s_mangle.done; then
+              systemctl enable --now ncb_k3s_mangle.timer
+            fi
+          fi
+      done
+
+      mv /tmp/.ncb_extended.env /var/tmp/ncb/etc/ncb_extended.env
+
+      rm /tmp/.metadata_update
+  - path: /etc/systemd/system/ncb_k3s_mangle.service
+    owner: root:root
+    append: false
+    content: >
+      [Unit]
+
+      Description=ncb_k3s_mangle
+
+      After=multi-user.target
+
+      [Service]
+
+      Type=idle
+
+      ExecStart=/bin/bash /var/tmp/ncb/bin/ncb_k3s_mangle.sh
+      [Install]
+      WantedBy=timers.target
+  - path: /etc/systemd/system/ncb_k3s_mangle.timer
+    owner: root:root
+    append: false
+    content: |
+      [Unit]
+
+      Description=run every 2 miutes ncb_k3s_mangle
+
+      [Timer]
+      OnBootSec=2min
+      OnUnitActiveSec=2min
+      Persistent=true
+
+      [Install]
+      WantedBy=timers.target
+  - path: /var/tmp/ncb/bin/ncb_k3s_mangle.sh
+    owner: root:root
+    append: false
+    content: |
+      #!/bin/bash
+
+      source /var/tmp/ncb/etc/ncb.env
+      source /var/tmp/ncb/etc/ncb_extended.env
+
+      if test -f /var/tmp/ncb/tmp/ncb_k3s_mangle.done; then
+        systemctl disable --now ncb_k3s_mangle.timer
+        systemctl disable ncb_k3s_mangle.service
+        exit 0
+      elif [ "$TAG_ncb_k3s" != "PRESENT" ]; then
+        exit 0
+      fi
+
+      curl -sfL https://get.k3s.io | NO_PROXY=127.0.0.0/8,10.0.0.0/8,172.16.0.0/12,192.168.0.0/16  HTTP_PROXY=${M_PRIV_IP}:83 INSTALL_K3S_EXEC="--advertise-address ${HOST_IP_MGMT_A} --bind-address ${HOST_IP_MGMT_A}" sh -
+
+      firewall-cmd --permanent --add-port=6443/tcp --zone=internal
+
+      firewall-cmd --reload
+
+      if test ! -f /var/tmp/ncb/tmp/kubectl.sha256; then
+        curl -o /var/tmp/ncb/tmp/kubectl -LO "https://dl.k8s.io/release/$(curl -L -s https://dl.k8s.io/release/stable.txt)/bin/linux/amd64/kubectl"
+        curl -o /var/tmp/ncb/tmp/kubectl.sha256 -LO "https://dl.k8s.io/release/$(curl -L -s https://dl.k8s.io/release/stable.txt)/bin/linux/amd64/kubectl.sha256"
+        curl -o /var/tmp/ncb/tmp/clusterctl -L https://github.com/kubernetes-sigs/cluster-api/releases/download/v1.5.2/clusterctl-linux-amd64
+        curl -o /var/tmp/ncb/tmp/cert-manager.yaml -LO https://github.com/cert-manager/cert-manager/releases/download/v1.13.1/cert-manager.yaml
+
+      fi
+
+      KCHKSUM=$(echo "$(cat /var/tmp/ncb/tmp/kubectl.sha256)  /var/tmp/ncb/tmp/kubectl" | sha256sum --check | awk '{print $NF}')
+      if [ "$KCHKSUM" = "OK" ]; then
+        echo "kubectl installed"
+      else
+        logger "SHA256 of kubectl in admiunuser home is wrong, exiting"
+        exit 1
+      fi
+
+      #HARDCODED CHECKSUMS ARE BAD OKAY?!
+      CCHKSUM=$(echo "4ae1a8fd5699e1926efbfd2fa7ee7272c8171348ca817255c950a6c4cffc7cb2  /var/tmp/ncb/tmp/clusterctl" | sha256sum --check | awk '{print $NF}')
+      if [ "$CCHKSUM" = "OK" ]; then
+        echo "clusterctl installed"
+      else
+        logger "SHA256 of clusterctl in /var/tmp/ncb/tmp is wrong, exiting"
+      fi
+
+      CMCHKSUM=$(echo "8b2a77bf9d2fe569d0c3bfd74f19dad0c8e675e9f6a7e88060abee3042f50a12  /var/tmp/ncb/tmp/cert-manager.yaml" | sha256sum --check | awk '{print $NF}')
+      if [ "$CMCHKSUM" = "OK" ]; then
+        echo "cert-manager.yaml installed"
+      else
+        logger "SHA256 of cert-manager.yaml in /var/tmp/ncb/tmp is wrong, exiting"
+        exit 1
+      fi
+
+
+      sudo -u adminuser cp /var/tmp/ncb/tmp/kubectl /home/adminuser/bin/
+      sudo -u adminuser cp /var/tmp/ncb/tmp/clusterctl /home/adminuser/bin/
+
+      sudo -u adminuser chmod 0750 /home/adminuser/bin/kubectl
+      sudo -u adminuser chmod 0750 /home/adminuser/bin/clusterctl
+
+      rm -rf /tmp/.kube
+      mkdir /tmp/.kube
+      cp /etc/rancher/k3s/k3s.yaml /tmp/.kube/config
+      chmod 0600 /tmp/.kube/config
+      cp -r /tmp/.kube /home/adminuser/
+      chown -R adminuser:cloud-users /home/adminuser/.kube
+      sudo -u adminuser cp /var/tmp/ncb/tmp/cert-manager.yaml /home/adminuser/.kube/
+
+      sudo -i -u adminuser kubectl apply -f /home/adminuser/.kube/cert-manager.yaml
+
+      systemctl disable --now ncb_k3s_mangle.timer
+
+      touch /var/tmp/ncb/tmp/ncb_k3s_mangle.done
+
     permissions: "0655"
   - path: /var/tmp/ncb/bin/ncb_dnsmasq_mangle.sh
     owner: root:root
@@ -522,7 +699,7 @@ write_files:
       server=$M_DNS2
 
 
-      domain=mgmta.gtst.local,$MGMT_A_NET$MGMT_A_CIDR
+      domain=mgmta.gtst.local,$MGMT_A_NET$MGMT_A_CIDR,local
 
       synth-domain=mgmta.gtst.local,$MGMT_A_NET$MGMT_A_CIDR,host-*
 
@@ -720,7 +897,7 @@ write_files:
           <dnsmasq:options>
             <dnsmasq:option value='listen-address=192.168.122.1'/>
             <dnsmasq:option value='synth-domain=libvirt.gtst.local,192.168.122.0/24,host-*'/>
-            <dnsmasq:option value='domain=libvirt.gtst.local,192.168.122.0/24'/>
+            <dnsmasq:option value='domain=libvirt.gtst.local,192.168.122.0/24',local/>
             <dnsmasq:option value='interface=virbr0'/>
             <dnsmasq:option value='server=127.0.0.1'/>
           </dnsmasq:options>
@@ -869,9 +1046,7 @@ write_files:
 
       rm -rf /etc/sysconfig/network-scripts/*
 
-
       nmcli connection add type bridge ifname mbr0 con-name mbr0 ipv4.method manual ipv4.never-default true  ipv4.addresses $M_PUBL_IP$M_PUBL_CIDR ipv4.gateway $M_PUBL_GW ipv4.dns '147.75.207.207,147.75.207.208,127.0.0.1'  ipv6.method ignore ipv6.never-default true 802-3-ethernet.mtu 9000 bridge.stp no
-
 
       nmcli connection modify mbr0 +ipv4.addresses $M_PRIV_IP$M_PRIV_CIDR
 
@@ -879,9 +1054,7 @@ write_files:
 
       nmcli connection modify mbr0 +ipv4.routes "10.0.0.0/8 $M_PRIV_GW"
 
-
       nmcli connection add type bond ifname bond0 con-name bond0 bond.options  "mode=802.3ad,miimon=100,lacp_rate=slow,updelay=5000,xmit_hash_policy=layer3+4" ipv4.method disabled  ipv4.never-default true ipv6.method ignore ipv6.never-default true 802-3-ethernet.mtu 9000
-
 
       nmcli con modify bond0 master mbr0 slave-type bridge
 
@@ -889,9 +1062,7 @@ write_files:
 
       nmcli connection add type ethernet slave-type bond con-name bond0-port1 ifname $SECOND_INTERFACE master bond0 802-3-ethernet.mtu 9000
 
-
       nmcli connection modify mbr0 connection.zone external
-
 
       nmcli con up bond0
 
@@ -900,7 +1071,6 @@ write_files:
       nmcli con up mbr0
 
       sleep 2
-
 
       nmcli connection add type bridge ifname mbr0.mgmt_a con-name mbr0.mgmt_a ipv4.method manual ipv4.never-default true ipv4.addresses $HOST_IP_MGMT_A$MGMT_A_CIDR ipv6.method ignore ipv6.never-default true 802-3-ethernet.mtu 9000 bridge.stp no
 

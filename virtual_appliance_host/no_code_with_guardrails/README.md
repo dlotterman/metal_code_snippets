@@ -12,14 +12,21 @@ When evaluating or working with [Equinix Metal](https://deploy.equinix.com/produ
   <img src="docs/assets/dashboard.PNG" width="32%" />
 </p>
 
-*no_code_bastion* aims to minimize the amount of toil needed to quickly and safely establish a familiar operational beachead inside of Equinix Metal for operators looking to get going quickly and safely-ish (or atleast, more so than without this resource) with their project.
+*no_code_bastion* aims to minimize the amount of toil needed to quickly and safely establish a familiar operational beachead inside of Equinix Metal for operators looking to get going quickly and safely-ish. It provides critical functions like:
+- Secure inside <-> outside access to an Equinix Metal environment
+- Network and utility services inside Equinix Metal
+- Container and VM hosting inside Equinix Metal
+- Operational tools and niceties
 
-By "Ctrl + C" & "Ctrl + V"'ing this [cloud-init](cloud_inits/el9_no_code_safety_first_appliance_host.yaml) into the [Userdata](https://deploy.equinix.com/developers/docs/metal/server-metadata/user-data/) field when provisioning an [Equinix Metal instance](https://deploy.equinix.com/product/bare-metal/servers/), an Operator should be returned a useable, working `no_code_bastion` instance, ready for brush clearing.
+All thats needed to get an `ncb` instance is to Copy (`Ctrl / Cmd + C`) [this cloud-init](cloud_inits/el9_no_code_safety_first_appliance_host.yaml) and Paste (`Ctrl / Cmd + P`) the contents into the [Userdata form](https://deploy.equinix.com/developers/docs/metal/server-metadata/user-data/#usage) when provisioning an Equinix Metal instance with `alma_9` or `rocky_9`. Thats it.
 
 ***For best experience, use the `.mime` encoded file***
-This minimzes browser / user input inconsistencies. Simply copy the [text from the mime encoded file](https://raw.githubusercontent.com/dlotterman/metal_code_snippets/main/virtual_appliance_host/no_code_with_guardrails/cloud_inits/el9_no_code_safety_first_appliance_host.yaml) and paste it into the user data section of the Metal instance provisoning page.
+
+This minimzes browser / user input inconsistencies. Simply copy the [text from the mime encoded file](https://raw.githubusercontent.com/dlotterman/metal_code_snippets/main/virtual_appliance_host/no_code_with_guardrails/cloud_inits/el9_no_code_safety_first_appliance_host.mime) and paste it into the user data section of the Metal instance provisoning page.
 
 The `mime` encoded file is simply the output of `cloud-init devel make-mime` run on the `yaml` file in the same directory.
+
+## Support
 
 Please note, as with anything in this reposistory, this resource is not supported by **ANYONE**. It is meant solely and exclusively as a reference resource. That being said, as of summer 2023, the owner is still looking to improve this resource and fix any quick wins. If anything about this perks you interest, get in contact with your [Equinix Metal sales team](https://deploy.equinix.com/get-started/).
 
@@ -107,6 +114,13 @@ The video links are links to Equinix's 0365 Sharepoint (sharepoint.com), and the
   - The author promotes [TigerVNC](https://github.com/TigerVNC/tigervnc)
     - [VNC over SSH](https://sscf.ucsd.edu/self-help-guides/tutorials/linux/vnc-with-ssh-tunnel)
 
+### Known incompatible hardware
+- c2.medium.x86
+  - Has problems provisioning alma_9
+- t3.small.x86
+  - Cannot provision alma_9
+- m3.small.x86
+  - Some m3.smalls are currently launched with Intel E810 NICs that have an incompatibility with their ToR that block some deployments
 
 ## EM SA Network Schema:
 [Reference link](https://github.com/dlotterman/metal_code_snippets/blob/main/documentation_stage/em_sa_network_schema.md)
