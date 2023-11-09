@@ -1,0 +1,5 @@
+---
+- include_tasks: metal_get_or_provision_plath_mgmt_vlan.yaml
+- include_tasks: metal_get_or_provision_mgmt_metal_gateway.yaml
+- include_tasks: metal_get_or_provision_plath_data_vlans.yaml
+#- include_tasks: metal_get_mgmt_network_details.yaml

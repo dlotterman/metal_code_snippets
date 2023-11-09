@@ -1,0 +1,6 @@
+#!ipxe
+
+dhcp
+echo stepping_through_embed
+sleep 10
+chain http://{{ ncb_private_ip }}/ipxes/trafficstop.ipxe || shell

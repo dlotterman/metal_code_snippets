@@ -663,7 +663,7 @@ write_files:
   - path: /var/tmp/ncb/bin/ncb_dnsmasq_mangle.sh
     owner: root:root
     append: false
-    content: >
+    content: |
       logger "running /var/tmp/ncb/bin/ncb_dnsmasq_mangle.sh"
 
       mkdir -p mkdir /var/tmp/ncb/etc/dnsmasq.d/hostsdir
@@ -693,7 +693,6 @@ write_files:
       address=/$HOSTNAME.mgmta.gtst.local/$HOST_IP_MGMT_A
       address=/$HOSTNAME.mgmta.gtst.local/$HOST_IP_MGMT_B
 
-
       interface=mbr0.mgmt_a
       interface=mbr0.mgmt_b
       bind-interfaces
@@ -705,7 +704,6 @@ write_files:
       log-debug
 
       EOL
-
 
       if [[ "$HOST_IP_END" == 1 ]]; then
 
@@ -1138,6 +1136,9 @@ write_files:
       #firewall-cmd --permanent --add-rich-rule 'rule service name="cockpit" accept limit value="2000/m"'
 
       firewall-cmd --reload
+
+      sleep 2
+      sync
 
       chmod 0400 /var/tmp/ncb/bin/ncb_network_mangle.sh
     permissions: "0644"

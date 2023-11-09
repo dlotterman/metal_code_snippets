@@ -1,0 +1,9 @@
+---
+- name: metal_get_or_provision_plath_data_vlans
+  equinix.cloud.metal_vlan:
+    project_id: YOURID
+    metal_api_token: YOURTOKEN
+    metro: "{{ metal_metro }}"
+    vxlan: "{{ item }}"
+  register: metal_get_or_provision_plath_data_vlans_output
+  loop: "{{ plath_data_vlans }}"

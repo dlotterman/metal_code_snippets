@@ -1,0 +1,8 @@
+---
+- include_role:
+    name: opsbox
+    tasks_from: opsbox_get_opsbox_details.yaml
+    apply:
+      delegate_to: localhost
+
+- include_tasks: metal_get_or_provision_plath_nodes.yaml

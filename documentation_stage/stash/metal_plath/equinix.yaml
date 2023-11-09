@@ -1,0 +1,17 @@
+---
+# equinix_metal.yaml
+plugin: equinix.cloud.metal_device
+
+strict: false
+keyed_groups:
+  - prefix: tag
+    key: tags
+  - prefix: equinix_metal_plan
+    key: plan
+  - key: metro
+    prefix: equinix_metal_metro
+  - key: state
+    prefix: equinix_metal_state
+
+project_ids:
+#

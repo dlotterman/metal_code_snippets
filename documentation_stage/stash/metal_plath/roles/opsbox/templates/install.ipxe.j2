@@ -1,0 +1,21 @@
+#!ipxe
+
+set base http://{{ ncb_private_ip }}:81
+
+dhcp
+
+echo stepping_through_ipxe_install
+
+echo stepping_through_uefi_vs_bios_check
+
+iseq ${platform} efi && goto plath_efi || goto plath_bios
+
+:plath_efi
+        echo in_efi
+        sleep 5
+        chain ${base}/plath-uefi.ipxe || shell
+
+:plath_bios
+        echo in_bios
+        sleep 5
+        chain ${base}/plath-bios.ipxe || shell

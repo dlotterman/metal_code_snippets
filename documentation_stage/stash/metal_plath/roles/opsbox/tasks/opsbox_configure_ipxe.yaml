@@ -1,0 +1,122 @@
+- name: opsbox_mkdir_ipxe
+  become: true
+  become_method: sudo
+  ansible.builtin.file:
+    path: /metal/src/ipxe
+    state: directory
+    owner: adminuser
+    group: cloud-users
+    mode: 0775
+  register: opsbox_mkdir_ipxe_output
+
+- name: opsbox_mkdir_ansible_lock_dir
+  become: true
+  become_method: sudo
+  ansible.builtin.file:
+    path: /metal/ansible_lock_dir
+    state: directory
+    owner: adminuser
+    group: cloud-users
+    mode: 0775
+
+- name: opsbox_install_packages
+  become: true
+  become_method: sudo
+  ansible.builtin.dnf:
+    name:
+      - make
+      - automake
+      - gcc
+      - gcc-c++
+      - xz-devel
+    state: latest
+  when: opsbox_mkdir_ipxe_output.changed
+
+- name: opsbox_ipxe_clone_repo
+  become: true
+  become_method: sudo
+  ansible.builtin.git:
+    repo: https://github.com/ipxe/ipxe
+    dest: /metal/src/ipxe
+    force: yes
+  when: opsbox_mkdir_ipxe_output.changed
+
+- name: opsbox_ipxe_template_embed
+  become: true
+  become_method: sudo
+  ansible.builtin.template:
+    src: roles/opsbox/templates/embed.ipxe.j2
+    dest: /metal/src/ipxe/src/embed.ipxe
+
+- name: opsbox_ipxe_build_bios_undionly_binary
+  become: true
+  become_method: sudo
+  ansible.builtin.command:
+    cmd: make bin/undionly.kpxe EMBED=embed.ipxe
+    chdir: /metal/src/ipxe/src/
+    creates: "/metal/ansible_lock_dir/ipxe_build_{{ ansible_file_lock_version }}.lock"
+  register: metal_hosts_ipxe_build
+
+- name: opsbox_ipxe_build_efi_binary
+  become: true
+  become_method: sudo
+  ansible.builtin.command:
+    cmd: make bin-x86_64-efi/ipxe.efi EMBED=embed.ipxe DEBUG=device,efi_driver,efi_init,efi_pci,efi_snp
+    chdir: /metal/src/ipxe/src/
+    creates: "/metal/ansible_lock_dir/ipxe_build_{{ ansible_file_lock_version }}.lock"
+  register: metal_hosts_ipxe_build
+
+- name: opsbox_ipxe_build_efi_snponly_binary
+  become: true
+  become_method: sudo
+  ansible.builtin.command:
+    cmd: make bin-x86_64-efi/snponly.efi EMBED=embed.ipxe DEBUG=device,efi_driver,efi_init,efi_pci,efi_snp
+    chdir: /metal/src/ipxe/src/
+    creates: "/metal/ansible_lock_dir/ipxe_build_{{ ansible_file_lock_version }}.lock"
+  register: metal_hosts_ipxe_build
+
+- name: opsbox_mkdir_private_html_ipxe
+  become: true
+  become_method: sudo
+  ansible.builtin.file:
+    path: /usr/share/nginx/private_html/ipxe/
+    state: directory
+    owner: adminuser
+    group: nginx
+    mode: 0775
+    recurse: yes
+
+- name: opsbox_ipxe_copy_to_html_dir_ipxe_efi
+  become: true
+  become_method: sudo
+  ansible.builtin.copy:
+    src: /metal/src/ipxe/src/bin-x86_64-efi/ipxe.efi
+    dest: /usr/share/nginx/private_html/ipxe/ipxe.efi
+    remote_src: yes
+  when: metal_hosts_ipxe_build.changed
+
+- name: opsbox_ipxe_copy_to_html_dir_ipxe_snponly
+  become: true
+  become_method: sudo
+  ansible.builtin.copy:
+    src: /metal/src/ipxe/src/bin-x86_64-efi/snponly.efi
+    dest: /usr/share/nginx/private_html/ipxe/snponly.efi
+    remote_src: yes
+  when: metal_hosts_ipxe_build.changed
+
+- name: opsbox_ipxe_copy_to_html_dir_bios_undionly
+  become: true
+  become_method: sudo
+  ansible.builtin.copy:
+    src: /metal/src/ipxe/src/bin/undionly.kpxe
+    dest: /usr/share/nginx/private_html/ipxe/undionly.kpxe
+    remote_src: yes
+  when: metal_hosts_ipxe_build.changed
+
+- name: opsbox_ipxe_build_touch_lock
+  become: true
+  become_method: sudo
+  ansible.builtin.file:
+    path: "/metal/ansible_lock_dir/ipxe_build_{{ ansible_file_lock_version }}.lock"
+    state: touch
+  when: metal_hosts_ipxe_build.changed

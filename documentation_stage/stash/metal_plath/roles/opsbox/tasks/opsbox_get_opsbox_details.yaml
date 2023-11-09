@@ -1,0 +1,57 @@
+---
+# - name: opsbox_get_private_ip
+  # ansible.builtin.set_fact:
+    # ncb_private_ip: "{{ item }}"
+  # when: item.public == False
+  # loop: "{{ hostvars.get(inventory_hostname)['ip_addresses'] }}"
+
+- name: opsbox_get_ncb
+  ansible.builtin.set_fact:
+    opsbox_ncb: "{{ query('inventory_hostnames', 'tag_plath_ncb')[0] }}"
+  no_log: True
+  #loop: "{{ query('inventory_hostnames', 'tag_plath_ncb')[0] }}"
+
+- name: opsbox_get_ncb_metal_details
+  uri:
+    url: "https://api.equinix.com/metal/v1/devices/{{ hostvars.get(opsbox_ncb)['id'] }}"
+    method: GET
+    headers:
+      X-Auth-Token: "{{ metal_api_token }}"
+    return_content: true
+    status_code: 200
+  no_log: True
+  register: opsbox_get_ncb_metal_details_output
+
+- name: opsbox_get_ncb_private_ip
+  ansible.builtin.set_fact:
+    ncb_private_ip: "{{ item.address }}"
+  loop: "{{ hostvars.get(opsbox_ncb)['ip_addresses'] }}"
+  when: item.public == False
+  no_log: True
+
+# - name: opsbox_get_ncb_private_ip
+  # ansible.builtin.debug:
+    # msg: "{{ item }}"
+  # loop: "{{ hostvars.get(opsbox_ncb) }}"
+  # when: item.public == False
+
+#- name: opsbox_get_private_ip
+  #ansible.builtin.debug:
+    #msg: "{{ item }}"
+    #msg: "{{ haha }}"
+  #when: item.public == False
+  #loop: "{{ hostvars.get(query('inventory_hostnames', 'tag_plath_ncb')[0]) }}"
+
+# - name: opsbox_ipxe_trafficstop_stall
+  # become: true
+  # become_method: sudo
+  # ansible.builtin.template:
+    # src: roles/opsbox/templates/stall.ipxe.j2
+    # dest: /usr/share/nginx/private_html/trafficstop.ipxe
+  # register: opsbox_ipxe_trafficstop_stall_output
+
+# - name: opsbox_download_harvester_isp
+  # ansible.builtin.get_url:
+    # url: "{{ harvester_iso_url }}"
+    # dest: /usr/share/nginx/private_html/harvester.iso
+    # mode: '0750'

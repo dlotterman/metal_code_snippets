@@ -1,0 +1,51 @@
+---
+- name: metal_provision_plath_provision_metal_environment
+  hosts: localhost
+  gather_facts: false
+  vars:
+    - ansible_python_interpreter: "{{ ansible_playbook_python }}"
+
+  tasks:
+    - name: metal_provision_ncb
+      include_role:
+        name: metal
+        tasks_from: play_metal_get_or_provision_ncb.yaml
+
+    - name: metal_provision_environment
+      include_role:
+        name: metal
+        tasks_from: play_metal_get_or_provision_environment.yaml
+
+    - meta: refresh_inventory
+
+    - name: metal_configure_and_wait_for_provision_ncb
+      include_role:
+        name: metal
+        tasks_from: play_metal_configure_and_wait_for_provision_ncb.yaml
+
+- name: metal_provision_plath_nodes
+  hosts: localhost
+  gather_facts: false
+  vars:
+    - ansible_python_interpreter: "{{ ansible_playbook_python }}"
+
+  tasks:
+    - name: metal_get_or_provision_plath_nodes
+      include_role:
+        name: metal
+        tasks_from: play_metal_get_or_provision_plath_nodes.yaml
+
+- name: opsbox_configure_ncb_for_node_provisioning
+  hosts: tag_plath_ncb
+  gather_facts: false
+  remote_user: adminuser
+  vars:
+    - ansible_python_interpreter: auto_silent
+  tasks:
+
+    - meta: refresh_inventory
+
+    - name: opsbox_configure_ncb_for_node_provisioning
+      include_role:
+        name: opsbox
+        tasks_from: play_opsbox_configure_ncb_for_node_provisioning.yaml

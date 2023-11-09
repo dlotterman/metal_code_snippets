@@ -1,0 +1,28 @@
+---
+# - name: metal_provision_plath_mgmt_vlan
+  # uri:
+    # url: "https://api.equinix.com/metal/v1/projects/{{ metal_project_id }}/virtual-networks"
+    # method: POST
+    # headers:
+      # X-Auth-Token: "{{ metal_api_token }}"
+    # body_format: json
+    # body:
+      # metro: "{{ metal_metro }}"
+      # vxlan: "{{ plath_mgmt_vlan }}"
+      # description: "{{ full_domain }}"
+    # status_code: [201, 422]
+
+- name: metal_get_or_provision_plath_mgmt_vlan
+  equinix.cloud.metal_vlan:
+    project_id:
+    metal_api_token:
+    metro: "{{ metal_metro }}"
+    vxlan: "{{ plath_mgmt_vlan }}"
+    #project_id: "{{ metal_project_id }}"
+  register: metal_get_or_provision_plath_mgmt_vlan_output
+
+# - name: haha
+  # debug:
+    # msg:
+      # - "First line"
+      # - "{{ metal_get_or_provision_plath_mgmt_vlan_output }}"

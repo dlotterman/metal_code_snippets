@@ -1,0 +1,46 @@
+---
+- name: opsbox_mkdir_ansible_lock_dir
+  become: true
+  become_method: sudo
+  ansible.builtin.file:
+    path: /metal/ansible_lock_dir
+    state: directory
+    owner: adminuser
+    group: cloud-users
+    mode: 0775
+    recurse: yes
+# - name: opsbox_mkdir_ipxe
+  # ansible.builtin.file:
+    # path: /usr/share/nginx/private_html/ipxe
+    # state: directory
+    # owner: adminuser
+    # group: nginx
+    # mode: 0775
+# - name: opsbox_get_private_ip
+  # ansible.builtin.set_fact:
+    # ncb_private_ip: "{{ item }}"
+  # when: item.public == False
+  # loop: "{{ hostvars.get(inventory_hostname)['ip_addresses'] }}"
+- name: opsbox_mkdir_ipxe
+  ansible.builtin.file:
+    path: /usr/share/nginx/private_html/ipxe/
+    state: directory
+    owner: adminuser
+    group: nginx
+    mode: 0775
+    recurse: yes
+  register: opsbox_mkdir_ipxe_output
+
+- name: opsbox_ipxe_trafficstop_stall
+  become: true
+  become_method: sudo
+  ansible.builtin.template:
+    src: roles/opsbox/templates/stall.ipxe.j2
+    dest: /usr/share/nginx/private_html/ipxe/trafficstop.ipxe
+  register: opsbox_ipxe_trafficstop_stall_output
+
+# - name: opsbox_download_harvester_isp
+  # ansible.builtin.get_url:
+    # url: "{{ harvester_iso_url }}"
+    # dest: /usr/share/nginx/private_html/harvester.iso
+    # mode: '0750'

@@ -1,0 +1,11 @@
+---
+- name: metal_plath_node_get_details
+  uri:
+    url: "https://api.equinix.com/metal/v1/devices/{{ hostvars[item].id }}"
+    method: GET
+    headers:
+      X-Auth-Token: "{{ metal_api_token }}"
+    return_content: true
+    status_code: 200
+  register: metal_plath_node_get_details_output
+  loop: "{{ query('inventory_hostnames', 'tag_plath_node') }}"

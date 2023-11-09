@@ -1,0 +1,21 @@
+- name: metal_build_eth0_mac_table
+  ansible.builtin.set_fact:
+    eth0_mac_table: "{{ eth0_mac_table | default({}) | combine ({ item.get('hostname') : item | json_query(query_string) | first }) }}"
+  loop: "{{ metal_plath_node_get_details_output.results |  map(attribute='content') | map('from_json') }}"
+  vars:
+    query_string: "network_ports[?name=='eth0'].data.mac"
+  #no_log: true
+
+- name: metal_build_eth1_mac_table
+  ansible.builtin.set_fact:
+    eth1_mac_table: "{{ eth1_mac_table | default({}) | combine ({ item.get('hostname') : item | json_query(query_string) | first }) }}"
+  loop: "{{ metal_plath_node_get_details_output.results |  map(attribute='content') | map('from_json') }}"
+  vars:
+    query_string: "network_ports[?name=='eth1'].data.mac"
+  #no_log: true
+
+- name: metal_mac_tables_print
+  ansible.builtin.debug:
+    msg:
+      - "eth0_mac_table: {{ eth0_mac_table }}"
+      - "eth1_mac_table {{ eth1_mac_table }}"

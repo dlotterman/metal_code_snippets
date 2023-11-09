@@ -1,0 +1,88 @@
+---
+- name: opsbox_template_dnsmasq_conf
+  become: yes
+  become_method: sudo
+  template:
+    src: roles/opsbox/templates/dnsmasq.conf.j2
+    dest: /etc/dnsmasq.conf
+  register: dnsmasq_conf
+
+- name: opsbox_template_dnsmasq_conf
+  become: yes
+  become_method: sudo
+  template:
+    src: roles/opsbox/templates/plath_dnsmasq.conf.j2
+    dest: /etc/dnsmasq.d/metal_plath_dnsmasq.conf
+  register: dnsmasq_conf
+
+#This repo current uses the `no_code_bastion` cloud-unit
+# to secure the ops box, because we do that, we have to fix the libvirt thing
+
+- name: opsbox_template_fix_ncb_dnsmasq_conf
+  become: yes
+  become_method: sudo
+  lineinfile:
+    path: /var/tmp/metal_libvirt_network_dnsmasq.xml
+    regexp: '^(.*)listen-address=::1,192.168.122.1(.*)$'
+    line: 'listen-address=192.168.122.1,172.16.100.1,172.16.101.1'
+    backrefs: yes
+  register: opsbox_template_fix_ncb_dnsmasq_conf_output
+
+- name: opsbox_template_fix_ncb_libvirt_dnsmasq_1_of_4
+  become: yes
+  become_method: sudo
+  ansible.builtin.shell:
+    cmd: virsh net-destroy default
+  when: opsbox_template_fix_ncb_dnsmasq_conf_output.changed
+
+- name: opsbox_template_fix_ncb_libvirt_dnsmasq_2_of_4
+  become: yes
+  become_method: sudo
+  ansible.builtin.shell:
+    cmd: virsh net-undefine default
+  when: opsbox_template_fix_ncb_dnsmasq_conf_output.changed
+
+- name: opsbox_template_fix_ncb_libvirt_dnsmasq_3_of_4
+  become: yes
+  become_method: sudo
+  ansible.builtin.shell:
+    cmd: virsh net-define /var/tmp/metal_libvirt_network_dnsmasq.xml
+  when: opsbox_template_fix_ncb_dnsmasq_conf_output.changed
+
+- name: opsbox_template_fix_ncb_libvirt_dnsmasq_4_of_4
+  become: yes
+  become_method: sudo
+  ansible.builtin.shell:
+    cmd: virsh net-start --network default
+  when: opsbox_template_fix_ncb_dnsmasq_conf_output.changed
+
+
+- name: metal_hosts_service_dnsmasq_restart
+  become: true
+  become_method: sudo
+  ansible.builtin.service:
+    name: dnsmasq
+    state: restarted
+    enabled: yes
+  when: dnsmasq_conf.changed
+
+- name: metal_standup_opsbox_self_dns
+  become: true
+  become_method: sudo
+  community.general.nmcli:
+    conn_name: mbr0
+    state: present
+    dns4:
+      - 127.0.0.1
+      - 147.75.207.207
+      - 147.75.207.208
+  register: self_dns_register
+
+- name: metal_standup_opsbox_self_dns_network_restart
+  become: true
+  become_method: sudo
+  ansible.builtin.service:
+    name: NetworkManager
+    enabled: true
+    state: restarted
+  when: self_dns_register.changed

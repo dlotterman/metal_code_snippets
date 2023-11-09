@@ -1,0 +1,224 @@
+# Metal Gateways with Private IPs are a little weird.
+# Private IPs dont handle reservation requests quite the same way
+# Instead of creating a GW with a reservation like public elastic blocks
+# You create the GW with a requested size of private block and Metal cuts it off a new one for the request
+# You then need to get the ID afterewards since the decision is made on the platform side
+
+
+# There is also currently a bug where if we ask for a Metal GW that already exists
+# in this way, the platform will still cut off a new private elastic IP block, which is bad
+# So we have to do a full list, search, create if does not exist
+
+# This is also too much logic here.
+# We should break off the bottom half into opsbox
+---
+# vars:
+  # metal_ip_block_size_adjust: "{{ metal_ip_block_size - 1 }}"
+
+- name: metal_get_mgmt_metal_gateway_details
+  uri:
+    url: "https://api.equinix.com/metal/v1/projects/{{ metal_project_id }}/metal-gateways?include=virtual_network"
+    method: GET
+    headers:
+      X-Auth-Token: "{{ metal_api_token }}"
+    status_code: [200]
+  register: metal_get_mgmt_metal_gateway_output
+  no_log: true
+
+- name: metal_extract_mgmt_metal_gateway_details
+  ansible.builtin.set_fact:
+    mgmt_metal_gateway_id: "{{ item.id }} "
+  when: item.virtual_network.vxlan == plath_mgmt_vlan and item.virtual_network.metro_code == metal_metro
+  loop: "{{ metal_get_mgmt_metal_gateway_output.json.get('metal_gateways') }}"
+  no_log: true
+
+- name: metal_provision_mgmt_metal_gateway
+  uri:
+    url: "https://api.equinix.com/metal/v1/projects/{{ metal_project_id }}/metal-gateways"
+    method: POST
+    headers:
+      X-Auth-Token: "{{ metal_api_token }}"
+    body_format: json
+    body:
+      virtual_network_id: "{{ metal_get_or_provision_plath_mgmt_vlan_output.id }}"
+      private_ipv4_subnet_size: "{{ metal_ip_block_size }}"
+    status_code: [201, 422]
+  register: metal_get_or_provision_mgmt_metal_gateway_output
+  when: mgmt_metal_gateway_id is undefined
+  no_log: true
+
+
+- name: metal_extract_mgmt_metal_gateway_details
+  ansible.builtin.set_fact:
+    mgmt_ip_reservation: "{{ (item.ip_reservation.href | split('/')) | last }}"
+  when: item.virtual_network.vxlan == plath_mgmt_vlan and item.virtual_network.metro_code == metal_metro
+  loop: "{{ metal_get_mgmt_metal_gateway_output.json.get('metal_gateways') }}"
+  no_log: true
+
+# - name: metal_extract_mgmt_metal_gateway_details
+  # ansible.builtin.debug:
+    # msg: "{{ mgmt_ip_reservation }}"
+
+- name: metal_get_mgmt_reservation_details
+  uri:
+    url: "https://api.equinix.com/metal/v1/ips/{{ mgmt_ip_reservation }}"
+    method: GET
+    headers:
+      X-Auth-Token: "{{ metal_api_token }}"
+    status_code: [200]
+  register: metal_get_mgmt_reservation_details_output
+  no_log: true
+
+# - name: metal_extract_mgmt_metal_gateway_details
+  # ansible.builtin.debug:
+    # msg: "{{ metal_get_mgmt_reservation_details_output }}"
+
+- name: metal_set_plath_mgmt_ip_facts
+  ansible.builtin.set_fact:
+    mgmt_ip_network: "{{ metal_get_mgmt_reservation_details_output.json.network }}"
+    mgmt_ip_gateway: "{{ metal_get_mgmt_reservation_details_output.json.gateway }}"
+    mgmt_ip_netmask: "{{ metal_get_mgmt_reservation_details_output.json.netmask }}"
+    mgmt_ip_cidr: "{{ metal_get_mgmt_reservation_details_output.json.cidr }}"
+    # mgmt_ip_cidr: "{{ 28 }}"
+    # mgmt_ip_network: "10.67.102.160"
+    # mgmt_ip_network_cidr: "10.67.102.160/28"
+
+- name: metal_set_plath_mgmt_ip_facts_extended
+  ansible.builtin.set_fact:
+    mgmt_ip_network_cidr: "{{ mgmt_ip_network }}/{{ mgmt_ip_cidr }}"
+  no_log: true
+
+- name: metal_set_plath_mgmt_ip_facts_extended_dance_party
+  ansible.builtin.set_fact:
+    mgmt_vip: "{{ mgmt_ip_network_cidr | ansible.utils.nthhost(2) }}"
+    mgmt_ip_first_dhcp: "{{ mgmt_ip_network_cidr | ansible.utils.nthhost(4) }}"
+    mgmt_ip_last_dhcp: "{{ mgmt_ip_network_cidr | ansible.utils.nthhost(metal_ip_block_size - 1) }}"
+  #no_log: true
+
+- name: metal_build_plath_mgmt_ip_host_table
+  ansible.builtin.set_fact:
+    plath_mgmt_ip_host_table: "{{ plath_mgmt_ip_host_table | default({}) | combine ({ mgmt_ip_network_cidr | ansible.utils.nthhost(ansible_loop.index + 2) : item }) }}"
+  loop: "{{ query('inventory_hostnames', 'tag_plath_mgmt_networking') }}"
+  loop_control:
+    extended: yes
+  no_log: true
+
+- name: metal_build_plath_mgmt_host_ip_table
+  ansible.builtin.set_fact:
+    plath_mgmt_host_ip_table: "{{ plath_mgmt_host_ip_table | default({}) | combine({item.value : item.key})}}"
+  loop: "{{ lookup('ansible.builtin.dict', plath_mgmt_ip_host_table, wantlist=True) }}"
+  loop_control:
+    extended: yes
+  #no_log: true
+
+# - name: metal_build_plath_mgmt_ip_host_table
+  # ansible.builtin.set_fact:
+    # plath_mgmt_ip_host_table: "{{ plath_mgmt_ip_host_table | default({}) | combine ({ mgmt_ip_cidr | ansible.utils.nthhost(ansible_loop.index + 2) : item }) }}"
+  # loop: "{{ query('inventory_hostnames', 'tag_plath_mgmt_networking') }}"
+  # loop_control:
+    # extended: yes
+    #msg: "{{ metal_get_mgmt_reservation_details_output.json.network }}"
+    #mgmt_ip_network: "{{ (metal_get_mgmt_reservation_details_output.json }}"
+- name: metal_print_plath_mgmt_details
+  ansible.builtin.debug:
+    msg:
+      - "mgmt_network: {{ mgmt_ip_network }}"
+      - "mgmt_gateway: {{ mgmt_ip_gateway }}"
+      - "mgmt_ip_cidr: {{ mgmt_ip_network_cidr }}"
+      - "mgmt_vip: {{ mgmt_vip }}"
+      - "mgmt_ip_first_dhcp: {{ mgmt_ip_first_dhcp }}"
+      - "mgmt_ip_last_dhcp: {{ mgmt_ip_last_dhcp }}"
+
+
+- name: metal_print_plath_mgmt_ip_host_table
+  ansible.builtin.debug:
+    msg: "{{ plath_mgmt_ip_host_table }}"
+
+# - name: metal_extract_mgmt_metal_gateway_details:
+  # ansible.builtin.debug:
+    # msg: "{{ mgmt_ip_network }}"
+  # when: item.virtual_network.vxlan == plath_mgmt_vlan and item.virtual_network.metro_code == metal_metro
+  # loop: "{{ metal_get_mgmt_metal_gateway_output.json.get('metal_gateways') }}"
+  ##when: item.virtual_network.metro == metal_metro
+  # loop: "{{ metal_get_mgmt_metal_gateway_output.json.get('metal_gateways') }}"
+
+
+
+
+
+
+# - name: metal_parse_mgmt_metal_gateway_details
+  # ansible.builtin.set_fact:
+    # lol_fact: "{{ item.id }} "
+  # when: item.virtual_network.vxlan == plath_mgmt_vlan
+  # loop: "{{ metal_get_mgmt_metal_gateway_output.json.get('metal_gateways') }}"
+
+# - name: metal_parse_mgmt_metal_gateway_details3
+  # ansible.builtin.debug:
+    # msg: "{{ item.virtual_network.metro_code }} "
+  ##when: item.virtual_network.metro == metal_metro
+  # loop: "{{ metal_get_mgmt_metal_gateway_output.json.get('metal_gateways') }}"
+
+# - name: metal_parse_mgmt_metal_gateway_details2
+  # ansible.builtin.set_fact:
+    # lol_fact2: "{{ item.id }} "
+  # when: item.virtual_network.metro_code == metal_metro
+  # loop: "{{ metal_get_mgmt_metal_gateway_output.json.get('metal_gateways') }}"
+
+
+
+# - name: metal_get_mgmt_metal_gateway_debug1
+  # ansible.builtin.debug:
+    # msg: "{{ item.virtual_network.vxlan }}"
+  # loop: "{{ metal_get_mgmt_metal_gateway_output.json.get('metal_gateways') }}"
+
+# - name: metal_get_mgmt_metal_gateway_debug2
+  # ansible.builtin.set_fact:
+    # metal_gateway_id: "{{ item.id }}"
+  # loop: "{{ metal_get_mgmt_metal_gateway_output.json.get('metal_gateways') }}"
+  # when: item.virtual_network.vxlan = plath_mgmt_vlan
+
+# - name: metal_get_mgmt_metal_gateway_debug3
+  # ansible.builtin.debug:
+    # msg: "{{ metal_gateway_id }}"
+  # when: item.virtual_network.vxlan = "{{ plath_mgmt_vlan }}"
+
+# - name: metal_get_mgmt_elastic_reservation_id_from_gateway1
+  # ansible.builtin.debug:
+    # msg: "{{ (plath_mgmt_vlan | string) }}"
+  ## when: '(plath_mgmt_vlan | string) in item.virtual_network.vxlan'
+  # when: (item.virtual_network.vxlan | string) in (plath_mgmt_vlan | string)
+  # loop: "{{ metal_get_mgmt_metal_gateway_output.json.get('metal_gateways') }}"
+
+# - name: metal_get_mgmt_elastic_reservation_id_from_gateway2
+  # ansible.builtin.set_fact:
+    # lol_fact: "{{ item.id }} "
+  # when: (item.virtual_network.vxlan | string) in (plath_mgmt_vlan | string)
+  # loop: "{{ metal_get_mgmt_metal_gateway_output.json.get('metal_gateways') }}"
+
+# - name: metal_get_mgmt_elastic_reservation_id_from_gateway
+  # ansible.builtin.debug:
+    # msg:
+      # - "haha"
+      # - "{{ lol_fact }}"
+      # - "{{ lol_fact2 }}"
+      # - "{{ lol_fact3 }}"
+# - name: metal_get_or_provision_mgmt_metal_gateway
+  # uri:
+    # url: "https://api.equinix.com/metal/v1/projects/{{ metal_project_id }}/metal-gateways?include=virtual_network"
+    # method: POST
+    # headers:
+      # X-Auth-Token: "{{ metal_api_token }}"
+    # body_format: json
+    # body:
+      # virtual_network_id: "{{ metal_get_or_provision_plath_mgmt_vlan_output.id }}"
+      ##ip_reservation_id: "{{ ocp_ip_reservation_id }}"
+      # private_ipv4_subnet_size: 16
+    # status_code: [201, 422]
+  # register: metal_get_or_provision_mgmt_metal_gateway_output
+
+# - name: haha
+  # debug:
+    # msg:
+      # - "First line"
+      # - "{{ metal_provision_mgmt_metal_gateway_output }}"

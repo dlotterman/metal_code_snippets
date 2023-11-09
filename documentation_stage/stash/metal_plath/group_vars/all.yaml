@@ -1,0 +1,11 @@
+metal_api_token: "YOUR_TOKEN"
+metal_project_id: "YOUR_TOKEN"
+harvester_iso_url: "SOMEURL/harvester-v1.2.0-amd64.iso"
+harvester_kernel_url:
+# plath_domain should be alphanumeric, no dashes or underbars
+plath_domain: sv
+basedomain: .plath.dlott.casa
+full_domain: "{{ plath_domain }}.{{ basedomain }}"
+plath_mgmt_vlan: 3222
+plath_data_vlans:
+  - 2333

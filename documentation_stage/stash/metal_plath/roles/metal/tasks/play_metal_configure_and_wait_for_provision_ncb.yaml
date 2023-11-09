@@ -1,0 +1,8 @@
+---
+- include_role:
+    name: opsbox
+    tasks_from: opsbox_get_opsbox_details.yaml
+    apply:
+      delegate_to: localhost
+- include_tasks: metal_attach_plath_mgmt_vlan_ncb.yaml
+#- include_tasks: metal_wait_for_provision_ncb.yaml

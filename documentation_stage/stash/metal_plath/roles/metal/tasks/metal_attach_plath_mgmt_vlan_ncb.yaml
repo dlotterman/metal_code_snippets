@@ -1,0 +1,10 @@
+- name: metal_attach_plath_mgmt_vlan_ncb
+  uri:
+    url: "https://api.equinix.com/metal/v1/ports/{{ opsbox_get_ncb_metal_details_output.json.network_ports[0].bond.id }}/assign"
+    method: POST
+    headers:
+      X-Auth-Token: "{{ metal_api_token }}"
+    body_format: json
+    body:
+      vnid: "{{ plath_mgmt_vlan }}"
+    status_code: [200, 422]

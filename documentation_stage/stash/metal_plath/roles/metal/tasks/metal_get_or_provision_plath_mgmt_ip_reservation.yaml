@@ -1,0 +1,66 @@
+- name: metal_get_ip_reservations
+  uri:
+    url: "https://api.equinix.com/metal/v1/projects/{{ metal_project_id }}/ips"
+    method: GET
+    headers:
+      X-Auth-Token: "{{ metal_api_token }}"
+    status_code: [200]
+  register: metal_get_ip_reservations_output
+  no_log: True
+
+- name: metal_get_ocp_ip_reservation_id
+  ansible.builtin.set_fact:
+    plath_mgmt_ip_reservation_id: "{{ item[0].get('id') }}"
+  loop: "{{ metal_get_ip_reservations_output.json.get('ip_addresses') | subelements('tags') }}"
+  when: 'full_domain in item'
+  ignore_errors: true
+  no_log: true
+
+- name: metal_provision_plath_mgmt_ip_reservation
+  uri:
+    url: "https://api.equinix.com/metal/v1/projects/{{ metal_project_id }}/ips"
+    method: POST
+    headers:
+      X-Auth-Token: "{{ metal_api_token }}"
+      Content-Type: "application/json"
+      Accept: application/json
+    body_format: json
+    body:
+      type: "private_ipv4"
+      quantity: "{{ metal_ip_block_size }}"
+      comments: "{{ full_domain }}"
+      metro: "{{ metal_metro }}"
+      tags:
+        - "{{ full_domain }}"
+        - "plath"
+      fail_on_approval_required: "True"
+    return_content: true
+    status_code: [201, 422]
+  when: plath_ip_reservation_id is undefined
+  register: metal_provision_plath_mgmt_ip_reservation_output
+  changed_when: metal_provision_plath_mgmt_ip_reservation_output.status == 201
+
+- name: metal_provision_plath_mgmt_ip_reservation_wait
+  ansible.builtin.pause:
+    seconds: 5
+  when: metal_provision_plath_mgmt_ip_reservation_output.changed
+
+- name: metal_get_ip_reservations_refresh
+  uri:
+    url: "https://api.equinix.com/metal/v1/projects/{{ metal_project_id }}/ips"
+    method: GET
+    headers:
+      X-Auth-Token: "{{ metal_api_token }}"
+    status_code: [200]
+  register: metal_get_ip_reservations_refresh_output
+  no_log: True
+
+- name: metal_get_ocp_ip_reservation_id_refresh
+  debug:
+    msg: plath_mgmt_ip_reservation_id
+  #ansible.builtin.set_fact:
+  #  plath_mgmt_ip_reservation_id: "{{ item[0].get('id') }}"
+  loop: "{{ metal_get_ip_reservations_refresh_output.json.get('ip_addresses') | subelements('tags') }}"
+  when: 'full_domain in item'
+  ignore_errors: true
+  #no_log: true

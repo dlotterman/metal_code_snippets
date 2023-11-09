@@ -1,0 +1,29 @@
+- name: opsbox_configure_ncb_plath_mgmt_bridge_interface
+  become: true
+  become_method: sudo
+  community.general.nmcli:
+    type: bridge
+    conn_name: mbr0.{{ plath_mgmt_vlan }}
+    ip4: "{{ plath_mgmt_host_ip_table.get(inventory_hostname) }}/{{ mgmt_ip_cidr }}"
+    gw4: "{{ mgmt_ip_gateway }}"
+    autoconnect: yes
+    state: present
+    zone: trusted
+    method6: disabled
+    mtu: 9000
+
+- name: opsbox_configure_ncb_plath_mgmt_vlan_interface
+  become: true
+  become_method: sudo
+  community.general.nmcli:
+    type: vlan
+    conn_name: bond0.{{ plath_mgmt_vlan }}
+    vlanid: "{{ plath_mgmt_vlan }}"
+    autoconnect: yes
+    state: present
+    vlandev: bond0
+    slave_type: bridge
+    master: mbr0.{{ plath_mgmt_vlan }}
+    method4: disabled
+    method6: disabled
+    mtu: 9000

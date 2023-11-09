@@ -1,0 +1,55 @@
+#jinja2: trim_blocks:False
+
+expand-hosts
+domain-needed
+bogus-priv
+dns-forward-max=150
+cache-size=2047
+neg-ttl=360
+no-poll
+log-queries
+log-dhcp
+log-facility=/var/log/dnsmasq.log
+server=147.75.207.207
+server=147.75.207.208
+
+interface=mbr0.{{ plath_mgmt_vlan }}
+
+dhcp-option=19,0           # option ip-forwarding off / icmp forward off
+
+dhcp-ignore=tag:!known 		# Only offer DHCP leases to MAC's we know
+
+dhcp-range={{ mgmt_ip_first_dhcp }},{{ mgmt_ip_last_dhcp }},365d
+dhcp-option=option:router,{{ mgmt_ip_gateway }}
+dhcp-authoritative
+dhcp-leasefile=/var/lib/dnsmasq/dnsmasq.leases
+
+dhcp-match=set:bios,60,PXEClient:Arch:00000
+dhcp-boot=tag:bios,undionly.kpxe,{{ plath_mgmt_host_ip_table.get(inventory_hostname) }}
+
+dhcp-match=set:efi64,60,PXEClient:Arch:00009
+dhcp-boot=tag:efi64,ipxe.efi,{{ plath_mgmt_host_ip_table.get(inventory_hostname) }}
+
+dhcp-match=set:efi64,60,PXEClient:Arch:00007
+dhcp-boot=tag:efi64,ipxe.efi,{{ plath_mgmt_host_ip_table.get(inventory_hostname) }}
+
+enable-tftp
+tftp-no-blocksize
+tftp-root=/usr/share/nginx/html/ipxes/
+
+dhcp-boot=tag:bios,undionly.kpxe
+#dhcp-boot=tag:efi64,ipxe.efi
+dhcp-boot=tag:efi64,snponly.efi
+
+local=/{{ plath_domain }}/
+domain={{ basedomain }}
+
+{{"listen-address=127.0.0.1,"}}{{ plath_mgmt_host_ip_table.get(inventory_hostname) }}
+
+{% set count = namespace(value=5) %}
+{% for host in groups['tag_plath_mgmt_networking'] %}
+{{"address=/"}}{{ host }}/{{ mgmt_ip_network_cidr | ansible.utils.nthhost(count.value) }}
+{% set count.value = count.value + 1 %}
+{% endfor %}
+
+{{"address=/vip."}}{{ plath_domain }}/{{ mgmt_vip }}

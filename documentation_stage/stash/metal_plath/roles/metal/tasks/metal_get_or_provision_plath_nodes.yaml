@@ -1,0 +1,48 @@
+- name: metal_get_or_provision_plath_01
+  equinix.cloud.metal_device:
+    project_id: YOURID
+    metal_api_token: YOURTOKEN
+    hostname: "plath-{{ plath_domain }}-01"
+    tags: plath,plath_harvester,plath_node,plath_ansible,tag_plath_mgmt_networking
+    operating_system: custom_ipxe
+    always_pxe: true
+    ipxe_script_url: "http://{{ ncb_private_ip }}:81/ipxe/stall.ipxe"
+    metro: "{{ metal_metro }}"
+    plan: "{{ metal_plath_node_config }}"
+    state: present
+    ip_addresses:
+      - address_family: 4
+        public: false
+  async: 500
+  poll: 0
+  register: metal_get_or_provision_plath_output
+
+- name: metal_get_or_provision_plath_02
+  equinix.cloud.metal_device:
+    project_id: YOURID
+    metal_api_token: YOURTOKEN
+    hostname: "plath-{{ plath_domain }}-02"
+    tags: plath,plath_harvester,plath_node,plath_ansible,plath_mgmt_networking
+    operating_system: custom_ipxe
+    always_pxe: true
+    ipxe_script_url: "http://{{ ncb_private_ip }}:81/ipxe/stall.ipxe"
+    metro: "{{ metal_metro }}"
+    plan: "{{ metal_plath_node_config }}"
+    state: present
+    ip_addresses:
+      - address_family: 4
+        public: false
+  async: 500
+  poll: 0
+  register: metal_get_or_provision_plath_output
+
+# The gist here is we want the instances to be laucned async
+# And then catch them all at success, because we need the instances to be "green"
+# Making API calls to instances that are provisioning -> can cause bad things
+- name: metal_get_or_provision_plath_async_wait
+  async_status:
+    jid: "{{ metal_get_or_provision_plath_output.ansible_job_id }}"
+  register: job_result
+  until: job_result.finished
+  retries: 100
+  delay: 10

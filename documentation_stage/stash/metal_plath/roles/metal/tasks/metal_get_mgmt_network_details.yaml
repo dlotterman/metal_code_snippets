@@ -1,0 +1,28 @@
+# Metal Gateways with Private IPs are a little weird.
+# Private IPs dont handle reservation requests quite the same way
+# Instead of creating a GW with a reservation like public elastic blocks
+# You create the GW with a requested size of private block and Metal cuts it off a new one for the request
+# You then need to get the ID afterewards since the decision is made on the platform side
+
+# - name: metal_get_mgmt_elastic_reservation_id_from_gateway
+  # ansible.builtin.debug:
+    # msg: "{{ metal_get_or_provision_mgmt_metal_gateway_output.json.ip_reservation.href | split('/') | last }}"
+
+# - name: metal_get_mgmt_elastic_reservation_id_from_gateway
+  # ansible.builtin.set_fact:
+    # mgmt_reservation: "{{ metal_get_or_provision_mgmt_metal_gateway_output.json.ip_reservation.href | split('/') | last }}"
+# - name: haha
+  # debug:
+    # msg:
+      # - "metal_get_or_provision_plath_mgmt_ip_reservation_output.json"
+      # - "{{ mgmt_elastic_reservation_id }}"
+
+# - name: metal_get_or_provision_plath_mgmt_ip_reservation
+  # equinix.cloud.metal_reserved_ip_block:
+    # project_id:
+    # metal_api_token:
+    # metro: "{{ metal_metro }}"
+    # id: mgmt_reservation
+    # type: private_ipv4
+    # quantity: 16
+  # register: metal_get_or_provision_plath_mgmt_ip_reservation_output

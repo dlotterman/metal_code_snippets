@@ -1,0 +1,2 @@
+---
+- include_tasks: metal_get_or_provision_ncb.yaml

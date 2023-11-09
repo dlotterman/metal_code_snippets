@@ -1,0 +1,8 @@
+- name: metal_get_or_provision_ncb_wait_for_cockpit
+  ansible.builtin.wait_for:
+    delay: 1
+    host: "{{ hostvars.get(item).ansible_host }}"
+    port: 9090
+    timeout: 1000
+  loop: "{{ groups.tag_plath_ncb }}"
+  when: metal_get_or_provision_ncb_output.changed

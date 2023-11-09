@@ -1,0 +1,11 @@
+---
+metal_project_id: "YOUR_ID"
+metal_facility: sv15
+metal_metro: sv
+
+metal_ncb_config: "m3.small.x86"
+metal_plath_node_config: "m3.small.x86"
+metal_plath_num_control_hosts: 3
+metal_ocp_worker_host_config: "m3.small.x86"
+metal_ocp_num_worker_hosts: 1
+metal_ip_block_size: 16

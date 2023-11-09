@@ -1,0 +1,22 @@
+---
+- include_role:
+    name: metal
+    tasks_from: metal_get_or_provision_mgmt_metal_gateway.yaml
+    apply:
+      delegate_to: localhost
+- include_role:
+    name: metal
+    tasks_from: metal_get_plath_networking_node_details.yaml
+    apply:
+      delegate_to: localhost
+- include_role:
+    name: metal
+    tasks_from: metal_build_mac_tables.yaml
+    apply:
+      delegate_to: localhost
+
+- include_tasks: opsbox_get_opsbox_details.yaml
+- include_tasks: opsbox_configure_ipxe.yaml
+- include_tasks: opsbox_configure_ncb_plath_mgmt_vlan_interface.yaml
+- include_tasks: opsbox_configure_dnsmasq.yaml
+- include_tasks: opsbox_configure_ncb_for_node_provisioning.yaml
