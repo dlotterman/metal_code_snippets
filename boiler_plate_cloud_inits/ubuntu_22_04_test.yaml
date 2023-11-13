@@ -1,0 +1,19 @@
+#cloud-config
+
+# Package updates are handled below
+package_upgrade: false
+package_reboot_if_required: false
+
+
+packages:
+  - fail2ban
+
+runcmd:
+  - [touch, /var/tmp/cloudinit.runcmd]
+
+write_files:
+    - path: "/var/tmp/cloudinit.writefile"
+      permissions: "0644"
+      owner: "root:root"
+      content: |
+        test

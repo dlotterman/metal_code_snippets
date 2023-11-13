@@ -16,6 +16,4 @@ OUTPUT=$(curl -s "https://api.equinix.com/metal/v1/organizations/$ORG" \
 sleep 1
 if (echo $OUTPUT | jq -e 'has("errors")' > /dev/null); then
         echo $OUTPUT | jq
-else
-        echo "Done..."
 fi
