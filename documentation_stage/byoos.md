@@ -14,7 +14,7 @@ The faster you try to move the slower you will go. Each widget needs to be prope
 
 Slower is better.
 
-When you are done with day-0, day-1/2 can be a reward full of herculean tasks achieved quickly. There are Equinix Metal customers who used iPXE to re-install their custom OS as part of their CI/CD or deployment automation. Custom iPXE installs can take as little as 3-5 minutes to turn around a provision with complete control. The power and value is significant.
+When you are done with day-0, day-1/2 can be a reward full of herculean tasks achieved quickly. There are Equinix Metal customers who use `custom_ipxe` to re-install their custom OS as part of their CI/CD or deployment automation. `custom_ipxe` installs can take as little as 3-5 minutes to turn around a provision with complete control. The power and value is significant.
 
 ### Moving fast
 If you really want to move fast, use an Equinix Metal provided image and install your software to that image, or run your OS in a VM on Equinix Metal. Tools like [ncb](https://github.com/dlotterman/metal_code_snippets/tree/main/virtual_appliance_host/no_code_with_guardrails) can make this easy.
@@ -22,8 +22,8 @@ If you really want to move fast, use an Equinix Metal provided image and install
 
 ## What do you want to install?
 
-- I want to install my specific version of a common Linux distribution, packaged in ISO or HTTP repo hosted format
-    - Great! You're in luck, as Linux's use of iPXE as a core tool has made this fairly easy! Just understand the [challenges](https://github.com/dlotterman/metal_code_snippets/blob/main/documentation_stage/byoos.md#things-that-make-custom_ipxe-with-equinix-metal-hard) and then skip [here](https://github.com/dlotterman/metal_code_snippets/blob/main/documentation_stage/byoos.md#installing-common-linux-distributions)
+- I want to install my specific version of a common Linux distribution, packaged in ISO or HTTP repo hosted format, or something based off a common linux installer
+    - Great! You're in luck, as Linux's use of iPXE as a core tool has made this fairly easy! Just understand the [challenges](https://github.com/dlotterman/metal_code_snippets/blob/main/documentation_stage/byoos.md#things-that-make-custom_ipxe-with-equinix-metal-hard) and then skip [here](https://github.com/dlotterman/metal_code_snippets/blob/main/documentation_stage/byoos.md#installing-common-linux-distributions).
 
 - I want to install my specific FreeBSD or other Unix
     - You may have varying degrees of difficulty ahead of you. While FreeBSD and OpenBSD both have mature network installation suites, they are dependent on a more traditional install chain than the shortcuts iPXE makes.
@@ -162,7 +162,7 @@ Some examples of iPXE scripts for common Linux distributions can be found [here]
 
 You can then use [kickstart](https://access.redhat.com/documentation/en-us/red_hat_enterprise_linux/9/html/performing_an_advanced_rhel_9_installation/kickstart-installation-basics_installing-rhel-as-an-experienced-user) or [pre-seed ](https://www.debian.org/releases/stable/amd64/apb.en.html) files to automate the install.
 
-The common [Equinix Metal documentation](https://deploy.equinix.com/developers/guides/what-is-ipxe/), if started from the
+The common [Equinix Metal documentation](https://deploy.equinix.com/developers/guides/what-is-ipxe/) should be sufficient for this case, where [netboot](https://github.com/netbootxyz/netboot.xyz) can also be extremely useful to get up to speed quickly.
 
 ## Bring your own existing OS install toolchains
 
