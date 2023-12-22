@@ -23,7 +23,7 @@ If you really want to move fast, use an Equinix Metal provided image and install
 ## What do you want to install?
 
 - I want to install my specific version of a common Linux distribution, packaged in ISO or HTTP repo hosted format
-    - Great! You're in luck, as Linux's use of iPXE as a core tool has made this fairly easy! Skip to "installing common linux " # TODO
+    - Great! You're in luck, as Linux's use of iPXE as a core tool has made this fairly easy! Just understand the [challenges](https://github.com/dlotterman/metal_code_snippets/blob/main/documentation_stage/byoos.md#things-that-make-custom_ipxe-with-equinix-metal-hard) and then skip [here](https://github.com/dlotterman/metal_code_snippets/blob/main/documentation_stage/byoos.md#installing-common-linux-distributions)
 
 - I want to install my specific FreeBSD or other Unix
     - You may have varying degrees of difficulty ahead of you. While FreeBSD and OpenBSD both have mature network installation suites, they are dependent on a more traditional install chain than the shortcuts iPXE makes.
@@ -47,9 +47,9 @@ If you really want to move fast, use an Equinix Metal provided image and install
     - Run the VMDK or image as a VM on Metal, this is easy with tools like [ncb](https://github.com/dlotterman/metal_code_snippets/tree/main/virtual_appliance_host/no_code_with_guardrails)
 
 
-## Things that make `custom_ipxe` with Equinix Metal hard
+## Challenges that make `custom_ipxe` with Equinix Metal hard
 
-These are the challenges your BYOS Rube Goldberg machine **MUST** overcome. If you do not have an understanding of how your machine handles each one of these challenges, slow down and get sanity.
+These are the obstacles your BYO-OS Rube Goldberg machine **MUST** overcome. If you do not have an understanding of how your machine handles each one of these challenges, slow down and get sanity.
 
 ### Video / Keyboard / Mouse - Input / Output / Console
 
@@ -73,7 +73,7 @@ To clarify, an Equinix Metal chassis is *never* configured with customer facing 
 
 The BMC of an Equinix Metal instance is then configured to present a **SECOND** virtual serial interface to the OS.
 
-The SOS / OOB service is then an Equinix Metal application that accepts SSH connections as integrated with Equinix Metal's [SSH Keys]](https://deploy.equinix.com/developers/docs/metal/accounts/ssh-keys/), where a successful SSH authentication will enter a virtualized environment that securely connects to that virtualized serial port hosted on the BMC.
+The SOS / OOB service is then an Equinix Metal application that accepts SSH connections as integrated with Equinix Metal's [SSH Keys](https://deploy.equinix.com/developers/docs/metal/accounts/ssh-keys/), where a successful SSH authentication will enter a virtualized environment that securely connects to that virtualized serial port hosted on the BMC.
 
 **TLDR**:
 
