@@ -22,6 +22,7 @@ packages:
  - dnsutils
  - jq
  - rsync
+ - smartmontools
 
 groups:
  - cloud-users
@@ -51,7 +52,6 @@ runcmd:
   - [ modprobe, 8021q ]
   - [ rsync, -av, "/root/.ssh", /home/adminuser/ ]
   - [ chown, -R, "adminuser:cloud-users", "/home/adminuser/.ssh" ]
-  - [ sed, -i, -e, '/^PermitRootLogin/s/^.*$/PermitRootLogin no/', /etc/ssh/sshd_config ]
   - [ sed, -i, -e, '/^#MaxAuthTries/s/^.*$/MaxAuthTries 5/', /etc/ssh/sshd_config ]
   - [ sed, -i, -e, '/^X11Forwarding/s/^.*$/X11Forwarding no/', /etc/ssh/sshd_config ]
   - [ systemctl, disable, --now, sshd ]
@@ -114,3 +114,24 @@ write_files:
     content: |
       bonding
       8021q
+
+  - path: "/etc/smartd.conf"
+    permissions: "0644"
+    owner: "root:root"
+    append: true
+    content: |
+      DEVICESCAN -d auto -n standby -m <nomailer> -M exec /usr/share/smartmontools/smartd-runner
+
+  - path: "/etc/default/smartmontools"
+    permissions: "0644"
+    owner: "root:root"
+    append: true
+    content: |
+      start_smartd=yes
+
+  - path: "/etc/ssh/sshd_config"
+    permissions: "0644"
+    owner: "root:root"
+    append: true
+    content: |
+      PermitRootLogin no
