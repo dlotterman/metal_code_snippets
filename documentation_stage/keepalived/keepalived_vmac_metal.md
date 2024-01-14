@@ -42,8 +42,10 @@ INTER_A_VIP=172.17.16.230/32
 **With** *cloud-init*:
 ```
 metal device create --hostname $METAL_HOSTNAME --plan c3.medium.x86 --metro $METAL_METRO --operating-system ubuntu_22_04 --project-id $METAL_PROJ_ID -t "metalcli,keepalived" --userdata-file ~/code/github/metal_code_snippets/boiler_plate_cloud_inits/ubuntu_22_04_v1.mime
+```
 
 **Without** *cloud-init*:
+```
 metal device create --hostname $METAL_HOSTNAME --plan c3.medium.x86 --metro $METAL_METRO --operating-system ubuntu_22_04 --project-id $METAL_PROJ_ID -t "metalcli,keepalived"
 ```
 
