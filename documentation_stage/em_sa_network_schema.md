@@ -9,3 +9,9 @@
 | `inter_a`       | `3850`    | `172.16.249.0/24`       |
 | `inter_b`       | `3750`    | `192.168.248.0/24`      |
 | `libvirt/guest` | `4`       | `DHCP 192.168.122.0/24` |
+
+
+
+## Magic numbers
+- `01`, as in `172.16.100.1` is reserved for `ncb`
+- `239`, as in `172.16.100.239` is reserved for VMW VCSA usage

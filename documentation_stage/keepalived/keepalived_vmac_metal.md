@@ -161,7 +161,7 @@ filter accept_all {
   accept;
 }
 
-filter side_a_only {
+filter side_a_z_only {
     if net ~ $SIDE_A_NETWORK then accept;
     else reject;
 }
@@ -183,8 +183,11 @@ protocol kernel {
   scan time 20; # Scan kernel routing table every 20 seconds
   ipv4
     {
-        import none; # Default is import all
-        export none; # Default is export none
+        import all;
+        export filter {
+            if source = RTS_STATIC then reject;
+            accept;
+      };
     };
 }
 
@@ -197,9 +200,13 @@ protocol bgp observer1 {
     export filter side_a_only;
     import all;
   };
+  #interface \"vrrp.*\";
   local $(echo $INTER_A_VIP | awk -F '/' '{print$1}') as 65202;
   password \"Equinixmetal05\";
+  multihop;
+  next hop self;
   neighbor $OBSERVER_IP as 65001;
+  source address $INTER_A_VIP;
 }
 
 " | ssh adminuser@$HOSTNAME_PIP0 "sudo tee /etc/bird/bird.conf"

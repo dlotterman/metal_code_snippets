@@ -690,6 +690,7 @@ write_files:
       synth-domain=mgmta.gtst.local,$MGMT_A_NET$MGMT_A_CIDR,host-*
       synth-domain=mgmtb.gtst.local,$MGMT_B_NET$MGMT_B_CIDR,host-*
 
+      host-record=egtst-vcsa01.gtst.local,172.16.100.239
       address=/$HOSTNAME.mgmta.gtst.local/$HOST_IP_MGMT_A
       address=/$HOSTNAME.mgmta.gtst.local/$HOST_IP_MGMT_B
 
