@@ -56,6 +56,9 @@ Have the above CLI'ed with SSH + ESXi commands.
 ## Launch ncb-01
 ```
 METAL_PROJ_ID=###YOUR_PROJECT_ID
+VCSA_URL=###YOUR_HOSTED_VSCA
+## take the ending number from your esxi-20 hostname
+TMP_ESXI_HOST_INT=20
 METAL_HOSTNAME=ncb-01
 METAL_MGMT_A_VLAN=3880
 METAL_INTER_A_VLAN=3850
@@ -86,7 +89,7 @@ metal port vlan -i $HOSTNAME_BOND0 -a $METAL_INTER_A_VLAN
 
 
 ssh adminuser@$HOSTNAME_PIP0 "mkdir -p /mnt/util/export/nfs1/isos"
-ssh adminuser@$HOSTNAME_PIP0 "wget --quiet -O /mnt/util/export/nfs1/isos/vmwarevcsaall703.iso http://ipxe.dlott.casa/util/vmware/vmwarevcsaall703.iso"
+ssh adminuser@$HOSTNAME_PIP0 "wget --quiet -O /mnt/util/export/nfs1/isos/vmwarevcsaall703.iso $VCSA_URL"
 
 metal device get -i $HOSTNAME_ID -o json | jq . | grep passw
 
@@ -101,7 +104,7 @@ echo '
     "__comments": "Equinix GTST cli based VCSA deployment, expects ncb-01",
     "new_vcsa": {
         "esxi": {
-            "hostname": "172.16.100.14",
+            "hostname": "172.16.100.20",
             "username": "root",
             "password": "Equinixmetal0$",
             "deployment_network": "vm_3880",

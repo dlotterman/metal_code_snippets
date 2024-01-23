@@ -39,6 +39,7 @@ packages:
   - cockpit-bridge
   - cockpit-pcp
   - cockpit-packagekit
+  - wireguard-tools
 groups:
   - cloud-users
   - export-users
