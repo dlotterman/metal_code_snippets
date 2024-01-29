@@ -26,6 +26,11 @@ You really only need to set the first two envs (`METAL_INT`, `METAL_PROJ_ID`), t
 
 - Networks taken from [GTST Network Schema](https://github.com/dlotterman/metal_code_snippets/blob/main/documentation_stage/em_sa_network_schema.md)
 
+This document presumes you will launch 3x instances:
+
+- 2x "routers" running `bird`, our objects of focus
+- 1x "observer", running `FRR`, our control / test device
+
 ```
 METAL_INT=###YOUR_INT_HERE
 METAL_PROJ_ID=####YOUR_PROJ_ID_HERE
@@ -91,7 +96,8 @@ ssh adminuser@$HOSTNAME_PIP0 "sudo apt-get update && sudo apt-get upgrade -y && 
 Wait for reboot:
 ```
 ssh adminuser@$HOSTNAME_PIP0 "sudo apt-get install keepalived bird2 bird2-doc -y && sudo systemctl stop bird"
-
+```
+```
 ssh adminuser@$HOSTNAME_PIP0 "sudo systemctl stop bird"
 
 ssh adminuser@$HOSTNAME_PIP0 "modprobe 8021q && echo "8021q" | sudo tee -a /etc/modules"
@@ -152,8 +158,7 @@ ssh adminuser@$HOSTNAME_PIP0 "sudo ip addr add $SIDE_A_NETWORK dev lo:0"
 
 ### Template bird
 
-You will see this warning in the logs, it's fine
-# https://bird.network.cz/pipermail/bird-users/2015-November/009996.html
+You will see this warning in the logs, it's fine: https://bird.network.cz/pipermail/bird-users/2015-November/009996.html
 
 ```
 echo "
@@ -206,7 +211,7 @@ protocol bgp observer1 {
   multihop;
   next hop self;
   neighbor $OBSERVER_IP as 65001;
-  source address $INTER_A_VIP;
+  source address $(echo $INTER_A_VIP | awk -F '/' '{print$1}');
 }
 
 " | ssh adminuser@$HOSTNAME_PIP0 "sudo tee /etc/bird/bird.conf"
@@ -228,8 +233,7 @@ MGMT_A_IP=172.16.100
 INTER_A_IP=172.17.16
 INSTANCE_PAIR=20
 INTER_A_VIP=172.17.16.230/32
-SIDE_A_NETWORK=10.50.50.0/24
-LOCAL_NETWORK=10.60.60.0/24
+SIDE_Z_NETWORK=10.60.60.0/24
 ```
 
 ```
@@ -269,10 +273,12 @@ metal port vlan -i $HOSTNAME_BOND0 -a $METAL_INTER_A_VLAN
 ### Stuff
 ```
 ssh adminuser@$HOSTNAME_PIP0 "sudo apt-get update && sudo apt-get upgrade -y && sudo reboot"
+```
 
+```
 ssh adminuser@$HOSTNAME_PIP0 "modprobe 8021q && echo "8021q" | sudo tee -a /etc/modules"
 
-ssh adminuser@$HOSTNAME_PIP0 "sudo apt-get install -y frr frr-doc"
+ssh adminuser@$HOSTNAME_PIP0 "sudo apt-get install -y frr frr-doc && systemctl stop frr"
 
 ssh adminuser@$HOSTNAME_PIP0 "sudo ip link add link bond0 name bond0.$METAL_MGMT_A_VLAN type vlan id $METAL_MGMT_A_VLAN && sudo ip addr add $MGMT_A_IP.$METAL_INT/24 dev bond0.$METAL_MGMT_A_VLAN && sudo ip link set dev bond0.$METAL_MGMT_A_VLAN up"
 
@@ -360,5 +366,5 @@ end
 ```
 
 ```
-ssh adminuser@$HOSTNAME_PIP0 "sudo systemctl start f"
+ssh adminuser@$HOSTNAME_PIP0 "sudo systemctl start frr"
 ```
