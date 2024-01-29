@@ -149,6 +149,10 @@ vrrp_instance VC_1_VI_1 {
     virtual_ipaddress {
         $INTER_A_VIP
     }
+
+    notify_stop "systemctl stop frr"
+    notify_backup "systemctl stop frr"
+    notify_master "systemctl start frr"
 }
 " | ssh adminuser@$HOSTNAME_PIP0 "sudo tee /etc/keepalived/keepalived.conf"
 ```
