@@ -116,7 +116,7 @@ ssh adminuser@$HOSTNAME_PIP0 "sudo ip link add link bond0 name bond0.$METAL_MGMT
 
 ssh adminuser@$HOSTNAME_PIP0 "sudo ip link add link bond0 name bond0.$METAL_INTER_A_VLAN type vlan id $METAL_INTER_A_VLAN && sudo ip addr add $INTER_A_IP.$METAL_INT/24 dev bond0.$METAL_INTER_A_VLAN && sudo ip link set dev bond0.$METAL_INTER_A_VLAN up"
 
-ssh adminuser@$HOSTNAME_PIP0 "sudo ip link set bond0 mtu 9000 && sudo ufw allow in on bond0.$METAL_MGMT_A_VLAN && sudo ufw allow in on bond0.$METAL_INTER_A_VLAN && sudo allow in sudo ufw allow from $INTER_A_IP.0/24"
+ssh adminuser@$HOSTNAME_PIP0 "sudo ip link set bond0 mtu 9000 && sudo ufw allow in on bond0.$METAL_MGMT_A_VLAN && sudo ufw allow in on bond0.$METAL_INTER_A_VLAN && sudo ufw allow from $INTER_A_IP.0/24"
 ```
 ### Template keepalived
 ```
@@ -167,7 +167,7 @@ Credit to linode link at top for this.
 ```
 echo '#!/bin/bash
 
-logger "notify_keepalived: starting keepalived notify script, state: $state"
+logger "notify_keepalived: starting keepalived notify script, state: $1"
 
 function check_state {
 
@@ -362,7 +362,7 @@ ssh adminuser@$HOSTNAME_PIP0 "sudo ip link add link bond0 name bond0.$METAL_MGMT
 
 ssh adminuser@$HOSTNAME_PIP0 "sudo ip link add link bond0 name bond0.$METAL_INTER_A_VLAN type vlan id $METAL_INTER_A_VLAN && sudo ip addr add $INTER_A_IP.$METAL_INT/24 dev bond0.$METAL_INTER_A_VLAN && sudo ip link set dev bond0.$METAL_INTER_A_VLAN up"
 
-ssh adminuser@$HOSTNAME_PIP0 "sudo ip link set bond0 mtu 9000 && sudo ufw allow in on bond0.$METAL_MGMT_A_VLAN && sudo ufw allow in on bond0.$METAL_INTER_A_VLAN"
+ssh adminuser@$HOSTNAME_PIP0 "sudo ip link set bond0 mtu 9000 && sudo ufw allow in on bond0.$METAL_MGMT_A_VLAN && sudo ufw allow in on bond0.$METAL_INTER_A_VLAN && sudo ufw allow from $INTER_A_IP.0/24"
 
 ssh adminuser@$HOSTNAME_PIP0 "sudo ip addr add $SIDE_Z_NETWORK dev lo:0"
 ```
@@ -432,7 +432,6 @@ router bgp 65001
  !
 !
 ip prefix-list Z_SIDE_ALLOW_LIST seq 5 permit $SIDE_Z_NETWORK
-ip prefix-list Z_SIDE_ALLOW_LIST seq 10 deny any
 !
 route-map ALLOW-ALL permit 100
 !
@@ -457,3 +456,7 @@ ssh adminuser@$HOSTNAME_PIP0 "sudo systemctl start frr"
 - Firewalls correct?
     - Router to observer on `179/tcp` should succeed
     - Observer to router on `179/tcp` like will not work because of VMAC / macvlan stuff on keepalived VIP
+
+- Double, tripple check your addressing in your `ENV` builds. Are the right IPs getting rendered to the right spots of each file?
+
+- Double tripple check your network specification
