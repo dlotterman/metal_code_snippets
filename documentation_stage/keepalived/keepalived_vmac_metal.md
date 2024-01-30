@@ -13,6 +13,9 @@ The guide is meant to be copy paste-able if you follow the spirit of it. Each `c
 - https://github.com/acassen/keepalived/blob/master/doc/NOTE_vrrp_vmac.txt
 - https://blog.kintone.io/entry/bird
 - https://erunix.wordpress.com/2021/11/11/bird2-config-filter/
+- https://github.com/acassen/keepalived/issues/1743
+- https://www.linode.com/docs/products/compute/compute-instances/guides/failover-bgp-with-keepalived/
+- https://www.claudiokuenzler.com/blog/994/how-to-keepalived-execute-scripts-non-root-user
 
 ## Requirements
 
@@ -20,31 +23,31 @@ This guide assumes a modern `bash` shell with [metal-cli](https://deploy.equinix
 
 Optional checkout of this repo for [cloud-init](https://github.com/dlotterman/metal_code_snippets/tree/main/boiler_plate_cloud_inits) an extra choice.
 
-
+- Networks taken from [GTST Network Schema](https://github.com/dlotterman/metal_code_snippets/blob/main/documentation_stage/em_sa_network_schema.md)
 
 ## Routers
 
 These will be out standing "routers" that will speak `BGP` via a `keepalived` VIP.
 
 ### ENVs / Configuration
-You really only need to set the first three envs (`METAL_INT`, `METAL_PROJ_ID` and `OBSERVER_IP`), the rest will assume / build from those inputs presuming `metal` is installed correct (see `metal-cli` above).
+You really only need to set the first three envs (`METAL_INT`, `METAL_PROJ_ID` and `OBSERVER_IP`, `INSTANCE_PAIR`), the rest will assume / build from those inputs presuming `metal` is installed correct (see `metal-cli` above).
 
-- Networks taken from [GTST Network Schema](https://github.com/dlotterman/metal_code_snippets/blob/main/documentation_stage/em_sa_network_schema.md)
+This document presumes you will launch 3x instances, where 2x of those instances, the *"router"* will be based of the below environment variables.
 
-This document presumes you will launch 3x instances:
+Copy the below to a scratch pad and edit them appropriately. The *"observer"* instance will be launched later (below)
 
 
 ```
 METAL_INT=###YOUR_INT_HERE
 METAL_PROJ_ID=####YOUR_PROJ_ID_HERE
 OBSERVER_IP=##YOUR_OBSERVER_INT_HERE
+INSTANCE_PAIR=##THE INT OF THE OTHER INSTANCE, so if the other router's "int" is 10, put ten here.
 METAL_HOSTNAME=router-$METAL_INT
 METAL_MGMT_A_VLAN=3880
 METAL_INTER_A_VLAN=3850
 METAL_METRO=sv
 MGMT_A_IP=172.16.100
 INTER_A_IP=172.17.16
-INSTANCE_PAIR=20
 INTER_A_VIP=172.17.16.230/32
 SIDE_A_NETWORK=172.16.20.0/24
 SIDE_Z_NETWORK=172.16.40.0/24
@@ -100,7 +103,7 @@ ssh adminuser@$HOSTNAME_PIP0 "sudo apt-get update && sudo apt-get upgrade -y && 
 Wait for reboot:
 
 ```
-ssh adminuser@$HOSTNAME_PIP0 "sudo apt-get install keepalived frr frr-doc -y && sudo systemctl stop bird"
+ssh adminuser@$HOSTNAME_PIP0 "sudo apt-get install keepalived frr frr-doc -y && sudo systemctl stop frr"
 ```
 ```
 ssh adminuser@$HOSTNAME_PIP0 "sudo systemctl stop frr"
@@ -113,7 +116,7 @@ ssh adminuser@$HOSTNAME_PIP0 "sudo ip link add link bond0 name bond0.$METAL_MGMT
 
 ssh adminuser@$HOSTNAME_PIP0 "sudo ip link add link bond0 name bond0.$METAL_INTER_A_VLAN type vlan id $METAL_INTER_A_VLAN && sudo ip addr add $INTER_A_IP.$METAL_INT/24 dev bond0.$METAL_INTER_A_VLAN && sudo ip link set dev bond0.$METAL_INTER_A_VLAN up"
 
-ssh adminuser@$HOSTNAME_PIP0 "sudo ip link set bond0 mtu 9000 && sudo ufw allow in on bond0.$METAL_MGMT_A_VLAN && sudo ufw allow in on bond0.$METAL_INTER_A_VLAN"
+ssh adminuser@$HOSTNAME_PIP0 "sudo ip link set bond0 mtu 9000 && sudo ufw allow in on bond0.$METAL_MGMT_A_VLAN && sudo ufw allow in on bond0.$METAL_INTER_A_VLAN && sudo allow in sudo ufw allow from $INTER_A_IP.0/24"
 ```
 ### Template keepalived
 ```
@@ -121,10 +124,10 @@ echo "
 global_defs {
     log_unknown_vrids
     enable_script_security
+    script_user adminuser
     max_auto_priority 40
 	nftables
 	nftables_counters
-    use_pid_dir
 }
 
 vrrp_instance VC_1_VI_1 {
@@ -150,17 +153,54 @@ vrrp_instance VC_1_VI_1 {
         $INTER_A_VIP
     }
 
-    notify_stop "systemctl stop frr"
-    notify_backup "systemctl stop frr"
-    notify_master "systemctl start frr"
+    notify_stop \"/var/tmp/notify_keepalived.sh Fault\"
+    notify_backup \"/var/tmp/notify_keepalived.sh Backup\"
+    notify_master \"/var/tmp/notify_keepalived.sh Master\"
+
 }
 " | ssh adminuser@$HOSTNAME_PIP0 "sudo tee /etc/keepalived/keepalived.conf"
 ```
 
-### Start keepalived
+### Template keepalived / frr script
+
+Credit to linode link at top for this.
 ```
-ssh adminuser@$HOSTNAME_PIP0 "sudo systemctl start keepalived"
+echo '#!/bin/bash
+
+logger "notify_keepalived: starting keepalived notify script, state: $state"
+
+function check_state {
+
+        if [[ "$state" == "Master" ]]; then
+                logger "notify_keepalived: attempting to start frr via keepalived notify script"
+                sudo systemctl restart frr
+        else
+                logger "notify_keepalived: attempting to stop frr via keepalived notify script"
+                sudo systemctl stop frr
+        fi
+}
+
+function main {
+        local state=$1
+        case $state in
+        Master)
+                check_state Master;;
+        Backup)
+                check_state Backup;;
+        Fault)
+                check_state Fault;;
+        *)
+                echo "[ERR] Provided arguement is invalid"
+        esac
+}
+main "$1"
+' | ssh adminuser@$HOSTNAME_PIP0 "tee /var/tmp/notify_keepalived.sh"
 ```
+
+```
+ssh adminuser@$HOSTNAME_PIP0 "sudo chmod 0755 /var/tmp/notify_keepalived.sh"
+```
+
 
 ### Add local Network
 ```
@@ -246,6 +286,11 @@ end
 " | ssh adminuser@$HOSTNAME_PIP0 "sudo tee /etc/frr/frr.conf"
 ```
 
+### Start keepalived
+```
+ssh adminuser@$HOSTNAME_PIP0 "sudo systemctl start keepalived"
+```
+
 ```
 ssh adminuser@$HOSTNAME_PIP0 "sudo systemctl start frr"
 ```
@@ -257,7 +302,7 @@ METAL_PROJ_ID=###
 METAL_HOSTNAME=observer-$METAL_INT
 METAL_MGMT_A_VLAN=3880
 METAL_INTER_A_VLAN=3850
-METAL_METRO=da
+METAL_METRO=sv
 MGMT_A_IP=172.16.100
 INTER_A_IP=172.17.16
 INTER_A_VIP=172.17.16.230/32
@@ -359,6 +404,8 @@ service integrated-vtysh-config
 debug bgp neighbor-events
 debug bgp updates
 debug bgp zebra
+debug bgp updates in
+debug bgp updates out
 !
 ip router-id $MGMT_A_IP.$METAL_INT
 !
@@ -384,7 +431,7 @@ router bgp 65001
  exit-address-family
  !
 !
-ip prefix-list Z_SIDE_ALLOW_LIST seq 5 permit $SIDE_Z_NETWORK le 30
+ip prefix-list Z_SIDE_ALLOW_LIST seq 5 permit $SIDE_Z_NETWORK
 ip prefix-list Z_SIDE_ALLOW_LIST seq 10 deny any
 !
 route-map ALLOW-ALL permit 100
