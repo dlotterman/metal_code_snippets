@@ -448,3 +448,12 @@ end
 ```
 ssh adminuser@$HOSTNAME_PIP0 "sudo systemctl start frr"
 ```
+
+
+
+
+#### Troubleshooting
+
+- Firewalls correct?
+    - Router to observer on `179/tcp` should succeed
+    - Observer to router on `179/tcp` like will not work because of VMAC / macvlan stuff on keepalived VIP
