@@ -32,6 +32,9 @@ Please note, as with anything in this reposistory, this resource is not supporte
 
 **Quick Bullet Points of Toils Solved:**
 
+- Moves `root` user to -> `adminuser`
+    - Use of root for outside access is restricted, access outside in with user `adminuser`
+    - `adminuser`'s password should be the same password as the root password assigned by Metal.
 - [Management UI](https://access.redhat.com/documentation/en-us/red_hat_enterprise_linux/9/html/managing_systems_using_the_rhel_9_web_console/index) ([Cockpit](https://cockpit-project.org/) via self-signed HTTPS over [Metal Internet](https://deploy.equinix.com/developers/docs/metal/networking/ip-addresses/#public-ipv4-subnet))
 - VM hosting via [libvirt](https://libvirt.org/) (accesible in [Cockpit](https://access.redhat.com/documentation/en-us/red_hat_enterprise_linux/9/html/managing_systems_using_the_rhel_9_web_console/managing-virtual-machines-in-the-web-console_system-management-using-the-rhel-9-web-console))
 - Container hosting via [podman](https://podman.io/) (accesible in [Cockpit](https://github.com/cockpit-project/cockpit-podman))

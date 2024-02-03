@@ -16,6 +16,7 @@ The guide is meant to be copy paste-able if you follow the spirit of it. Each `c
 - https://github.com/acassen/keepalived/issues/1743
 - https://www.linode.com/docs/products/compute/compute-instances/guides/failover-bgp-with-keepalived/
 - https://www.claudiokuenzler.com/blog/994/how-to-keepalived-execute-scripts-non-root-user
+- https://bsdrp.net/documentation/examples/bgp_route_reflector_and_confederation_using_quagga_and_bird
 
 ## Requirements
 

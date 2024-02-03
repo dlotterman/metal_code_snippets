@@ -457,7 +457,7 @@ write_files:
     content: |
       logger "running /var/tmp/ncb/bin/ncb_adminuser_mangle.sh"
       pwhash=$(sudo getent shadow root | cut -d: -f2)
-      sudo usermod -p $pwhash adminuser
+      sudo usermod -p "$pwhash" adminuser
       usermod -a -G export-users root
       mkdir /home/adminuser/bin
       chown -R adminuser:cloud-users /home/adminuser/bin
