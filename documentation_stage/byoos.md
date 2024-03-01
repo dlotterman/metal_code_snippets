@@ -8,7 +8,7 @@ So you want to bring your own operating system installation to an Equinix Metal?
 
 The day-0 learning curve for BYO-OS with Equinix Metal is steep. There is no way around this.
 
-Because the power and value of that raw primitives being delivered by Equinix Metal essentially demand proper ordering and understanding by an operator for it to work at all. That is to say explicitly, BYO-OS with Equinix Metal will always be a Rube Goldberg machine. When you are done, it may be a simple machine, it may be an elegant machine, but BYO-OS with Equinix Metal will always be a Rube Goldberg machine. There is no winging it and hoping it works, it wont.
+The simplicity of the primitives being delivered by Equinix Metal demand proper ordering and understanding by an operator for them to work at all. That is to say explicitly, BYO-OS with Equinix Metal will always be a Rube Goldberg machine. When you are done, it may be a simple machine, it may be an elegant machine, but BYO-OS with Equinix Metal will always be a Rube Goldberg machine. There is no winging it and hoping it works, it wont.
 
 The faster you try to move the slower you will go. Each widget needs to be properly sized and placed before the next. If even one widget is out of place, the whole machine immediately stops working end to end.
 
@@ -22,8 +22,11 @@ If you really want to move fast, use an Equinix Metal provided image and install
 
 ## What do you want to install?
 
-- I want to install my specific version of a common Linux distribution, packaged in ISO or HTTP repo hosted format, or something based off a common linux installer
+- I want to install my specific version of a common Linux distribution, packaged in ISO or HTTP hosted repo format, or something based off a common linux installer
     - Great! You're in luck, as Linux's use of iPXE as a core tool has made this fairly easy! Just understand the [challenges](https://github.com/dlotterman/metal_code_snippets/blob/main/documentation_stage/byoos.md#things-that-make-custom_ipxe-with-equinix-metal-hard) and then skip [here](https://github.com/dlotterman/metal_code_snippets/blob/main/documentation_stage/byoos.md#installing-common-linux-distributions).
+
+- I want to bring my own OS, that has a well documented network install path such as PXE and can download it's needed install artifacts from an HTTP or equivalent hosted endpoint.
+    - Great! Your in luck, iPXE can generally be tricked into doing anything a traditional PXE install could do, it might just take some thought.
 
 - I want to install my specific FreeBSD or other Unix
     - You may have varying degrees of difficulty ahead of you. While FreeBSD and OpenBSD both have mature network installation suites, they are dependent on a more traditional install chain than the shortcuts iPXE makes.
@@ -50,6 +53,16 @@ If you really want to move fast, use an Equinix Metal provided image and install
 ## Challenges that make `custom_ipxe` with Equinix Metal hard
 
 These are the obstacles your BYO-OS Rube Goldberg machine **MUST** overcome. If you do not have an understanding of how your machine handles each one of these challenges, slow down and get sanity.
+
+### Asset Hosting
+
+Equinix Metal provides no asset or artifact hosting functionality as part of it's service offering, while many of it's feature paths are depedant on leveraging hosted assets, Custom iPXE is a perfect example of this.
+
+In order to install a server with a custom OS, you will likely need to host HTTP(s) accessible assets, likely over the public Internet. This can come from a service like HTTP accessible Object Storage, or from a simple HTTP server hosted **somewhere**.
+
+Often when working with PoC's on Equinix Metal, this can present an ordering or "Chicken and Egg" problem, where bootstrapping involves a custom OS, where the assets for that must be available before the bootstrap.
+
+This may require a little bit of thought and planning.
 
 ### Video / Keyboard / Mouse - Input / Output / Console
 

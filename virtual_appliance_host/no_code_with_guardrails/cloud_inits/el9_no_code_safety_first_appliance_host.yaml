@@ -120,6 +120,22 @@ runcmd:
   - - firewall-cmd
     - --permanent
     - --zone=internal
+    - --add-service=nfs
+  - - firewall-cmd
+    - --permanent
+    - --zone=internal
+    - --add-service=nfs3
+  - - firewall-cmd
+    - --permanent
+    - --zone=internal
+    - --add-service=mountd
+  - - firewall-cmd
+    - --permanent
+    - --zone=internal
+    - --add-service=rpc-bind
+  - - firewall-cmd
+    - --permanent
+    - --zone=internal
     - --add-source=172.16.253.0/24
   - - firewall-cmd
     - --permanent
@@ -758,9 +774,10 @@ write_files:
       source /var/tmp/ncb/etc/ncb.env
       curl -s https://metadata.platformequinix.com/metadata -o /tmp/metadata
 
-      mkdir -p /mnt/util/export/html/autoindex
-      echo "private network" > /mnt/util/export/index.html
-      echo "private network html audotindex" > /mnt/util/export/html/index.html
+      mkdir -p /mnt/util/export/http/autoindex
+      chown -R adminuser:export-users /mnt/util/export/http
+      echo "private network html audotindex" > /mnt/util/export/http/index.html
+      sed -i -e /"^        root         \/usr\/share\/nginx\/http"/s/^.*$/"        root         \/mnt\/util\/export\/http;"/ /etc/nginx/nginx.conf
       cat > /etc/nginx/conf.d/ncb_private.conf << EOL
         server {
             listen       $M_PRIV_IP:81;
@@ -789,7 +806,7 @@ write_files:
             listen       $HOST_IP_INTE_A:82;
             listen       $HOST_IP_INTE_B:82;
             server_name  _;
-            root         /mnt/util/export/html/;
+            root         /mnt/util/export/http/;
 
             # Load configuration files for the default server block.
             include /etc/nginx/default.d/*.conf;
