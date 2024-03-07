@@ -40,6 +40,7 @@ packages:
   - cockpit-pcp
   - cockpit-packagekit
   - wireguard-tools
+  - libnsl
 groups:
   - cloud-users
   - export-users
