@@ -1,6 +1,6 @@
 # Angeline the Diligent Purchaser for Bisco Foods
 
-Angeline is a recent addition for the Bisco Foods Vendor Management team, coming from an acquisition Bisco made of a regional supplier last year. She is respected, but known for being scrupilous, she has distinguished herself on the new team by assuming things should be the way they have been.
+Angeline is a recent addition for the [Bisco Foods](../orgs/bisco_foods.md) Vendor Management team, coming from an acquisition Bisco made of a regional supplier last year. She is respected, but known for being scrupilous, she has distinguished herself on the new team by assuming things should be the way they have been.
 
 
 ## Profesional Goals
