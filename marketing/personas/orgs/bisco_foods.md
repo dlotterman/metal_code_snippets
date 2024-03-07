@@ -1,10 +1,10 @@
-#Bisco Foods Holding Corp
+# Bisco Foods Holding Corp
 
 Bisco Foods is a large, international conglomarant of food and logisitics companies, based out of St. Louis MI and a member of the G1000. Listed on the NYSE, it is an anchor blue chip stock with stable revenue, but faces headwinds from inflation and global logistics instabality as well as global competition.
 
 As a conglomerant, Bisco Foods is really made up of hundreds of brands and subsidary companies picked up from M&A over the decades. Some of those orgs still maintain their own indepedent back office or supply chain related technology infrastructure.
 
-## Unique Technical Challenges to Bisco Foods
+## Unique Technical Challenges
 
 Bisco foods has all the same problems as any other mature North American enterprise, and manages it's IT purchasing to fall in line with G1000 norms. A recent CTO change brought in a "Everything to the cloud Mandate" roadmap that many established employees believe doesn't reflect the operational reality of the companies infrastructure.
 
