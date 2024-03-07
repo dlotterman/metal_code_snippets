@@ -3,7 +3,6 @@
 This is intended to be used to get more drive layout options out of an Equinix Metal instance with NVMe, example use cases being vSAN.
 
 - `esxcli nvme controller list`
-    -
 ```
 [root@m3-large-x86-01:~] esxcli nvme controller list
 Name                                                                                  Controller Number  Adapter  Transport Type  Is Online  Is VVOL
@@ -15,7 +14,6 @@ nqn.2014-08.org.nvmexpress_1344_Micron_9300_MTFDHAL3T8TDP_______________2145327D
 
 
 - `esxcli nvme controller identify -c nqn.2014-08.org.nvmexpress_1344_Micron_9300_MTFDHAL3T8TDP_______________2145327D9246 | grep CNTLID`
-    -
 ```
 [root@m3-large-x86-01:~] esxcli nvme controller identify -c nqn.2014-08.org.nvmexpress_1344_Micron_9300_MTFDHAL3T8TDP_______________2145327D9246 | grep CNTLID
 CNTLID       0x1
