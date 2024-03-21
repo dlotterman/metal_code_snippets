@@ -2,9 +2,20 @@
 
 Sizing a workload for Equinix Metal is generally a simple endeavor, given the primitives (CPU, RAM, Disk) involved. This document is supposed to be an informal potholes and practices review of the exercise of sizing a workload for Equinix Metal.
 
+Table of Contents:
+- Disk
+	- [RTO / RPO](https://github.com/dlotterman/metal_code_snippets/blob/main/marketing/operators_sizing_guide.md#key-rto--rpo-considerations)
+	- [Storage Appliance Minimums](https://github.com/dlotterman/metal_code_snippets/blob/main/marketing/operators_sizing_guide.md#minimum-sizes-for-storage-appliances)
+	- [Disk Performance](https://github.com/dlotterman/metal_code_snippets/blob/main/marketing/operators_sizing_guide.md#disk-performance)
+- CPU
+	- [Core vs vCPU vs Thread](https://github.com/dlotterman/metal_code_snippets/blob/main/marketing/operators_sizing_guide.md#disk-performance)
+    - [Single vs Dual Socket (Licensing)](https://github.com/dlotterman/metal_code_snippets/blob/main/marketing/operators_sizing_guide.md#single-vs-dual-socket-licensing)
+- [RVTools](https://github.com/dlotterman/metal_code_snippets/blob/main/marketing/operators_sizing_guide.md#rvtools)
+- [Specific Hardware / HCL](https://github.com/dlotterman/metal_code_snippets/blob/main/marketing/operators_sizing_guide.md#specifying-hardware-and-hcls)
+
 ## Equinix Metal instances are Dedicated Server Chassis, not virtualized instances
 
-It is often worth clarifying this repetitively, Equinix Metal instances are single tenant, Dedicated Servers (chassis) that are orchestrated in a way to behave similarly to **cloudy** instances, but they are **NOT** VMs. They are just Bare Metal Servers (chassis), the kind you've seen in data center racks for decades.
+It is worth repeating: Equinix Metal instances are single tenant, Dedicated Servers (chassis) that are orchestrated in a way to behave similarly to **cloudy** instances, but they are **NOT** Virtual Machines. They are just Bare Metal Servers (chassis), the kind you have seen in data center racks for decades.
 
 # Instance Sizing
 
@@ -17,6 +28,8 @@ Often, the easiest place to start is at the end. Do you need to recover from a f
 - Equinix Metal provides no backup as a Service. Backups must be configured and operated by the customer or their delegated management partner
 	- This is because Equinix Metal deliberately inserts no management vector into the customer's side of the environment. We want customers to trust the demarcation border between their of the dedicated environment and ares is strong and persisted.
 - The disks an instance are local, they are not network attached or automagicked.
+	- They must also be monitored by the customer, where for reserved instances, coordination of replacements in conjunction with support is available.
+		- On-demand customers should rely on being able to provision capacity to accomadate failure.
 - Equinix Metal provides few, if any, instances with a hardware RAID controller.
 	- In accordance with Cloud Best Practices and Principles, data parity and protection are best considered an solution level design challenge, leveraging either Software Defined Storage (Ceph, vSAN, Nutanix), software RAID ([CPR](https://deploy.equinix.com/developers/docs/metal/storage/custom-partitioning-raid/), [LVM](https://github.com/dlotterman/metal_code_snippets/blob/main/documentation_stage/s3_tiered_storage.md)), or storage appliances ([Pure](https://deploy.equinix.com/solutions/equinix-operated/pure-storage/), [Netapp](https://deploy.equinix.com/solutions/equinix-operated/netapp-storage/) and [Dell](https://deploy.equinix.com/developers/docs/metal/storage/dell-powerstore/)).
 		- Equinix Metal suggests considering an entire chassis as the primary fault domain of concern, not say individual disks
@@ -26,7 +39,24 @@ Often, the easiest place to start is at the end. Do you need to recover from a f
 - Equinix Metal provides no guarantee about availability of on-demand instances, if capacity is 100% required (say for recovery bootstrap), that capacity must be reserved, presumably ahead of time
 	- Equinix Metal is uniquely transparent about it's inventory and stocking levels, providing both [dashboards](https://deploy.equinix.com/developers/capacity-dashboard/) and [APIs](https://deploy.equinix.com/developers/api/metal#tag/Capacity/operation/findOrganizationCapacityPerFacility) for capacity transperancy.
 
-### Minimum sizes for storage appliances
+### Software Defined Storage
+
+Software Defined Storage generally speaking is used to cover technologies like Ceph, vSAN or Nutanix HCI that distrute and manage application from as an application down, consuming hard drives as raw primitives and layering performance and availability features.
+
+SDS is generally well aligned with Equinix Metal, particularly [Ceph (Rook for Kubernetes)](https://deploy.equinix.com/developers/guides/choosing-a-csi-for-kubernetes/) or [MiNIO](https://deploy.equinix.com/developers/guides/minio-terraform/), which can consume the leverage internal to the chassis. It is up to the end operator to configure, monitor and operate their SDS implementation.
+
+
+#### vSAN
+Beyond it's strict HCL, vSAN can have strict requirements on tiers and sizes of disk used for the caching tier that must be accounted for. It may be that [NVMe namespace partitioning](https://github.com/dlotterman/metal_code_snippets/vmware/esxi_nvme_namspaces.md) or [Workload Optimized](https://deploy.equinix.com/developers/docs/metal/hardware/workload-optimized-plans/) configuration is required to correctly meet a valid, resilient and supported vSAN design.
+
+
+### Storage Appliances
+
+#### Deduplication Apples to Oranges
+
+When evaluating current consumption vs offered storage solutions, be sure to understand which numbers may include magic features like Deduplication. For example, the local storage that is represented as instance storage, is a **"raw"** or un-deduped number, where as a number from a storage vendor **may** include Deduplication as part of their calculation.
+
+#### Appliance Minimum Sizes
 
 The storage appliances from partners that can be delivered into Equinix Metal generally start with a vendor specific minimum implementation size. Because there can be so much upfront cost in a dedicated hardware model, those minimums often just define financial minimums where each party in the deal benefits.
 
@@ -47,11 +77,12 @@ Generally speaking, the smallest minimum is 25TB or more likely 50TB, where belo
 ### vCPU vs Core vs Thread
 
 When Equinix Metal states the "Core count" of an instance, so for example when the marketing details page for the [m3.large.x86](https://deploy.equinix.com/product/servers/m3-large/) says "32 Cores", Metal means:
-	- This is a single socket instance
-	- That socket has a AMD 7502P (or better) CPU in it
-	- That CPU has 32 physical cores on it
-	- Those physical cores will likely be enabled for [SMT](https://en.wikipedia.org/wiki/Simultaneous_multithreading) (config / architecture support)
-		- This means an m3.large.x86 will likely see 64 "threads of CPU" available to its host operating system
+
+- This is a single socket instance
+- That socket has a AMD 7502P (or better) CPU in it
+- That CPU has 32 physical cores on it
+- Those physical cores will likely be enabled for [SMT](https://en.wikipedia.org/wiki/Simultaneous_multithreading) (config / architecture support)
+	- This means an m3.large.x86 will likely see 64 "threads of CPU" available to its host operating system
 
 This can be tricky when trying to compare "Apples to Apples" with other adjacent kinds of automated hosting. What Equinix Metal presents, by the nature of being Bare Metal, is a full and real CPU, where many other vendors may present merely a "thread" as a "vCPU", or may even run multiple tenants on a single thread of a single core.
 
