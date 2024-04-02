@@ -21,3 +21,7 @@ From the private / local rack VLAN, the customer VLAN is bridged into a customer
 Because Equinix Metal "VLANs" are just VXLANs outside of their local rack, that means an Equinix Metal VLAN is really just an abitrarily large isolated broadcast domain, not a real switched network. By default, there are no switches or routers presented inside a customers VLAN which could acts as IGMP routing or advertisement endpoints.
 
 So this means an Equinix Metal (or hosted VM) instance inside of a VLAN can issue and send Multicast traffic, and that multicast traffic will be propogated to everything else in the broadcast domain, but there is no infrastructure for IGMP routing.
+
+### BUM traffic
+
+While not immediately related to Multicast / IGMP, it should be noted that Equinix Metal VLANs will drop or limit some [BUM](https://en.wikipedia.org/wiki/Broadcast,_unknown-unicast_and_multicast_traffic), in particular link level or layer messaging.
