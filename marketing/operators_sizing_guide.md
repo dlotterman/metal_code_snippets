@@ -27,7 +27,7 @@ Often, the easiest place to start is at the end. Do you need to recover from a f
 
 - Equinix Metal provides no backup as a Service. Backups must be configured and operated by the customer or their delegated management partner
 	- This is because Equinix Metal deliberately inserts no management vector into the customer's side of the environment. We want customers to trust the demarcation border between their of the dedicated environment and ares is strong and persisted.
-- The disks an instance are local, they are not network attached or automagicked.
+- The disks inside an instance are local, they are not network attached or automagicked.
 	- They must also be monitored by the customer, where for reserved instances, coordination of replacements in conjunction with support is available.
 		- On-demand customers should rely on being able to provision capacity to accomadate failure.
 - Equinix Metal provides few, if any, instances with a hardware RAID controller.
@@ -41,7 +41,7 @@ Often, the easiest place to start is at the end. Do you need to recover from a f
 
 ### Software Defined Storage
 
-Software Defined Storage generally speaking is used to cover technologies like Ceph, vSAN or Nutanix HCI that distrute and manage application from as an application down, consuming hard drives as raw primitives and layering performance and availability features.
+Software Defined Storage generally speaking is used to cover technologies like Ceph, vSAN or Nutanix HCI that distribute and manage application from as an application down, consuming hard drives as raw primitives and layering performance and availability features.
 
 SDS is generally well aligned with Equinix Metal, particularly [Ceph (Rook for Kubernetes)](https://deploy.equinix.com/developers/guides/choosing-a-csi-for-kubernetes/) or [MiNIO](https://deploy.equinix.com/developers/guides/minio-terraform/), which can consume the leverage internal to the chassis. It is up to the end operator to configure, monitor and operate their SDS implementation.
 
@@ -104,6 +104,11 @@ Most Equinix Metal instances are by default 2x port instances, with the n3.large
 
 SR-IOV and DPDK dependant workloads are absolutely viable, but may align with a preference for the 4x port instance configuration, which allows an instance to preserve an LACP bond for control plane on the first two ports, but allowing individual, SR-IOV/DKPK addressable allocation to the remaining 2x interfaces.
 
+### Port Speed
+
+While an Equuinix Metal instance with 4x 25Gbps NICs as expected and allowed to do its full throughput facing the network, it should still be noted that the common rules of networking apply, no invidual data stream will be able to scale past the port speed of the instance.
+
+That is to say, an `n3.xlarge.x86` can do 4x streams of 25Gbps, or 8x streams of 12.5Gbps, but it cannot do a single stream of 100Gbps.
 # RVTools
 
 When using an [RVTools](https://www.rvtools.net/about.html) export as a starting place for a sizing exercise, the below is how it would likely be broken down by a Equinix DTS Solutions Architect.
@@ -128,6 +133,7 @@ When using an [RVTools](https://www.rvtools.net/about.html) export as a starting
 		- vSAN above may have shortened list to m3.large and n3.large instances
 - Double check customer processor preference (Intel vs AMD)
 	- If best from shortlist is different from stated customer preference, show both options with closest other vendor based match.
+- Double check the size of the larger VMs in the RVtools report to ensure we are covering off the smallest host sizing possible to host a whole VM
 
 # Specifying Hardware and HCLs
 
