@@ -46,7 +46,7 @@ To create a second, third or (n) instance, simply repeat these steps while chang
 	```
 	eval $(metal env)
 	INSTANCE_INT=11
-	METAL_METRO=SV
+	METAL_METRO=CH
 	INSTANCE_HOSTNAME=node-$METAL_METRO-$INSTANCE_INT
 	source shell/gtst.env
 	source shell/gtst_metal_shellisms.sh

@@ -1,0 +1,24 @@
+{
+  "ignition": {
+    "version": "3.4.0"
+  },
+  "storage": {
+    "files": [
+      {
+        "path": "/etc/systemd/network/10-static-bastion1.network",
+        "contents": {
+          "compression": "",
+          "source": "data:,%5BRoute%5D%0AGateway%3D147.28.180.136%0ADestination%3D139.178.87.0%2F24%0A"
+        }
+      },
+      {
+        "path": "/opt/bin/test.sh",
+        "contents": {
+          "compression": "",
+          "source": "data:,docker%20run%20hello-world%0A"
+        },
+        "mode": 493
+      }
+    ]
+  }
+}
