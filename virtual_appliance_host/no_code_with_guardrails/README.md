@@ -22,9 +22,22 @@ All thats needed to get an `ncb` instance is to Copy (`Ctrl / Cmd + C`) [this cl
 
 ***For best experience, use the `.mime` encoded file***
 
-This minimzes browser / user input inconsistencies. Simply copy the [text from the mime encoded file](https://raw.githubusercontent.com/dlotterman/metal_code_snippets/main/virtual_appliance_host/no_code_with_guardrails/cloud_inits/el9_no_code_safety_first_appliance_host.mime) and paste it into the user data section of the Metal instance provisoning page.
+This minimzes browser / user input (copy+paste) inconsistencies. Simply copy the [text from the mime encoded file](https://raw.githubusercontent.com/dlotterman/metal_code_snippets/main/virtual_appliance_host/no_code_with_guardrails/cloud_inits/el9_no_code_safety_first_appliance_host.mime) and paste it into the user data section of the Metal instance provisoning page.
 
 The `mime` encoded file is simply the output of `cloud-init devel make-mime` run on the `yaml` file in the same directory.
+
+## Login Credentials / Authentication
+
+Outside in access via `root` is disabled, as in it is denied in the config of `sshd` and `cokpit`.
+
+* To `ssh` in, use the following credentials:
+  - **Username:**`adminuser`
+  - Use your [Metal SSH Key](https://deploy.equinix.com/developers/docs/metal/identity-access-management/ssh-keys/)
+* To `sudo`, or login via the Cockpit UI:
+  - **Username:** `adminuser
+  - Password: is the `UUID` of the Metal instance itself. You can copy it from the instances details in the WebUI or [metadata](https://deploy.equinix.com/developers/docs/metal/server-metadata/metadata/).
+    - It is worth noting, the `UUID` of an instance is only discernable from the inside of Metal, which presumes authentication by at least two factors if required.
+
 
 ## Support
 
@@ -34,7 +47,7 @@ Please note, as with anything in this reposistory, this resource is not supporte
 
 - Moves `root` user to -> `adminuser`
     - Use of root for outside access is restricted, access outside in with user `adminuser`
-    - `adminuser`'s password should be the same password as the root password assigned by Metal.
+    - `adminuser`'s password should be the `UUID` of the instance.
 - [Management UI](https://access.redhat.com/documentation/en-us/red_hat_enterprise_linux/9/html/managing_systems_using_the_rhel_9_web_console/index) ([Cockpit](https://cockpit-project.org/) via self-signed HTTPS over [Metal Internet](https://deploy.equinix.com/developers/docs/metal/networking/ip-addresses/#public-ipv4-subnet))
 - VM hosting via [libvirt](https://libvirt.org/) (accesible in [Cockpit](https://access.redhat.com/documentation/en-us/red_hat_enterprise_linux/9/html/managing_systems_using_the_rhel_9_web_console/managing-virtual-machines-in-the-web-console_system-management-using-the-rhel-9-web-console))
 - Container hosting via [podman](https://podman.io/) (accesible in [Cockpit](https://github.com/cockpit-project/cockpit-podman))
@@ -107,12 +120,12 @@ The video links are links to Equinix's 0365 Sharepoint (sharepoint.com), and the
 
 ### Tools you will want
 
-- A well setup SSH toolchain including a public key associated with your user in Equinix Metal
+- A well setup SSH toolchain including a public SSH key associated with your user in [Equinix Metal](https://deploy.equinix.com/developers/docs/metal/identity-access-management/ssh-keys/)
   - This includes the use of SSH based Interconnection
     - [SOCKS](https://github.com/dlotterman/metal_code_snippets/blob/main/documentation_stage/operator_documentation/bastion_socks_tunnel_guide.md#configuring-ssh-with-socks)
-	- With a correctly configured SOCKs proxy, you can naviate *"inside"* or private resources like ESXi interfaces, storage interfaces, or Interconnection attached resources, easily from a single point. It is often easiest to "Dedicate a browser to the function", [Firefox Portable](https://support.mozilla.org/en-US/questions/1286588) makes this easy and supports tunneled DNS.
+	- With a correctly configured SOCKs proxy, you can navigate *"inside"* or private resources like ESXi interfaces, storage interfaces, or Interconnection attached resources, easily from a single point. It is often easiest to "Dedicate a browser to the function", [Firefox Portable](https://support.mozilla.org/en-US/questions/1286588) makes this easy and supports tunneled DNS.
     - [Local / Remote Port Forwading](https://linuxize.com/post/how-to-setup-ssh-tunneling/)
-      - This makes things like RDP'ing to a hosted VM simple and fast. No fiddling with VPN's, no dangerous exposed ports to the internet. Everything gets encrypted, everything stays private.
+      - This makes things like RDP'ing to a hosted VM or a "prive network only" Metal instance simple and fast. No fiddling with VPN's, no dangerous exposed ports to the internet. Everything gets encrypted, everything stays private.
 - A VNC client
   - The author promotes [TigerVNC](https://github.com/TigerVNC/tigervnc)
     - [VNC over SSH](https://sscf.ucsd.edu/self-help-guides/tutorials/linux/vnc-with-ssh-tunnel)

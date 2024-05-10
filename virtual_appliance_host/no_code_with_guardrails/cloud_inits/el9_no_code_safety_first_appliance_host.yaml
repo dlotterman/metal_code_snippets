@@ -10,6 +10,7 @@ ssh:
 no_ssh_fingerprints: false
 packages:
   - iperf3
+  - bash-completion
   - tmux
   - firewalld
   - jq
@@ -473,7 +474,9 @@ write_files:
     append: false
     content: |
       logger "running /var/tmp/ncb/bin/ncb_adminuser_mangle.sh"
-      pwhash=$(sudo getent shadow root | cut -d: -f2)
+      curl -s https://metadata.platformequinix.com/metadata -o /tmp/metadata
+      id=$(cat /tmp/metadata | jq -r .id)
+      pwhash=$(openssl passwd -6 "$id")
       sudo usermod -p "$pwhash" adminuser
       usermod -a -G export-users root
       mkdir /home/adminuser/bin
@@ -988,6 +991,7 @@ write_files:
 
       source /var/tmp/ncb/etc/ncb.env
 
+      systemctl restart NetworkManager
 
       NUM_INTERFACES=$(ip link list up | grep SLAVE | grep BROADCAST | wc -l)
 
