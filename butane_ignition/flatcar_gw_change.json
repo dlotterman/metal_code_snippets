@@ -1,0 +1,26 @@
+{
+  "ignition": {
+    "version": "3.4.0"
+  },
+  "storage": {
+    "files": [
+      {
+        "path": "/var/tmp/firstboot.sh",
+        "contents": {
+          "compression": "",
+          "source": "data:,%23!%2Fbin%2Fbash%0Adocker%20pull%20hello-world%0Ased%20-i%20s%2F'0.0.0.0%5C%2F0'%2F'139.178.87.0%5C%2F24'%2F%20%2Fetc%2Fsystemd%2Fnetwork%2F05-bond0.network%0Atouch%20%2Fvar%2Ftmp%2Finside-firstboot.touch%0A"
+        },
+        "mode": 493
+      }
+    ]
+  },
+  "systemd": {
+    "units": [
+      {
+        "contents": "[Unit]\nDescription=A hello world unit!\n[Service]\nType=oneshot\nRemainAfterExit=yes\nExecStart=/var/tmp/firstboot.sh\n[Install]\nWantedBy=multi-user.target\n",
+        "enabled": true,
+        "name": "firstboot.service"
+      }
+    ]
+  }
+}

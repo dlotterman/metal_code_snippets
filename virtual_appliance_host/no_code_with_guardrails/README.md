@@ -34,7 +34,7 @@ Outside in access via `root` is disabled, as in it is denied in the config of `s
   - **Username:**`adminuser`
   - Use your [Metal SSH Key](https://deploy.equinix.com/developers/docs/metal/identity-access-management/ssh-keys/)
 * To `sudo`, or login via the Cockpit UI:
-  - **Username:** `adminuser
+  - **Username:** `adminuser`
   - Password: is the `UUID` of the Metal instance itself. You can copy it from the instances details in the WebUI or [metadata](https://deploy.equinix.com/developers/docs/metal/server-metadata/metadata/).
     - It is worth noting, the `UUID` of an instance is only discernable from the inside of Metal, which presumes authentication by at least two factors if required.
 
@@ -54,6 +54,7 @@ Please note, as with anything in this reposistory, this resource is not supporte
 - Automatic Updates configured via [dnf-automatic](https://dnf.readthedocs.io/en/latest/automatic.html)
     - Security updates are automatically applied.
 - Basic securitization (`root` -> `adminuser`, firewall up, user-lockout etc)
+- Installs kubernetes with just by adding "k3s" tag to instance via Metal
 - Mounts largest non-HDD free disk to `/mnt/util/`
   - Adds it as storage volume to `libvirt`
   - Exposed via private network HTTP (via `nginx` below)

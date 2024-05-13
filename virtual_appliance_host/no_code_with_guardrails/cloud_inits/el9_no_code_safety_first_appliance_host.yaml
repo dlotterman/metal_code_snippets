@@ -566,6 +566,10 @@ write_files:
             if test ! -f /var/tmp/ncb/tmp/ncb_k3s_mangle.done; then
               systemctl enable --now ncb_k3s_mangle.timer
             fi
+          if [ "$TAG" = "ncb_vyos" ]; then
+            if test ! -f /var/tmp/ncb/tmp/ncb_vyos_mangle.done; then
+                systemctl enable --now ncb_vyos_mangle.timer
+            fi
           fi
       done
 
@@ -622,6 +626,115 @@ write_files:
       fi
 
       curl -sfL https://get.k3s.io | NO_PROXY=127.0.0.0/8,10.0.0.0/8,172.16.0.0/12,192.168.0.0/16  HTTP_PROXY=${M_PRIV_IP}:83 INSTALL_K3S_EXEC="--advertise-address ${HOST_IP_MGMT_A} --bind-address ${HOST_IP_MGMT_A}" sh -
+
+      firewall-cmd --permanent --add-port=6443/tcp --zone=internal
+
+      firewall-cmd --reload
+
+      if test ! -f /var/tmp/ncb/tmp/kubectl.sha256; then
+        curl -o /var/tmp/ncb/tmp/kubectl -LO "https://dl.k8s.io/release/$(curl -L -s https://dl.k8s.io/release/stable.txt)/bin/linux/amd64/kubectl"
+        curl -o /var/tmp/ncb/tmp/kubectl.sha256 -LO "https://dl.k8s.io/release/$(curl -L -s https://dl.k8s.io/release/stable.txt)/bin/linux/amd64/kubectl.sha256"
+        curl -o /var/tmp/ncb/tmp/clusterctl -L https://github.com/kubernetes-sigs/cluster-api/releases/download/v1.5.2/clusterctl-linux-amd64
+        curl -o /var/tmp/ncb/tmp/cert-manager.yaml -LO https://github.com/cert-manager/cert-manager/releases/download/v1.13.1/cert-manager.yaml
+
+      fi
+
+      KCHKSUM=$(echo "$(cat /var/tmp/ncb/tmp/kubectl.sha256)  /var/tmp/ncb/tmp/kubectl" | sha256sum --check | awk '{print $NF}')
+      if [ "$KCHKSUM" = "OK" ]; then
+        echo "kubectl installed"
+      else
+        logger "SHA256 of kubectl in admiunuser home is wrong, exiting"
+        exit 1
+      fi
+
+      #HARDCODED CHECKSUMS ARE BAD OKAY?!
+      CCHKSUM=$(echo "4ae1a8fd5699e1926efbfd2fa7ee7272c8171348ca817255c950a6c4cffc7cb2  /var/tmp/ncb/tmp/clusterctl" | sha256sum --check | awk '{print $NF}')
+      if [ "$CCHKSUM" = "OK" ]; then
+        echo "clusterctl installed"
+      else
+        logger "SHA256 of clusterctl in /var/tmp/ncb/tmp is wrong, exiting"
+      fi
+
+      CMCHKSUM=$(echo "8b2a77bf9d2fe569d0c3bfd74f19dad0c8e675e9f6a7e88060abee3042f50a12  /var/tmp/ncb/tmp/cert-manager.yaml" | sha256sum --check | awk '{print $NF}')
+      if [ "$CMCHKSUM" = "OK" ]; then
+        echo "cert-manager.yaml installed"
+      else
+        logger "SHA256 of cert-manager.yaml in /var/tmp/ncb/tmp is wrong, exiting"
+        exit 1
+      fi
+
+
+      sudo -u adminuser cp /var/tmp/ncb/tmp/kubectl /home/adminuser/bin/
+      sudo -u adminuser cp /var/tmp/ncb/tmp/clusterctl /home/adminuser/bin/
+
+      sudo -u adminuser chmod 0750 /home/adminuser/bin/kubectl
+      sudo -u adminuser chmod 0750 /home/adminuser/bin/clusterctl
+
+      rm -rf /tmp/.kube
+      mkdir /tmp/.kube
+      cp /etc/rancher/k3s/k3s.yaml /tmp/.kube/config
+      chmod 0600 /tmp/.kube/config
+      cp -r /tmp/.kube /home/adminuser/
+      chown -R adminuser:cloud-users /home/adminuser/.kube
+      sudo -u adminuser cp /var/tmp/ncb/tmp/cert-manager.yaml /home/adminuser/.kube/
+
+      sudo -i -u adminuser kubectl apply -f /home/adminuser/.kube/cert-manager.yaml
+
+      systemctl disable --now ncb_k3s_mangle.timer
+
+      touch /var/tmp/ncb/tmp/ncb_k3s_mangle.done
+
+    permissions: "0655"
+  - path: /etc/systemd/system/ncb_vyos_mangle.service
+    owner: root:root
+    append: false
+    content: >
+      [Unit]
+
+      Description=ncb_vyos_mangle
+
+      After=multi-user.target
+
+      [Service]
+
+      Type=idle
+
+      ExecStart=/bin/bash /var/tmp/ncb/bin/ncb_vyos_mangle.sh
+      [Install]
+      WantedBy=timers.target
+  - path: /etc/systemd/system/ncb_vyos_mangle.timer
+    owner: root:root
+    append: false
+    content: |
+      [Unit]
+
+      Description=run every 2 miutes ncb_vyos_mangle
+
+      [Timer]
+      OnBootSec=2min
+      OnUnitActiveSec=2min
+      Persistent=true
+
+      [Install]
+      WantedBy=timers.target
+  - path: /var/tmp/ncb/bin/ncb_vyos_mangle.sh
+    owner: root:root
+    append: false
+    content: |
+      #!/bin/bash
+
+      source /var/tmp/ncb/etc/ncb.env
+      source /var/tmp/ncb/etc/ncb_extended.env
+
+      if test -f /var/tmp/ncb/tmp/ncb_k3s_mangle.done; then
+        systemctl disable --now ncb_k3s_mangle.timer
+        systemctl disable ncb_k3s_mangle.service
+        exit 0
+      elif [ "$TAG_ncb_k3s" != "PRESENT" ]; then
+        exit 0
+      fi
+
+      curl -sfL https://get.k3s.io | NO_PROXY=127.0.0.0/8,10.0.0.0/8,172.16.0.0/12,192.168.0.0/16  HTTP_PROXY=${M_PRIV_IP}:83 INSTALL_K3S_EXEC="--disable-traefik --advertise-address ${HOST_IP_MGMT_A} --bind-address ${HOST_IP_MGMT_A}" sh -
 
       firewall-cmd --permanent --add-port=6443/tcp --zone=internal
 

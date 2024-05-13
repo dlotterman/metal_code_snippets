@@ -1,0 +1,25 @@
+variant: flatcar
+version: 1.1.0
+storage:
+  files:
+    - path: /var/tmp/firstboot.sh
+      mode: 0755
+      contents:
+        inline: |
+          #!/bin/bash
+          docker pull hello-world
+          sed -i s/'0.0.0.0\/0'/'139.178.87.0\/24'/ /etc/systemd/network/05-bond0.network
+          touch /var/tmp/inside-firstboot.touch
+systemd:
+  units:
+    - name: firstboot.service
+      enabled: true
+      contents: |
+        [Unit]
+        Description=A hello world unit!
+        [Service]
+        Type=oneshot
+        RemainAfterExit=yes
+        ExecStart=/var/tmp/firstboot.sh
+        [Install]
+        WantedBy=multi-user.target
