@@ -85,6 +85,10 @@ runcmd:
     - --add-service=cockpit
   - - firewall-cmd
     - --permanent
+    - --zone=public
+    - --add-port=90/tcp
+  - - firewall-cmd
+    - --permanent
     - --zone=external
     - --add-service=ssh
   - - firewall-cmd
@@ -95,6 +99,10 @@ runcmd:
     - --permanent
     - --zone=external
     - --add-service=cockpit
+  - - firewall-cmd
+    - --permanent
+    - --zone=external
+    - --add-port=90/tcp
   - - firewall-cmd
     - --permanent
     - --zone=trusted
@@ -119,10 +127,6 @@ runcmd:
     - --permanent
     - --zone=internal
     - --add-port=82/tcp
-  - - firewall-cmd
-    - --permanent
-    - --zone=internal
-    - --add-port=90/tcp
   - - firewall-cmd
     - --permanent
     - --zone=internal

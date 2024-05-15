@@ -11,6 +11,7 @@ Table of Contents:
 	- [Core vs vCPU vs Thread](https://github.com/dlotterman/metal_code_snippets/blob/main/marketing/operators_sizing_guide.md#disk-performance)
     - [Single vs Dual Socket (Licensing)](https://github.com/dlotterman/metal_code_snippets/blob/main/marketing/operators_sizing_guide.md#single-vs-dual-socket-licensing)
 - [RVTools](https://github.com/dlotterman/metal_code_snippets/blob/main/marketing/operators_sizing_guide.md#rvtools)
+- [VMWare is VCF only!](https://github.com/dlotterman/metal_code_snippets/blob/main/marketing/operators_sizing_guide.md#rvtools)
 - [Specific Hardware / HCL](https://github.com/dlotterman/metal_code_snippets/blob/main/marketing/operators_sizing_guide.md#specifying-hardware-and-hcls)
 
 ## Equinix Metal instances are Dedicated Server Chassis, not virtualized instances
@@ -32,7 +33,7 @@ Often, the easiest place to start is at the end. Do you need to recover from a f
 		- On-demand customers should rely on being able to provision capacity to accomadate failure.
 - Equinix Metal provides few, if any, instances with a hardware RAID controller.
 	- In accordance with Cloud Best Practices and Principles, data parity and protection are best considered an solution level design challenge, leveraging either Software Defined Storage (Ceph, vSAN, Nutanix), software RAID ([CPR](https://deploy.equinix.com/developers/docs/metal/storage/custom-partitioning-raid/), [LVM](https://github.com/dlotterman/metal_code_snippets/blob/main/documentation_stage/s3_tiered_storage.md)), or storage appliances ([Pure](https://deploy.equinix.com/solutions/equinix-operated/pure-storage/), [Netapp](https://deploy.equinix.com/solutions/equinix-operated/netapp-storage/) and [Dell](https://deploy.equinix.com/developers/docs/metal/storage/dell-powerstore/)).
-		- Equinix Metal suggests considering an entire chassis as the primary fault domain of concern, not say individual disks
+		- Equinix Metal suggests considering an entire chassis as the primary fault domain of concern, not individual disks
 - Equinix Metal's native internet connectivity and also access to Fabric unlock unique data transmission schemes
    - An Equinix Metal instance with 2x 25Gbps NICs can in fact do ~22Gbps backup / restores to Wasabi
    - Equinix Fabric provides fixed rate (no consumption aware) private connectivity options, allowing performant connectivity to both storage partners, but also storage that may already exist within a customers colocation or on-prem footprint
@@ -45,10 +46,13 @@ Software Defined Storage generally speaking is used to cover technologies like C
 
 SDS is generally well aligned with Equinix Metal, particularly [Ceph (Rook for Kubernetes)](https://deploy.equinix.com/developers/guides/choosing-a-csi-for-kubernetes/) or [MiNIO](https://deploy.equinix.com/developers/guides/minio-terraform/), which can consume the leverage internal to the chassis. It is up to the end operator to configure, monitor and operate their SDS implementation.
 
+[Harvester](https://deploy.equinix.com/solutions/customer-operated/suse-harvester/) deserves a special callout for it's ability to consume Metal at it's most native and transform it into immediately consumeable [HCI](https://harvesterhci.io/).
+
+The math behind most SDS will be more or less the same, erasure coding is erasure coding. This [vSAN oriented tool](https://kauteetech.github.io/vsancapacity/allflash) can be helpful for napkin math
 
 #### vSAN
-Beyond it's strict HCL, vSAN can have strict requirements on tiers and sizes of disk used for the caching tier that must be accounted for. It may be that [NVMe namespace partitioning](https://github.com/dlotterman/metal_code_snippets/vmware/esxi_nvme_namspaces.md) or [Workload Optimized](https://deploy.equinix.com/developers/docs/metal/hardware/workload-optimized-plans/) configuration is required to correctly meet a valid, resilient and supported vSAN design.
 
+See VMWare section below.
 
 ### Storage Appliances
 
@@ -70,6 +74,7 @@ Generally speaking, the smallest minimum is 25TB or more likely 50TB, where belo
 	- Either via Dedicated Port of Fabric Virtual Connection, it can often be performant, cost effective and easy to bring in outside storage to Equinix Metal
 
 ### Disk Performance
+
 - Equinix Metal prioritizes NVMe for it's performant tier of storage. The NVMe sourced by Equinix Metal is always best of breed, and for configurations like the [m3.large.x86](https://deploy.equinix.com/product/servers/m3-large/), can be assumed as 100k IOP+ capable drives each.
 - The 8TB drives in the s3.xlarge.x86 are `7200RPM` HBA attached SAS/SATA drives
 
@@ -117,8 +122,9 @@ When using an [RVTools](https://www.rvtools.net/about.html) export as a starting
 
 - The guest vCPU, RAM and Total Disk columns in each sheet will be summed at the bottom of the column
 - Starting with storage:
-	- If customer has stated vSAN preference, shortlist of instances is limited to the m3.large and n3.large or their WO variations. SA must be sure to communicate laundry list of vSAN caveats
+	- If customer has stated SDS (non vSAN) preference:
 		- All Metal NVMe is currently based on a 3.8TB size, so divide number of aggregate GB of storage by 3800 for number of NVMe drives needed to meet raw capacity, then double for a sane parity starting place.
+		- If you can tier off to the s3.xlarge.x86, that will decrease cost for storage dense footprints.
 	- If customer states prefence for SAN, job done.
 - The SA divide the summed RAM by summed vCPU to get the ratio of vCPU to RAM and find alignment with instance catalog:
 	- For example, the c3.medium is a 2.6:1 GB or RAM to Core config
@@ -130,13 +136,26 @@ When using an [RVTools](https://www.rvtools.net/about.html) export as a starting
 	- Aggregate CPU by RAM of shortisted instance
 	- Use whichever of the two is higher (as a minimum), and add 1x or more to the quantity to ensure capacity for minimal host failure
 	- A first choice option from the shortlist will likely be chosen. If not, a shortlist of options may also be chosen
-		- vSAN above may have shortened list to m3.large and n3.large instances
 - Double check customer processor preference (Intel vs AMD)
 	- If best from shortlist is different from stated customer preference, show both options with closest other vendor based match.
 - Double check the size of the larger VMs in the RVtools report to ensure we are covering off the smallest host sizing possible to host a whole VM
+	- For example, we don't want to propose `128GB` instances if they have VMs that are `384GB` big.
+
+# VMWare
+
+As of `04/2024`, there is only one supported way to run VMWare at Equinix Metal, and that is [via VCF](https://deploy.equinix.com/solutions/customer-operated/vmware-cloud-foundation-vcf-on-equinix-metal/). Any previous documentation referencing any other path is wrong and out of date.
+
+There is currently one SKU that is supported and approved for use with VCF, and that is the [n3-xlarge-opt-m4s2](https://deploy.equinix.com/product/servers/n3-xlarge-opt-m4s2/).
+
+You must account for the [management domain](https://docs.vmware.com/en/VMware-Cloud-Foundation/4.5/vcf-getting-started/GUID-C68FD810-D270-43F2-AEBF-D522BA1F402B.html) in VCF. If it is not run on Metal than it must be run somewhere.
+
+# Nutanix
+As of `04/2024`, the [m3.large.x86](https://deploy.equinix.com/product/servers/m3-large/) and it's [WO Variants](https://deploy.equinix.com/developers/docs/metal/hardware/workload-optimized-plans/#m3large-variants) are the best starting places for Nutanix workloads.
+
+It's possible other configurations such as the [WO a3.xlarge.x86](https://deploy.equinix.com/developers/docs/metal/hardware/workload-optimized-plans/#a3large-variants) variants may get certified as well.
 
 # Specifying Hardware and HCLs
 
 Equinix Metal, does not by default guarantee specific parts, models, or HCL validation for any of it's listed parts for on-demand instances. That is to say, an c3.medium will always have it's listed processor, but in some cases, may come with an Intel `ice` based NIC, and in others `bnx2`.
 
-The only way to guarantee a specific model, version, or any fine grain detail of chassis configuration is by working with Equinix Metal Sales on a reserved configuration
+The only way to guarantee a specific model, version, or any fine grain detail of chassis configuration is by working with Equinix Metal Sales on a [reserved configuration](https://deploy.equinix.com/developers/docs/metal/deploy/reserved/).

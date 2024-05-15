@@ -4,26 +4,32 @@
   <img src="docs/assets/diagram.jpg" width="32%" />
 </p>
 
-`NCB` is a single, "copy+paste'able" [cloud-init](https://cloudinit.readthedocs.io/en/latest/index.html) file, that used when [provisioning](https://deploy.equinix.com/developers/docs/metal/server-metadata/user-data/) a Metal instance with [Alma 9](https://deploy.equinix.com/developers/docs/metal/operating-systems/supported/#almalinux) or [Rocky 9](https://deploy.equinix.com/developers/docs/metal/operating-systems/supported/#rocky-linux), will turn that instance into a **"swiss army"** bastion box.
+`NCB` is a single, "copy+paste'able" [cloud-init](https://cloudinit.readthedocs.io/en/latest/index.html) file, that used when [provisioning](https://deploy.equinix.com/developers/docs/metal/server-metadata/user-data/) a [Equinix Metal instance](https://deploy.equinix.com/developers/docs/metal/hardware/standard-servers/) with [Alma 9](https://deploy.equinix.com/developers/docs/metal/operating-systems/supported/#almalinux) or [Rocky 9](https://deploy.equinix.com/developers/docs/metal/operating-systems/supported/#rocky-linux), will turn that instance into a **"swiss army"** bastion box.
 
 
 <p float="middle">
   <img src="docs/assets/dashboard.PNG" width="32%" />
 </p>
 
-It can be used to quickly establish an operational footprint inside of an Equinix Metal [project](https://deploy.equinix.com/developers/docs/metal/projects/managing-a-project/). A quick highlight of `NCB`'s utility functions:
+It can be used to quickly establish an operational footprint inside of an Equinix Metal [project](https://deploy.equinix.com/developers/docs/metal/projects/managing-a-project/).
+
+A quick highlight of `NCB`'s utility functions and toil reducers:
 
 - Secure inside <-> outside management access to an Equinix Metal project
 - Network and utility services such as DHCP and NAT
-- PXE Toolchain for BYO-OS (For things iPXE doesn't cover)
+- PXE Toolchain for BYO-OS
 - File hosting via HTTP and NFS
-- Automatic Network Setup for [Hybrid Bonded Mode](https://deploy.equinix.com/developers/docs/metal/layer2-networking/hybrid-bonded-mode/) including VLANs
-	- Quickly test inside Metal network connectivity.
+- Automatic Network Setup for [Hybrid Bonded Mode](https://deploy.equinix.com/developers/docs/metal/layer2-networking/hybrid-bonded-mode/) including [VLANs](https://github.com/dlotterman/metal_code_snippets/blob/main/documentation_stage/em_sa_network_schema.md)
+	- Quickly test inside Metal network connectivity, just provision two `NCB` hosts
 - Container and VM hosting
 - Optional: VyOS ISO builder
 - Optional: Kubernetes via [k3s](https://k3s.io/)
 
+## How to use
+
 Just copy (`Ctrl / Cmd + C`) the content of [this cloud-init](cloud_inits/el9_no_code_safety_first_appliance_host.mime) and Paste (`Ctrl / Cmd + P`) the contents into the [Userdata form](https://deploy.equinix.com/developers/docs/metal/server-metadata/user-data/#usage) when provisioning an Equinix Metal instance with `alma_9` or `rocky_9`. Thats it.
+
+Please see videos below for extra context.
 
 ***For best experience, use the `.mime` encoded file***
 
@@ -33,7 +39,7 @@ The `mime` encoded file is simply the output of `cloud-init devel make-mime` run
 
 After the instance is "provisioned" in Equinix Metal, it may take up to 4-10 minutes for the automation to complete. You will know it's complete when the [Cockpit](https://cockpit-project.org/) interface is available on the instances Public IP on port `9090`.
 
-## Login Credentials / Authentication
+###  Login Credentials / Authentication
 
 Outside in access via `root` is disabled, as in it is denied in the config of `sshd` and `cockpit`.
 
