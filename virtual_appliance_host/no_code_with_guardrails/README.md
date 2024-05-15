@@ -149,7 +149,7 @@ Once the instance is provisioned and accessible by `Cockpit`, the following tags
 
 - `ncb_k3s`: An `NCB` instance tagged with `ncb_k3s` will install a minimal [k3s](https://k3s.io/) install on the `ncb` instance, including [clusterctl (AKA CAPI)](https://cluster-api.sigs.k8s.io/clusterctl/overview.html), and [cert-manager](https://cert-manager.io/)
 	- [Docs here](docs/k3s.md)
-- **vyos**: An `NCB` instance tagged with `ncb_vyos` will download the most recent VyOS source from github, and [follow these basic instructions](https://blog.vyos.io/introducing-the-image-build-flavor-system?utm_medium=email&_hsenc=p2ANqtz--cwWxln0yduVs8XGZ0QP_g1DO49i0YblM15ka7g35JEQrFQ3bE7k5OQIDq-zNUFY2b5tsoDIffOLvCxgxEsMITk2acUQ&_hsmi=306480568&utm_content=306480568&utm_source=hs_email#cb5-1) to build and host the VyOS artiftacts for immediate iPXE install.
+- `ncb_vyos`: An `NCB` instance tagged with `ncb_vyos` will download the most recent VyOS source from github, and [follow these basic instructions](https://blog.vyos.io/introducing-the-image-build-flavor-system?utm_medium=email&_hsenc=p2ANqtz--cwWxln0yduVs8XGZ0QP_g1DO49i0YblM15ka7g35JEQrFQ3bE7k5OQIDq-zNUFY2b5tsoDIffOLvCxgxEsMITk2acUQ&_hsmi=306480568&utm_content=306480568&utm_source=hs_email#cb5-1) to build and host the VyOS artiftacts for immediate iPXE install.
 	- [Docs here](docs/vyos.md)
 
 ## EM SA Network Schema:
