@@ -65,17 +65,16 @@ Please note, as with anything in this reposistory, this resource is not supporte
 - [Management UI](https://access.redhat.com/documentation/en-us/red_hat_enterprise_linux/9/html/managing_systems_using_the_rhel_9_web_console/index) ([Cockpit](https://cockpit-project.org/) via self-signed HTTPS over [Metal Internet](https://deploy.equinix.com/developers/docs/metal/networking/ip-addresses/#public-ipv4-subnet))
 - VM hosting via [libvirt](https://libvirt.org/) (accesible in [Cockpit](https://access.redhat.com/documentation/en-us/red_hat_enterprise_linux/9/html/managing_systems_using_the_rhel_9_web_console/managing-virtual-machines-in-the-web-console_system-management-using-the-rhel-9-web-console))
 - Container hosting via [podman](https://podman.io/) (accesible in [Cockpit](https://github.com/cockpit-project/cockpit-podman))
-- Automatic Updates configured via [dnf-automatic](https://dnf.readthedocs.io/en/latest/automatic.html)
-    - Security updates are automatically applied via [dnf automatic](https://dnf.readthedocs.io/en/latest/automatic.html)
+- Automatic Updates via [dnf-automatic](https://dnf.readthedocs.io/en/latest/automatic.html)
 - Turns up firewall and limits access
-- Installs kubernetes with just by adding the tag `ncb_k3s` to instance via the Metal UI or API
 - Mounts largest non-HDD free disk to `/mnt/util/`
   - Adds it as storage volume to `libvirt`
   - Exposed via private network HTTP (via `nginx` below)
   - Exposed via private network NFS (via `nfs-server`)
 - Network
     - Replaces stock Metal networking with `eth0/1` -> `bond0` -> `bridge` -> `VLAN` model allowing guests access to the native VLAN (carrying EM's [Layer-3 network](https://deploy.equinix.com/developers/docs/metal/networking/ip-addresses/)) + [tagged VLAN](https://deploy.equinix.com/developers/docs/metal/layer2-networking/overview/)s while persisting the desired [Equinix Metal LACP bonding](https://deploy.equinix.com/developers/docs/metal/networking/server-level-networking/#your-servers-lacp-bonding) configuration.
-        - This allows the instance and it's guests to acces [Interconnection](https://deploy.equinix.com/developers/docs/metal/interconnections/introduction/)
+        - This allows the instance and it's guests to access [Interconnection](https://deploy.equinix.com/developers/docs/metal/interconnections/introduction/)
+		- This allows the instance and it's guests to access [Metal's L3 Networking](https://deploy.equinix.com/developers/docs/metal/networking/ip-addresses/) including [BGP Peering](https://github.com/dlotterman/metal_code_snippets/blob/main/documentation_stage/networking/operators_guide_metal_bgp.md#how-to-bgp-peer-through-metal-hosted-vnfs-virtual-appliances-or-just-vms)
     + NAT'ed Internet for `mgmt_a` network
     - DHCP for mgmt_a network via hostname ending in `-01`, for example `ncb-sv-01`
     - Inside VLAN Layer-3 configuration dynamic based on hostname, e.g a host launched as `ncb-am-55` will use `55` as it's inside IP for all networks (e.g `172.16.100.55`), a host launched with `ncb-am-33` would then be assigned `33` (e.g `172.16.100.33`), and they would be able to ping each other inside VLAN `3880` when assigned that VLAN from the Metal platform.
@@ -100,6 +99,10 @@ Please note, as with anything in this reposistory, this resource is not supporte
 - TFTP server via dnsmasq in `mgmt_a` network via hostname ending in `-01`, for example `ncb-sv-01`
     - Enables quick paths for `DHCP` + `PXE` + `TFTP` + `HTTP/NFS` BYO-OS install paths
 - Should work with broadly with [Equinix Metal hardware](https://deploy.equinix.com/developers/docs/metal/hardware/standard-servers/) (including [4x port boxes](https://deploy.equinix.com/product/servers/n3-xlarge/) and the [s3.xlarge](https://deploy.equinix.com/product/servers/s3-xlarge/)
+
+Optionally:
+- Installs kubernetes by adding the tag `ncb_k3s` to instance via the Metal UI or API
+- Builds VyOS ISO by adding the tag `ncb_vyos` to instance via the Metl UI or API
 
 ## Documentation
 

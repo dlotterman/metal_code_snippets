@@ -947,6 +947,8 @@ write_files:
             }
         }
       EOL
+      sync
+      sleep 2
       systemctl enable --now nginx
       systemctl restart nginx
       chmod 0400 /var/tmp/ncb/bin/ncb_nginx_mangle.sh
