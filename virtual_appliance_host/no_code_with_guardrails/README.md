@@ -1,24 +1,29 @@
-# "No Code" + "Safe First" + "Bastion" + "Virtual Appliance Host" for Equinix Metal
-
-Or **NCSFBVAHfEM** for short... Just kiding, shorten it to *no_code_bastion* or `ncb` for really short.
+# **NCB**: Node Code Bastion for Equinix Metal
 
 <p float="middle">
   <img src="docs/assets/diagram.jpg" width="32%" />
 </p>
 
-When evaluating or working with [Equinix Metal](https://deploy.equinix.com/product/bare-metal/), operators often want a "fastest path to running an application or device inside of the Equinix", where the bootstrap curve of the Equinix Metal is such that often the hardest part is figuring out where to start.
+`NCB` is a single, "copy+paste'able" [cloud-init](https://cloudinit.readthedocs.io/en/latest/index.html) file, that used when [provisioning](https://deploy.equinix.com/developers/docs/metal/server-metadata/user-data/) a Metal instance with [Alma 9](https://deploy.equinix.com/developers/docs/metal/operating-systems/supported/#almalinux) or [Rocky 9](https://deploy.equinix.com/developers/docs/metal/operating-systems/supported/#rocky-linux), will turn that instance into a **"swiss army"** bastion box.
+
 
 <p float="middle">
   <img src="docs/assets/dashboard.PNG" width="32%" />
 </p>
 
-*no_code_bastion* aims to minimize the amount of toil needed to quickly and safely establish a familiar operational beachead inside of Equinix Metal for operators looking to get going quickly and safely-ish. It provides critical functions like:
-- Secure inside <-> outside access to an Equinix Metal environment
-- Network and utility services inside Equinix Metal
-- Container and VM hosting inside Equinix Metal
-- Operational tools and niceties
+It can be used to quickly establish an operational footprint inside of an Equinix Metal [project](https://deploy.equinix.com/developers/docs/metal/projects/managing-a-project/). A quick highlight of `NCB`'s utility functions:
 
-All thats needed to get an `ncb` instance is to Copy (`Ctrl / Cmd + C`) [this cloud-init](cloud_inits/el9_no_code_safety_first_appliance_host.yaml) and Paste (`Ctrl / Cmd + P`) the contents into the [Userdata form](https://deploy.equinix.com/developers/docs/metal/server-metadata/user-data/#usage) when provisioning an Equinix Metal instance with `alma_9` or `rocky_9`. Thats it.
+- Secure inside <-> outside management access to an Equinix Metal project
+- Network and utility services such as DHCP and NAT
+- PXE Toolchain for BYO-OS (For things iPXE doesn't cover)
+- File hosting via HTTP and NFS
+- Automatic Network Setup for [Hybrid Bonded Mode](https://deploy.equinix.com/developers/docs/metal/layer2-networking/hybrid-bonded-mode/) including VLANs
+	- Quickly test inside Metal network connectivity.
+- Container and VM hosting
+- Optional: VyOS ISO builder
+- Optional: Kubernetes via [k3s](https://k3s.io/)
+
+Just copy (`Ctrl / Cmd + C`) the content of [this cloud-init](cloud_inits/el9_no_code_safety_first_appliance_host.mime) and Paste (`Ctrl / Cmd + P`) the contents into the [Userdata form](https://deploy.equinix.com/developers/docs/metal/server-metadata/user-data/#usage) when provisioning an Equinix Metal instance with `alma_9` or `rocky_9`. Thats it.
 
 ***For best experience, use the `.mime` encoded file***
 
@@ -26,9 +31,11 @@ This minimzes browser / user input (copy+paste) inconsistencies. Simply copy the
 
 The `mime` encoded file is simply the output of `cloud-init devel make-mime` run on the `yaml` file in the same directory.
 
+After the instance is "provisioned" in Equinix Metal, it may take up to 4-10 minutes for the automation to complete. You will know it's complete when the [Cockpit](https://cockpit-project.org/) interface is available on the instances Public IP on port `9090`.
+
 ## Login Credentials / Authentication
 
-Outside in access via `root` is disabled, as in it is denied in the config of `sshd` and `cokpit`.
+Outside in access via `root` is disabled, as in it is denied in the config of `sshd` and `cockpit`.
 
 * To `ssh` in, use the following credentials:
   - **Username:**`adminuser`
@@ -41,20 +48,21 @@ Outside in access via `root` is disabled, as in it is denied in the config of `s
 
 ## Support
 
-Please note, as with anything in this reposistory, this resource is not supported by **ANYONE**. It is meant solely and exclusively as a reference resource. That being said, as of summer 2023, the owner is still looking to improve this resource and fix any quick wins. If anything about this perks you interest, get in contact with your [Equinix Metal sales team](https://deploy.equinix.com/get-started/).
+Please note, as with anything in this reposistory, this resource is not supported by **ANYONE**. It is meant solely and exclusively as a reference resource and convenience tool. That being said, as of summer 2024, the owner is still looking to improve this resource and fix any quick wins. If anything about this perks you interest, get in contact with your [Equinix Metal sales team](https://deploy.equinix.com/get-started/).
 
-**Quick Bullet Points of Toils Solved:**
+## **Quick Bullet Points of Toils Solved:**
 
 - Moves `root` user to -> `adminuser`
     - Use of root for outside access is restricted, access outside in with user `adminuser`
     - `adminuser`'s password should be the `UUID` of the instance.
+	- Applies lockout / brute force restrictions
 - [Management UI](https://access.redhat.com/documentation/en-us/red_hat_enterprise_linux/9/html/managing_systems_using_the_rhel_9_web_console/index) ([Cockpit](https://cockpit-project.org/) via self-signed HTTPS over [Metal Internet](https://deploy.equinix.com/developers/docs/metal/networking/ip-addresses/#public-ipv4-subnet))
 - VM hosting via [libvirt](https://libvirt.org/) (accesible in [Cockpit](https://access.redhat.com/documentation/en-us/red_hat_enterprise_linux/9/html/managing_systems_using_the_rhel_9_web_console/managing-virtual-machines-in-the-web-console_system-management-using-the-rhel-9-web-console))
 - Container hosting via [podman](https://podman.io/) (accesible in [Cockpit](https://github.com/cockpit-project/cockpit-podman))
 - Automatic Updates configured via [dnf-automatic](https://dnf.readthedocs.io/en/latest/automatic.html)
-    - Security updates are automatically applied.
-- Basic securitization (`root` -> `adminuser`, firewall up, user-lockout etc)
-- Installs kubernetes with just by adding "k3s" tag to instance via Metal
+    - Security updates are automatically applied via [dnf automatic](https://dnf.readthedocs.io/en/latest/automatic.html)
+- Turns up firewall and limits access
+- Installs kubernetes with just by adding the tag `ncb_k3s` to instance via the Metal UI or API
 - Mounts largest non-HDD free disk to `/mnt/util/`
   - Adds it as storage volume to `libvirt`
   - Exposed via private network HTTP (via `nginx` below)
@@ -68,31 +76,15 @@ Please note, as with anything in this reposistory, this resource is not supporte
     - Forward DNS in management networks
     - Reverse DNS in management networks
         ```
-        [adminuser@ncb-sv-04 ~]$ dig -x 172.16.101.5 @172.16.100.4
-
-        ; <<>> DiG 9.16.23-RH <<>> -x 172.16.101.5 @172.16.100.4
-        ;; global options: +cmd
-        ;; Got answer:
-        ;; ->>HEADER<<- opcode: QUERY, status: NOERROR, id: 41917
-        ;; flags: qr aa rd ra; QUERY: 1, ANSWER: 1, AUTHORITY: 0, ADDITIONAL: 1
-
-        ;; OPT PSEUDOSECTION:
-        ; EDNS: version: 0, flags:; udp: 4096
-        ;; QUESTION SECTION:
-        ;5.101.16.172.in-addr.arpa.     IN      PTR
-
-        ;; ANSWER SECTION:
-        5.101.16.172.in-addr.arpa. 0    IN      PTR     host-5.mgmtb.gtst.local.
-
-        ;; Query time: 0 msec
-        ;; SERVER: 172.16.100.4#53(172.16.100.4)
-        ;; WHEN: Tue Sep 05 22:58:12 UTC 2023
-        ;; MSG SIZE  rcvd: 91
+		[adminuser@ncb-sv-21 ~]$ dig -x 172.16.100.5 @172.16.100.21
+		... snip ...
+		5.100.16.172.in-addr.arpa. 0    IN      PTR     host-5.mgmta.gtst.local.
+		... snip ...
         ```
         - Note the generic `host-5.mgmtb.gtst.local.`
     - Automatic inclusion in [EM SA Network Schema networks](https://github.com/dlotterman/metal_code_snippets/tree/main/virtual_appliance_host/no_code_with_guardrails#em-sa-network-schema), simply apply VLANs from the Metal UI / CLI in [Hybrid Bonded](https://deploy.equinix.com/developers/docs/metal/layer2-networking/hybrid-bonded-mode/) mode
 - HTTP endpoint via NGINX
-    - Public Internet exposed HTTP endpoint (port `80` on Metal Instance's [Public IP](https://deploy.equinix.com/developers/docs/metal/networking/ip-addresses/#public-ipv4-subnet))
+    - Public Internet exposed HTTP endpoint (port `90` on Metal Instance's [Public IP](https://deploy.equinix.com/developers/docs/metal/networking/ip-addresses/#public-ipv4-subnet))
     - Private ([Backend Transfer](https://deploy.equinix.com/developers/docs/metal/networking/backend-transfer/) + VLAN only, port `81`) exposed HTTP endpoint (not open to internet)
 - Forward HTTP proxy via NGINX
     - Allows servers on private networks to use `ncb` as a simple HTTP proxy on port 83
@@ -138,6 +130,21 @@ The video links are links to Equinix's 0365 Sharepoint (sharepoint.com), and the
   - Cannot provision alma_9
 - m3.small.x86
   - Some m3.smalls are currently launched with Intel E810 NICs that have an incompatibility with their ToR that block some deployments
+
+### Tag Enabled Extensions
+
+`NCB` can be extended by adding tags to running instances via the [Metal UI or API](https://deploy.equinix.com/developers/docs/metal/server-metadata/device-tagging/).
+
+The reason these are not installed by default is that they likely involve downloading outside, semi-trusted code.
+
+Up to this point, we have only used software packages direct from Enterprise Linux, no outside code has yet been run on the system. To be explicit **Tag Enabled Extensions** will download and run code like the [k3s](https://docs.k3s.io/helm) installer and run them relatively un-trusted. To avoid this, just don't use the **Tag Enabled Extensions**, and everything will still vanilla Enterprise Linux.
+
+Once the instance is provisioned and accessible by `Cockpit`, the following tags will trigger their described behavior:
+
+- `ncb_k3s`: An `NCB` instance tagged with `ncb_k3s` will install a minimal [k3s](https://k3s.io/) install on the `ncb` instance, including [clusterctl (AKA CAPI)](https://cluster-api.sigs.k8s.io/clusterctl/overview.html), and [cert-manager](https://cert-manager.io/)
+	- [Docs here](docs/k3s.md)
+- **vyos**: An `NCB` instance tagged with `ncb_vyos` will download the most recent VyOS source from github, and [follow these basic instructions](https://blog.vyos.io/introducing-the-image-build-flavor-system?utm_medium=email&_hsenc=p2ANqtz--cwWxln0yduVs8XGZ0QP_g1DO49i0YblM15ka7g35JEQrFQ3bE7k5OQIDq-zNUFY2b5tsoDIffOLvCxgxEsMITk2acUQ&_hsmi=306480568&utm_content=306480568&utm_source=hs_email#cb5-1) to build and host the VyOS artiftacts for immediate iPXE install.
+	- [Docs here](docs/vyos.md)
 
 ## EM SA Network Schema:
 [Reference link](https://github.com/dlotterman/metal_code_snippets/blob/main/documentation_stage/em_sa_network_schema.md)

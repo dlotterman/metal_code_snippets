@@ -122,6 +122,10 @@ runcmd:
   - - firewall-cmd
     - --permanent
     - --zone=internal
+    - --add-port=90/tcp
+  - - firewall-cmd
+    - --permanent
+    - --zone=internal
     - --add-service=nfs
   - - firewall-cmd
     - --permanent
@@ -217,6 +221,11 @@ runcmd:
     - -i
     - -e
     - /^apply_updates/s/^.*$/apply_updates = yes/
+    - /etc/dnf/automatic.conf
+  - - sed
+    - -i
+    - -e
+    - /^reboot =/s/^.*$/reboot = when-needed/
     - /etc/dnf/automatic.conf
   - - bash
     - /var/tmp/ncb/bin/ncb_adminuser_mangle.sh
@@ -566,7 +575,7 @@ write_files:
             if test ! -f /var/tmp/ncb/tmp/ncb_k3s_mangle.done; then
               systemctl enable --now ncb_k3s_mangle.timer
             fi
-          if [ "$TAG" = "ncb_vyos" ]; then
+          elif [ "$TAG" = "ncb_vyos" ]; then
             if test ! -f /var/tmp/ncb/tmp/ncb_vyos_mangle.done; then
                 systemctl enable --now ncb_vyos_mangle.timer
             fi
@@ -625,7 +634,7 @@ write_files:
         exit 0
       fi
 
-      curl -sfL https://get.k3s.io | NO_PROXY=127.0.0.0/8,10.0.0.0/8,172.16.0.0/12,192.168.0.0/16  HTTP_PROXY=${M_PRIV_IP}:83 INSTALL_K3S_EXEC="--advertise-address ${HOST_IP_MGMT_A} --bind-address ${HOST_IP_MGMT_A}" sh -
+      curl -sfL https://get.k3s.io | NO_PROXY=127.0.0.0/8,10.0.0.0/8,172.16.0.0/12,192.168.0.0/16  HTTP_PROXY=${M_PRIV_IP}:83 INSTALL_K3S_EXEC=" --advertise-address ${HOST_IP_MGMT_A} --bind-address ${HOST_IP_MGMT_A}" sh -
 
       firewall-cmd --permanent --add-port=6443/tcp --zone=internal
 
@@ -726,72 +735,56 @@ write_files:
       source /var/tmp/ncb/etc/ncb.env
       source /var/tmp/ncb/etc/ncb_extended.env
 
-      if test -f /var/tmp/ncb/tmp/ncb_k3s_mangle.done; then
-        systemctl disable --now ncb_k3s_mangle.timer
-        systemctl disable ncb_k3s_mangle.service
+      if test -f /var/tmp/ncb/tmp/ncb_vyos_mangle.done; then
+        systemctl disable --now ncb_vyos_mangle.timer
+        systemctl disable ncb_vyos_mangle.service
         exit 0
-      elif [ "$TAG_ncb_k3s" != "PRESENT" ]; then
+      elif [ "$TAG_ncb_vyos" != "PRESENT" ]; then
         exit 0
       fi
 
-      curl -sfL https://get.k3s.io | NO_PROXY=127.0.0.0/8,10.0.0.0/8,172.16.0.0/12,192.168.0.0/16  HTTP_PROXY=${M_PRIV_IP}:83 INSTALL_K3S_EXEC="--disable-traefik --advertise-address ${HOST_IP_MGMT_A} --bind-address ${HOST_IP_MGMT_A}" sh -
-
-      firewall-cmd --permanent --add-port=6443/tcp --zone=internal
-
-      firewall-cmd --reload
-
-      if test ! -f /var/tmp/ncb/tmp/kubectl.sha256; then
-        curl -o /var/tmp/ncb/tmp/kubectl -LO "https://dl.k8s.io/release/$(curl -L -s https://dl.k8s.io/release/stable.txt)/bin/linux/amd64/kubectl"
-        curl -o /var/tmp/ncb/tmp/kubectl.sha256 -LO "https://dl.k8s.io/release/$(curl -L -s https://dl.k8s.io/release/stable.txt)/bin/linux/amd64/kubectl.sha256"
-        curl -o /var/tmp/ncb/tmp/clusterctl -L https://github.com/kubernetes-sigs/cluster-api/releases/download/v1.5.2/clusterctl-linux-amd64
-        curl -o /var/tmp/ncb/tmp/cert-manager.yaml -LO https://github.com/cert-manager/cert-manager/releases/download/v1.13.1/cert-manager.yaml
-
-      fi
-
-      KCHKSUM=$(echo "$(cat /var/tmp/ncb/tmp/kubectl.sha256)  /var/tmp/ncb/tmp/kubectl" | sha256sum --check | awk '{print $NF}')
-      if [ "$KCHKSUM" = "OK" ]; then
-        echo "kubectl installed"
-      else
-        logger "SHA256 of kubectl in admiunuser home is wrong, exiting"
-        exit 1
-      fi
-
-      #HARDCODED CHECKSUMS ARE BAD OKAY?!
-      CCHKSUM=$(echo "4ae1a8fd5699e1926efbfd2fa7ee7272c8171348ca817255c950a6c4cffc7cb2  /var/tmp/ncb/tmp/clusterctl" | sha256sum --check | awk '{print $NF}')
-      if [ "$CCHKSUM" = "OK" ]; then
-        echo "clusterctl installed"
-      else
-        logger "SHA256 of clusterctl in /var/tmp/ncb/tmp is wrong, exiting"
-      fi
-
-      CMCHKSUM=$(echo "8b2a77bf9d2fe569d0c3bfd74f19dad0c8e675e9f6a7e88060abee3042f50a12  /var/tmp/ncb/tmp/cert-manager.yaml" | sha256sum --check | awk '{print $NF}')
-      if [ "$CMCHKSUM" = "OK" ]; then
-        echo "cert-manager.yaml installed"
-      else
-        logger "SHA256 of cert-manager.yaml in /var/tmp/ncb/tmp is wrong, exiting"
-        exit 1
-      fi
+      mkdir -p /var/tmp/ncb/tmp/
+      cd /var/tmp/ncb/tmp/
+      git clone https://github.com/vyos/vyos-build
+      cd vyos-build
 
 
-      sudo -u adminuser cp /var/tmp/ncb/tmp/kubectl /home/adminuser/bin/
-      sudo -u adminuser cp /var/tmp/ncb/tmp/clusterctl /home/adminuser/bin/
+      echo 'image_format = "iso"' > data/build-flavors/iso.toml
+      echo "[boot_settings]" >> data/build-flavors/iso.toml
+      echo "  timeout = 5" >> data/build-flavors/iso.toml
+      echo "  console_type = \"ttyS\"" >> data/build-flavors/iso.toml
+      echo "  console_num = 1" >> data/build-flavors/iso.toml
+      echo "  console_speed = 115200" >> data/build-flavors/iso.toml
 
-      sudo -u adminuser chmod 0750 /home/adminuser/bin/kubectl
-      sudo -u adminuser chmod 0750 /home/adminuser/bin/clusterctl
+      #echo "system {" >> data/build-flavors/iso.toml
+      #echo "  console {" >> data/build-flavors/iso.toml
 
-      rm -rf /tmp/.kube
-      mkdir /tmp/.kube
-      cp /etc/rancher/k3s/k3s.yaml /tmp/.kube/config
-      chmod 0600 /tmp/.kube/config
-      cp -r /tmp/.kube /home/adminuser/
-      chown -R adminuser:cloud-users /home/adminuser/.kube
-      sudo -u adminuser cp /var/tmp/ncb/tmp/cert-manager.yaml /home/adminuser/.kube/
+      podman pull docker.io/vyos/vyos-build:current
+      podman run --rm --privileged --user 0:0 -v $(pwd):/vyos -v /dev:/dev -w /vyos vyos/vyos-build:current ./build-vyos-image iso
 
-      sudo -i -u adminuser kubectl apply -f /home/adminuser/.kube/cert-manager.yaml
+      mkdir /tmp/vyos_loopmount
+      mount -o loop build/live-image-amd64.hybrid.iso /tmp/vyos_loopmount/
+      mkdir /usr/share/nginx/html/vyos
+      rsync -a /tmp/vyos_loopmount/ /usr/share/nginx/html/vyos/
+      cp build/live-image-amd64.hybrid.iso /usr/share/nginx/html/vyos/
 
-      systemctl disable --now ncb_k3s_mangle.timer
 
-      touch /var/tmp/ncb/tmp/ncb_k3s_mangle.done
+      cat > /usr/share/nginx/html/vyos/vyos.ipxe << EOL
+      #!ipxe
+      dhcp
+      set vyos_url http://$M_PUBL_IP:90/vyos
+      set initrd_url /live/initrd.img
+      set vmlinuz_url /live/vmlinuz
+      set filesys_url /live/filesystem.squashfs
+      set kernel_common net.ifnames=0 boot=live nopersistence noautologin union=overlay ip=dhcp initrd=initrd.img nosmt BOOTIF=${mac} keep_bootcon console=ttyS1,115200n8
+      :vyos_eqinix_metal
+      initrd \${vyos_url}\${initrd_url}
+      kernel \${vyos_url}\${vmlinuz_url} \${kernel_common} fetch=\${vyos_url}\${filesys_url}
+      boot
+      EOL
+
+      systemctl disable --now ncb_vyos_mangle.timer
+      touch /var/tmp/ncb/tmp/ncb_vyos_mangle.done
 
     permissions: "0655"
   - path: /var/tmp/ncb/bin/ncb_dnsmasq_mangle.sh
@@ -895,6 +888,7 @@ write_files:
       chown -R adminuser:export-users /mnt/util/export/http
       echo "private network html audotindex" > /mnt/util/export/http/index.html
       sed -i -e /"^        root         \/usr\/share\/nginx\/http"/s/^.*$/"        root         \/mnt\/util\/export\/http;"/ /etc/nginx/nginx.conf
+      sed -i s/80/90/g /etc/nginx/nginx.conf
       cat > /etc/nginx/conf.d/ncb_private.conf << EOL
         server {
             listen       $M_PRIV_IP:81;
@@ -980,7 +974,7 @@ write_files:
           <dnsmasq:options>
             <dnsmasq:option value='listen-address=192.168.122.1'/>
             <dnsmasq:option value='synth-domain=libvirt.gtst.local,192.168.122.0/24,host-*'/>
-            <dnsmasq:option value='domain=libvirt.gtst.local,192.168.122.0/24,local/'>
+            <dnsmasq:option value='domain=libvirt.gtst.local,192.168.122.0/24'/>
             <dnsmasq:option value='interface=virbr0'/>
             <dnsmasq:option value='server=127.0.0.1'/>
           </dnsmasq:options>
