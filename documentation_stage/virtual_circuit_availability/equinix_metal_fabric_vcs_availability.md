@@ -4,9 +4,14 @@ This brief will informally cover key concerns regarding availability when design
 
 This document also assumes an *unreasonable* amount of domain and operator knowledge and experience. Please contact Equinix Metal Support or your Equinix account team for additional guidance if this document is unclear.
 
+## Update Q1/Q2 2024
+
+This doc has not yet been updated to include the release of Metal's VRF. This feature release significantly changes the operator toil required to implement highly available Interconnection solutions.
+
+- [Equinx Metal VRF Main Docs](https://deploy.equinix.com/developers/docs/metal/networking/vrf/)
+- [Equinix Metal VRF w/ Interconnect(https://deploy.equinix.com/developers/docs/metal/interconnections/vrf-interconnections/)
+
 ## Summary
-
-
 
 While the cloudy nature of Fabric Virtual Circuits provide significant operational advantages, the additional abstractions in implementation of the product do introduce additional or specific concerns when designing availability conscious Interconnection architectures, that may be different from more traditional interconnection mediums or may be specific to the integration between Equinix Metal and Equinix Fabric.
 

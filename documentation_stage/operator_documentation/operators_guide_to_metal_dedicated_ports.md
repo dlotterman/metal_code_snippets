@@ -18,7 +18,6 @@ An Equinix Metal wants to connect their on-prem database to a new scale-able Kub
 
 The customers "on-prem" is a datacenter on their corporate campus in Fremont CA. They source a local-loop from a vendor from their facility in Fremont CA going to Equinix SV5. The customer orders a patch x-conn to go from the vendors POP to Equinix Metal within SV5, with Metal's side terminating in SMF-LC. The customer orders Metal Dedicated Ports which will be the termination point for the SMF-LC patch / extension that goes from vendor's POP to Equinix Metal.
 
-It is worth noting that each of these widgets will have cost implications. EM Dedicated Ports service charge is for the ports and the ports alone, no intermediary solution services included.
 
 ## Equinix Metal Dedicated Port High Availability
 

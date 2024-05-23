@@ -51,10 +51,32 @@ Outside in access via `root` is disabled, as in it is denied in the config of `s
   - Password: is the `UUID` of the Metal instance itself. You can copy it from the instances details in the WebUI or [metadata](https://deploy.equinix.com/developers/docs/metal/server-metadata/metadata/).
     - It is worth noting, the `UUID` of an instance is only discernable from the inside of Metal, which presumes authentication by at least two factors if required.
 
+## Shortcuts:
+- Portforwarding a local workstation port through `NCB`, say to reach a WebUI on a private Metal network or to reach Remote Desktop securely:
+	- `ssh -L 3389:10.67.239.129:3389 adminuser@145.40.82.9`
+- Enabling a local SSH proxy:
+	- `ssh -D 8890 adminuser@145.40.82.9`
 
 ## Support
 
 Please note, as with anything in this reposistory, this resource is not supported by **ANYONE**. It is meant solely and exclusively as a reference resource and convenience tool. That being said, as of summer 2024, the owner is still looking to improve this resource and fix any quick wins. If anything about this perks you interest, get in contact with your [Equinix Metal sales team](https://deploy.equinix.com/get-started/).
+
+
+## ports
+
+| Port		| Purpose |
+| -----------	| -----------	|
+| `22/tcp`		| SSH, intended to be `public` |
+| `53/all`		| `private` DNS |
+| `67/udp`		| `private` DHCP |
+| `80/tcp`		| Reserved for `k3s`, intended to be `public` |
+| `81/tcp`		| `private` HTTP |
+| `82/tcp`		| `private` HTTP w/ autoindex enabled |
+| `83/tcp`		| `private` HTTP Proxy |
+| `90/tcp`		| `public` HTTP |
+| `111/tcp`		| `private` NFS |
+| `2049/tcp`	| `private` NFS |
+| `9090/tcp`	| `public` Cockpit UI|
 
 ## **Quick Bullet Points of Toils Solved:**
 
