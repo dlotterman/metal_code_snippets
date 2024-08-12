@@ -42,6 +42,8 @@ packages:
   - cockpit-packagekit
   - wireguard-tools
   - libnsl
+  - python3-pip
+
 groups:
   - cloud-users
   - export-users
